@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:services="clr-namespace:MedSestriManipulations.Services"
+             x:Class="MedSestriManipulations.CatheterPage"
+             Title="Катетри"
+             xmlns:local="clr-namespace:MedSestriManipulations"
+             BackgroundColor="#dfe9f5">
+
+    <AbsoluteLayout>
+
+        <!-- Scrollable form -->
+        <ScrollView AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
+            <VerticalStackLayout Padding="10" Spacing="10">
+
+                <!-- Заглавие -->
+                <Label Text="Катетри" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
+
+                <!-- Име -->
+                <Border Stroke="#CCCCCC" StrokeThickness="0.5" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,5">
+                    <Entry x:Name="PatientNameEntry" Placeholder="Име на пациента" FontSize="18" BackgroundColor="Transparent" TextColor="#000" HeightRequest="45"/>
+                </Border>
+
+                <!-- Телефон -->
+                <Border Stroke="#CCCCCC" StrokeThickness="0.5" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,5">
+                    <Entry x:Name="PhoneEntry" Placeholder="Телефон" Keyboard="Numeric" FontSize="18" BackgroundColor="Transparent" TextColor="#000" HeightRequest="45"/>
+                </Border>
+
+                <!-- Дата на поставяне -->
+                <Label Text="Дата на поставяне" FontAttributes="Bold" FontSize="16" Margin="5,10,0,0"/>
+                <Border Stroke="#CCCCCC" StrokeThickness="0.5" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,5">
+                    <DatePicker x:Name="CatheterDatePicker" FontSize="18" />
+                </Border>
+
+                <!-- Адрес -->
+                <Border Stroke="#CCCCCC" StrokeThickness="0.5" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,5">
+                    <Editor x:Name="AddressEntry" Placeholder="Адрес" FontSize="16" AutoSize="TextChanges" HeightRequest="100" BackgroundColor="Transparent"/>
+                </Border>
+
+                <!-- Бутон за записване -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="15">
+                    <Button Text="Запиши" Clicked="OnSaveClicked" BackgroundColor="#007BFF" TextColor="White" CornerRadius="20" Padding="40,10" FontAttributes="Bold">
+                        <Button.Shadow>
+                            <Shadow Brush="Black" Offset="-10,5" Radius="10" Opacity="0.5" />
+                        </Button.Shadow>
+                    </Button>
+
+                    <Button Text="Изчисти" Clicked="ClearFields" BackgroundColor="DarkRed" TextColor="White" CornerRadius="20" Padding="40,10" FontAttributes="Bold">
+                        <Button.Shadow>
+                            <Shadow Brush="Black" Offset="10,5" Radius="10" Opacity="0.5" />
+                        </Button.Shadow>
+                    </Button>
+                </HorizontalStackLayout>
+
+                <!-- Списък с въведени катетри -->
+                <Label Text="Записани катетри:" FontSize="18" FontAttributes="Bold" Margin="0,20,0,0"/>
+
+                <CollectionView x:Name="CathetersListView"
+                ItemsSource="{Binding cathers}"
+                Margin="0,0,0,20"
+                HeightRequest="300">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="White" CornerRadius="12" Padding="10" Margin="0,5">
+                                <Frame.Triggers>
+                                    <DataTrigger TargetType="Frame" Binding="{Binding IsOverdue}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="Beige" />
+                                    </DataTrigger>
+                                </Frame.Triggers>
+
+                                <Grid ColumnSpacing="10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <!-- Бутоните ще са в първата колона -->
+                                        <ColumnDefinition Width="*" />
+                                        <!-- Основната информация ще е втора колона -->
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Бутоните (вляво) -->
+                                    <VerticalStackLayout Grid.Column="0" Spacing="10" HorizontalOptions="Start" VerticalOptions="Center">
+                                        <Button Text="✔️" BackgroundColor="#007BFF" TextColor="White" CornerRadius="10" HeightRequest="30" WidthRequest="40" FontSize="14"
+                                        Clicked="UpdateCatheterAppointment_Clicked" CommandParameter="{Binding .}" />
+                                    </VerticalStackLayout>
+
+                                    <!-- Основна информация (вдясно) -->
+                                    <VerticalStackLayout Grid.Column="1" Spacing="5">
+                                        <Label Text="{Binding ClientName}" FontSize="16" FontAttributes="Bold"/>
+                                        <Label Text="{Binding PhoneNumber}" FontSize="14"/>
+                                        <Label Text="{Binding Date, StringFormat='Дата: {0:dd.MM.yyyy}'}" FontSize="14"/>
+                                        <Label Text="{Binding Address}" FontSize="14"/>
+                                    </VerticalStackLayout>
+                                </Grid>
+
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- FAB меню бутон -->
+        <Frame x:Name="MainFabButton" BackgroundColor="White" CornerRadius="25" HasShadow="True" AbsoluteLayout.LayoutBounds="0.96,0.98,60,60" AbsoluteLayout.LayoutFlags="PositionProportional">
+            <ImageButton Source="medsestri_logo.png" Clicked="OnMainFabClicked" BackgroundColor="Transparent" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center" VerticalOptions="Center" />
+        </Frame>
+
+        <!-- Бутон 1: История -->
+        <Frame x:Name="HistoryButton" BackgroundColor="#007BFF" CornerRadius="25" HeightRequest="60" WidthRequest="60" IsVisible="False" AbsoluteLayout.LayoutBounds="0.95,0.81,50,50" AbsoluteLayout.LayoutFlags="PositionProportional">
+            <ImageButton Source="history.png" Command="{x:Static services:NavigationService.NavigateToHistoryCommand}" BackgroundColor="Transparent" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center" VerticalOptions="Center"/>
+        </Frame>
+
+        <!-- Бутон 2: Начален екран -->
+        <Frame x:Name="MainWindowButton" BackgroundColor="#007BFF" CornerRadius="25" HeightRequest="60" WidthRequest="60" IsVisible="False" AbsoluteLayout.LayoutBounds="0.95,0.89,50,50" AbsoluteLayout.LayoutFlags="PositionProportional">
+            <ImageButton Source="home.png" Command="{x:Static services:NavigationService.NavigateToHomeCommand}" BackgroundColor="Transparent" WidthRequest="70" HeightRequest="70" HorizontalOptions="Center" VerticalOptions="Center"/>
+        </Frame>
+
+        <!-- Зареждащ overlay -->
+        <Grid x:Name="LoadingOverlay" BackgroundColor="#80000000" IsVisible="False" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10">
+                <ActivityIndicator IsRunning="True" IsVisible="True" WidthRequest="60" HeightRequest="60" Color="White" />
+                <Label Text="Записване..." TextColor="White" FontSize="16" HorizontalOptions="Center"/>
+            </StackLayout>
+        </Grid>
+
+    </AbsoluteLayout>
+</ContentPage>

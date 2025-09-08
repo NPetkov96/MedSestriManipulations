@@ -1,0 +1,2002 @@
+[
+  {
+    "Name": "НЗОК",
+    "Price": 0.0
+  },
+  {
+    "Name": "Пълна кръвна картина + ДКК + СУЕ",
+    "Price": 12.0
+  },
+  {
+    "Name": "Протромбиново време",
+    "Price": 6.0
+  },
+  {
+    "Name": "Фибриноген",
+    "Price": 6.0
+  },
+  {
+    "Name": "Д-димер(D-dimer)",
+    "Price": 25.0
+  },
+  {
+    "Name": "(TSH) Тиреоид-стимулиращ хормон ТТХ",
+    "Price": 17.0
+  },
+  {
+    "Name": "Глюкоза",
+    "Price": 3.0
+  },
+  {
+    "Name": "Общ белтък",
+    "Price": 3.5
+  },
+  {
+    "Name": "Липиден профил (Chol.+HDL+LDL+Tg)",
+    "Price": 12.0
+  },
+  {
+    "Name": "Албумин",
+    "Price": 3.5
+  },
+  {
+    "Name": "Билирубин, общ",
+    "Price": 3.5
+  },
+  {
+    "Name": "Билирубин, директен (конюгиран)",
+    "Price": 3.5
+  },
+  {
+    "Name": "Желязо (Fe)",
+    "Price": 6.0
+  },
+  {
+    "Name": "АсАТ",
+    "Price": 3.5
+  },
+  {
+    "Name": "АлАТ",
+    "Price": 3.5
+  },
+  {
+    "Name": "ГГТ",
+    "Price": 3.5
+  },
+  {
+    "Name": "ЖСК (желязосвързващ капацитет)",
+    "Price": 6.0
+  },
+  {
+    "Name": "Креатинин",
+    "Price": 3.5
+  },
+  {
+    "Name": "Урея",
+    "Price": 3.5
+  },
+  {
+    "Name": "Пикочна киселина",
+    "Price": 3.5
+  },
+  {
+    "Name": "Натрий (Na+)",
+    "Price": 4.5
+  },
+  {
+    "Name": "Калий (K+)",
+    "Price": 4.5
+  },
+  {
+    "Name": "Общ калций (Ca)",
+    "Price": 3.5
+  },
+  {
+    "Name": "Магнезий (Mg)",
+    "Price": 3.5
+  },
+  {
+    "Name": "Витамин D (25-OH)",
+    "Price": 30.0
+  },
+  {
+    "Name": "Фолиева киселина",
+    "Price": 24.0
+  },
+  {
+    "Name": "Витамин B12",
+    "Price": 23.0
+  },
+  {
+    "Name": "Гликиран хемоглобин (HbA1C)",
+    "Price": 15.0
+  },
+  {
+    "Name": "CRP - С-реактивен протеин ",
+    "Price": 7.0
+  },
+  {
+    "Name": "Урина 10 пок. + седимент",
+    "Price": 4.5
+  },
+  {
+    "Name": "Общо химично изследване и седимент",
+    "Price": 4.5
+  },
+  {
+    "Name": "Свободен Т4 (FT4)",
+    "Price": 17.0
+  },
+  {
+    "Name": "Свободен Т3 (FT3)",
+    "Price": 17.0
+  },
+  {
+    "Name": "Анти-тиреоглобулинови антитела (ТАТ)",
+    "Price": 18.0
+  },
+  {
+    "Name": "Анти-микрозомални антитела (MАТ)",
+    "Price": 18.0
+  },
+  {
+    "Name": "TSH рецепторни антитела (TSH-R-Ab)",
+    "Price": 37.0
+  },
+  {
+    "Name": "Лутеинизиращ хормон (LH)",
+    "Price": 17.0
+  },
+  {
+    "Name": "Фоликулостимулиращ хормон (FSH)",
+    "Price": 17.0
+  },
+  {
+    "Name": "Пролактин",
+    "Price": 17.0
+  },
+  {
+    "Name": "Естрадиол",
+    "Price": 19.0
+  },
+  {
+    "Name": "Прогестерон",
+    "Price": 19.0
+  },
+  {
+    "Name": "Aнти-Мюлеров хормон (AMH)",
+    "Price": 53.0
+  },
+  {
+    "Name": "Тестостерон",
+    "Price": 19.0
+  },
+  {
+    "Name": "17-OH-Progesterone",
+    "Price": 27.0
+  },
+  {
+    "Name": "Андростендион",
+    "Price": 27.0
+  },
+  {
+    "Name": "DHEA-s",
+    "Price": 20.0
+  },
+  {
+    "Name": "SHBG",
+    "Price": 24.0
+  },
+  {
+    "Name": "Растежен хормон (STH)",
+    "Price": 24.0
+  },
+  {
+    "Name": "Aдренокортикотропен хормон (ACTH)",
+    "Price": 24.0
+  },
+  {
+    "Name": "Кортизол (серум)",
+    "Price": 18.0
+  },
+  {
+    "Name": "Кортизол (слюнка)",
+    "Price": 18.0
+  },
+  {
+    "Name": "Инсулин (IRI)",
+    "Price": 18.0
+  },
+  {
+    "Name": "C-пептид",
+    "Price": 22.0
+  },
+  {
+    "Name": "Паратхормон (PTH)",
+    "Price": 30.0
+  },
+  {
+    "Name": "Остеокалцин",
+    "Price": 22.0
+  },
+  {
+    "Name": "β-CrossLaps",
+    "Price": 22.0
+  },
+  {
+    "Name": "IGF 1",
+    "Price": 44.0
+  },
+  {
+    "Name": "Алдостерон  (Aldosterone)",
+    "Price": 40.0
+  },
+  {
+    "Name": "Ренин (Renin",
+    "Price": 45.0
+  },
+  {
+    "Name": "Адреналин (Adrenaline)",
+    "Price": 48.0
+  },
+  {
+    "Name": "Норадреналин  (Noadrenaline)",
+    "Price": 48.0
+  },
+  {
+    "Name": "Допамин (Dopamine)",
+    "Price": 48.0
+  },
+  {
+    "Name": "free 3-метокситирамин (Free 3-methoxytyramine)",
+    "Price": 48.0
+  },
+  {
+    "Name": "Серотонин (Serotonin)",
+    "Price": 58.0
+  },
+  {
+    "Name": "Адреналин + Норадреналин + Допамин",
+    "Price": 135.0
+  },
+  {
+    "Name": "free Metanephine + free Normetanephrine + Free 3-Methoxytyramine",
+    "Price": 130.0
+  },
+  {
+    "Name": "Адреналин + Норадреналин + Допамин + Серотонин + free Metanephine + free Normetanephrine + Free 3-Methoxytyramine",
+    "Price": 200.0
+  },
+  {
+    "Name": "Адреналин (в урина) и норадреналин (в урина)",
+    "Price": 92.0
+  },
+  {
+    "Name": "Метанефрин (в урина) и норметанефрин (в урина)",
+    "Price": 92.0
+  },
+  {
+    "Name": "free Normetanephrine + Free 3-Methoxytyramine",
+    "Price": 92.0
+  },
+  {
+    "Name": "Инхибин В (Inhibin B)",
+    "Price": 43.0
+  },
+  {
+    "Name": "Обратен Т3 (Reverse T3)",
+    "Price": 60.0
+  },
+  {
+    "Name": "Глюкагон (Glucagon)",
+    "Price": 39.0
+  },
+  {
+    "Name": "CA 15-3",
+    "Price": 21.0
+  },
+  {
+    "Name": "CA 125",
+    "Price": 21.0
+  },
+  {
+    "Name": "HE 4",
+    "Price": 57.0
+  },
+  {
+    "Name": "HE 4+ CA 125+ ROMA index",
+    "Price": 65.0
+  },
+  {
+    "Name": "CA 19-9",
+    "Price": 21.0
+  },
+  {
+    "Name": "CEA (карциноембрионален антиген)",
+    "Price": 21.0
+  },
+  {
+    "Name": "Алфа-фетопротеин (AFP)",
+    "Price": 21.0
+  },
+  {
+    "Name": "CA 72-4",
+    "Price": 23.0
+  },
+  {
+    "Name": "Човешки хорионгонадотропин (cHG + ß)",
+    "Price": 20.0
+  },
+  {
+    "Name": "Простатно-специфичен антиген, общ (tPSA)",
+    "Price": 20.0
+  },
+  {
+    "Name": "Свободен простатно-специфичен антиген (fPSA)",
+    "Price": 20.0
+  },
+  {
+    "Name": "tPSA + fPSA",
+    "Price": 35.0
+  },
+  {
+    "Name": "Tиреоглобулин",
+    "Price": 35.0
+  },
+  {
+    "Name": "Калцитонин",
+    "Price": 33.0
+  },
+  {
+    "Name": "Неврон-специфична енолаза NSE (NSE)",
+    "Price": 32.0
+  },
+  {
+    "Name": "Cyfra 21-1",
+    "Price": 22.0
+  },
+  {
+    "Name": "Hb в изпражнение  (\"окултна\" кръв)",
+    "Price": 10.0
+  },
+  {
+    "Name": "S100",
+    "Price": 36.0
+  },
+  {
+    "Name": "Septin 9 (SEPT9)",
+    "Price": 240.0
+  },
+  {
+    "Name": "SCC",
+    "Price": 38.0
+  },
+  {
+    "Name": "M2-PK (M2-Pyruvatkinase)",
+    "Price": 107.0
+  },
+  {
+    "Name": "Пълна кръвна картина (ПКК)",
+    "Price": 7.0
+  },
+  {
+    "Name": "Пълна кръвна картина + СУЕ",
+    "Price": 8.0
+  },
+  {
+    "Name": "ДКК (апаратно)",
+    "Price": 3.0
+  },
+  {
+    "Name": "ДКК (микроскопско)",
+    "Price": 5.0
+  },
+  {
+    "Name": "СУЕ",
+    "Price": 3.0
+  },
+  {
+    "Name": "Морфология на еритроцити",
+    "Price": 6.0
+  },
+  {
+    "Name": "Ретикулоцити",
+    "Price": 4.0
+  },
+  {
+    "Name": "APTT",
+    "Price": 6.0
+  },
+  {
+    "Name": "Протеин С",
+    "Price": 36.0
+  },
+  {
+    "Name": "Протеин S",
+    "Price": 41.0
+  },
+  {
+    "Name": "Лупус (Lupus Antikoagulans AK)",
+    "Price": 36.0
+  },
+  {
+    "Name": "Антитромбин III",
+    "Price": 25.0
+  },
+  {
+    "Name": "Kръвно-захарен профил / ОГТТ (трикратно)",
+    "Price": 9.0
+  },
+  {
+    "Name": "Аполипопротеин А1 (Apo A1)",
+    "Price": 15.0
+  },
+  {
+    "Name": "Аполипопротеин B (Apo B)",
+    "Price": 15.0
+  },
+  {
+    "Name": "Липопротеин (a) (Lp (a)",
+    "Price": 35.0
+  },
+  {
+    "Name": "Креатинин",
+    "Price": 3.5
+  },
+  {
+    "Name": "Цистатин С",
+    "Price": 35.0
+  },
+  {
+    "Name": "Урея в 24ч. урина",
+    "Price": 3.5
+  },
+  {
+    "Name": "Пикочна киселина в 24ч. урина",
+    "Price": 3.5
+  },
+  {
+    "Name": "Общ холестерол (Chol.)",
+    "Price": 3.5
+  },
+  {
+    "Name": "HDL- Холестерол (HDL-C)",
+    "Price": 3.5
+  },
+  {
+    "Name": "LDL - Холестерол (LDL-C)",
+    "Price": 3.5
+  },
+  {
+    "Name": "Триглицериди (Tg)",
+    "Price": 3.5
+  },
+  {
+    "Name": "Алкална фосфатаза",
+    "Price": 3.5
+  },
+  {
+    "Name": "Амилаза",
+    "Price": 7.0
+  },
+  {
+    "Name": "Липаза",
+    "Price": 7.0
+  },
+  {
+    "Name": "Лактатдехидрогеназа (LDH)",
+    "Price": 6.5
+  },
+  {
+    "Name": "Креатин фосфокиназа (CPK)",
+    "Price": 3.5
+  },
+  {
+    "Name": "CPK-MB",
+    "Price": 10.0
+  },
+  {
+    "Name": "Йонизиран калций (Са2+)",
+    "Price": 4.5
+  },
+  {
+    "Name": "Неорганични фосфати (PO43-)",
+    "Price": 3.5
+  },
+  {
+    "Name": "Хлор (Cl -)",
+    "Price": 4.5
+  },
+  {
+    "Name": "Натрий (Na +) + Калий (K +) + Хлор (Cl -)",
+    "Price": 11.0
+  },
+  {
+    "Name": "Аlkaline Phosphatase ISO (Alkaline Phosphatase, Liver AP, Bone AP, Small Intestine AP%)",
+    "Price": 31.0
+  },
+  {
+    "Name": "Цистин (Cystine)",
+    "Price": 31.0
+  },
+  {
+    "Name": "Оксалат (Oxalic acid)",
+    "Price": 33.0
+  },
+  {
+    "Name": "Цитрат (Citric acid)",
+    "Price": 33.0
+  },
+  {
+    "Name": "Хомоцистеин",
+    "Price": 35.0
+  },
+  {
+    "Name": "Тропонин",
+    "Price": 28.0
+  },
+  {
+    "Name": "Феритин",
+    "Price": 18.0
+  },
+  {
+    "Name": "Трансферин",
+    "Price": 18.0
+  },
+  {
+    "Name": "hs-CRP",
+    "Price": 15.0
+  },
+  {
+    "Name": "Натриуретичен пептид (NT-Pro-BNP)",
+    "Price": 60.0
+  },
+  {
+    "Name": "Прокалцитонин (РСТ)",
+    "Price": 50.0
+  },
+  {
+    "Name": "Имуноглобулини IgA",
+    "Price": 16.0
+  },
+  {
+    "Name": "Имуноглобулини IgG",
+    "Price": 16.0
+  },
+  {
+    "Name": "Имуноглобулини IgM",
+    "Price": 16.0
+  },
+  {
+    "Name": "Имуноглобулини IgE, общи",
+    "Price": 20.0
+  },
+  {
+    "Name": "Калпротектин",
+    "Price": 42.0
+  },
+  {
+    "Name": "Фекален калпротектин, лактоферин, хемоглобин, трансферин",
+    "Price": 35.0
+  },
+  {
+    "Name": "β2 Микроглобулин (β-2-Microglobulin)",
+    "Price": 26.0
+  },
+  {
+    "Name": "Хаптоглобин",
+    "Price": 24.0
+  },
+  {
+    "Name": "Витамин В1 (Vitamin B1)",
+    "Price": 48.0
+  },
+  {
+    "Name": "Витамин В2 (Vitamin B2)",
+    "Price": 48.0
+  },
+  {
+    "Name": "Витамин В6 (Vitamin B6)",
+    "Price": 48.0
+  },
+  {
+    "Name": "Витамин А (Vitamin A)",
+    "Price": 34.0
+  },
+  {
+    "Name": "Витамин Н (Биотин)",
+    "Price": 39.0
+  },
+  {
+    "Name": "Витамин Е (Vitamin E)",
+    "Price": 34.0
+  },
+  {
+    "Name": "Витамин К (Vitamin K)",
+    "Price": 83.0
+  },
+  {
+    "Name": "Витамин С (Vitamin C)",
+    "Price": 60.0
+  },
+  {
+    "Name": "1.25(OH)2 Витамин D3",
+    "Price": 49.0
+  },
+  {
+    "Name": "Бета Дефенсин (Beta Defensin)",
+    "Price": 47.0
+  },
+  {
+    "Name": "Tau - protein (h-Tau)",
+    "Price": 128.0
+  },
+  {
+    "Name": "Protein 14-3-3",
+    "Price": 83.0
+  },
+  {
+    "Name": "Alpha-2-Macroglobulin",
+    "Price": 25.0
+  },
+  {
+    "Name": "Dickkopf 3 (DKK3)",
+    "Price": 61.0
+  },
+  {
+    "Name": "Omega Fatty acids",
+    "Price": 80.0
+  },
+  {
+    "Name": "Белтък в 24ч. урина",
+    "Price": 3.5
+  },
+  {
+    "Name": "Микроалбуминурия",
+    "Price": 15.0
+  },
+  {
+    "Name": "Албумин / креатинин",
+    "Price": 18.0
+  },
+  {
+    "Name": "Общ белтък / креатинин",
+    "Price": 7.0
+  },
+  {
+    "Name": "Пикочна к-на / креатинин",
+    "Price": 7.0
+  },
+  {
+    "Name": "Клирънс на креатинин",
+    "Price": 7.0
+  },
+  {
+    "Name": "Клирънс на пикочна к-на",
+    "Price": 7.0
+  },
+  {
+    "Name": "Калций в 24ч. урина",
+    "Price": 4.0
+  },
+  {
+    "Name": "Фосфати в 24ч. урина",
+    "Price": 4.0
+  },
+  {
+    "Name": "Натрий в 24ч. урина",
+    "Price": 5.0
+  },
+  {
+    "Name": "Kалий в 24ч. урина",
+    "Price": 5.0
+  },
+  {
+    "Name": "Магнезий в 24 ч. урина",
+    "Price": 4.0
+  },
+  {
+    "Name": "α -амилаза в урина",
+    "Price": 7.0
+  },
+  {
+    "Name": "С-пептид (C-peptid) в 24ч. урина",
+    "Price": 22.0
+  },
+  {
+    "Name": "Наркотични вещества",
+    "Price": 25.0
+  },
+  {
+    "Name": "Оксалат в урина (Oxalic acid)",
+    "Price": 33.0
+  },
+  {
+    "Name": "Цитрат в урина (Citric acid)",
+    "Price": 33.0
+  },
+  {
+    "Name": "Анализ на конкременти с произход от човешкото тяло",
+    "Price": 29.0
+  },
+  {
+    "Name": "Йод (I) Iodine",
+    "Price": 66.0
+  },
+  {
+    "Name": "Селен (Se) Selen",
+    "Price": 30.0
+  },
+  {
+    "Name": "Мед (Cu) Copper",
+    "Price": 25.0
+  },
+  {
+    "Name": "Цинк (Zn) Zink",
+    "Price": 15.0
+  },
+  {
+    "Name": "Ванадий (V) Vanadium",
+    "Price": 36.0
+  },
+  {
+    "Name": "Манган (Mn) Manganese",
+    "Price": 36.0
+  },
+  {
+    "Name": "Хром (Cr) Chromium",
+    "Price": 36.0
+  },
+  {
+    "Name": "Кобалт (Co) Cobalt",
+    "Price": 36.0
+  },
+  {
+    "Name": "Калай (Sn) Tin",
+    "Price": 36.0
+  },
+  {
+    "Name": "Молибден (Mo) Molybdenum",
+    "Price": 60.0
+  },
+  {
+    "Name": "Алуминий (Al) Aluminium",
+    "Price": 45.0
+  },
+  {
+    "Name": "Живак (Hg) Mercury",
+    "Price": 36.0
+  },
+  {
+    "Name": "Никел (Ni) Nickel",
+    "Price": 36.0
+  },
+  {
+    "Name": "Арсен (As) Arsenic",
+    "Price": 45.0
+  },
+  {
+    "Name": "Паладий (Pd) Palladium",
+    "Price": 65.0
+  },
+  {
+    "Name": "Кадмий (Cd) Cadmium",
+    "Price": 36.0
+  },
+  {
+    "Name": "Антимон (Sb) Antimony",
+    "Price": 36.0
+  },
+  {
+    "Name": "Барий (Ba) Barium",
+    "Price": 36.0
+  },
+  {
+    "Name": "Талий (Tl) Thallium",
+    "Price": 36.0
+  },
+  {
+    "Name": "Олово (Pb) Lead",
+    "Price": 25.0
+  },
+  {
+    "Name": "Бисмут (Bi) Bismuth",
+    "Price": 36.0
+  },
+  {
+    "Name": "Сребро (Ag) Silver",
+    "Price": 36.0
+  },
+  {
+    "Name": "Пакет Мед + Цинк",
+    "Price": 32.0
+  },
+  {
+    "Name": "Пакет Мед+ Цинк + Селен",
+    "Price": 58.0
+  },
+  {
+    "Name": "Цинк + Селен",
+    "Price": 40.0
+  },
+  {
+    "Name": "Спин (HIV ½) Ab",
+    "Price": 18.0
+  },
+  {
+    "Name": "Сифилис (TP - скрининг тест)",
+    "Price": 12.0
+  },
+  {
+    "Name": "Хепатит А (anti-HAV-IgM)",
+    "Price": 20.0
+  },
+  {
+    "Name": "Хепатит В (HBsAg)",
+    "Price": 18.0
+  },
+  {
+    "Name": "Хепатит B (Hbc-IgM Ab)",
+    "Price": 22.0
+  },
+  {
+    "Name": "Хепатит В (Anti-HBs Ab)",
+    "Price": 22.0
+  },
+  {
+    "Name": "Хепатит C (Anti-HCV)",
+    "Price": 20.0
+  },
+  {
+    "Name": "HBc IgM",
+    "Price": 30.0
+  },
+  {
+    "Name": "Хламидия трахоматис IgА Ab",
+    "Price": 18.0
+  },
+  {
+    "Name": "Хламидия трахоматис IgG Ab",
+    "Price": 18.0
+  },
+  {
+    "Name": "Хламидия трахоматис IgM Ab",
+    "Price": 18.0
+  },
+  {
+    "Name": "Хламидия трахоматис IgА, IgG, IgM)",
+    "Price": 40.0
+  },
+  {
+    "Name": "Хламидия трахоматис-Антиген",
+    "Price": 20.0
+  },
+  {
+    "Name": "Херпес симплекс ½ IgG (HSV ½ IgG)",
+    "Price": 25.0
+  },
+  {
+    "Name": "Херпес симплекс ½ IgM (HSV ½ IgM)",
+    "Price": 35.0
+  },
+  {
+    "Name": "Херпес симплекс ½ IgG+ ½ IgM (HSV ½ IgG+ ½ IgM)",
+    "Price": 55.0
+  },
+  {
+    "Name": "Рубеола IgG",
+    "Price": 20.0
+  },
+  {
+    "Name": "Рубеола IgM",
+    "Price": 25.0
+  },
+  {
+    "Name": "Цитомегаловирус (CMV) IgG",
+    "Price": 26.0
+  },
+  {
+    "Name": "Цитомегаловирус (CMV) IgM",
+    "Price": 26.0
+  },
+  {
+    "Name": "Ещайн Бар вирус EА IgG",
+    "Price": 26.0
+  },
+  {
+    "Name": "Епщайн Бар вирус EА IgG – качествен тест",
+    "Price": 26.0
+  },
+  {
+    "Name": "Епщайн Бар вирус (EBV) IgM+IgG+EBNA",
+    "Price": 60.0
+  },
+  {
+    "Name": "Вирусен Пароит (заушка) IgG– MUMPS IgG",
+    "Price": 30.0
+  },
+  {
+    "Name": "Вирусен Пароит (заушка) – MUMPS IgM",
+    "Price": 35.0
+  },
+  {
+    "Name": "Мононуклеоза IgM - скрининг",
+    "Price": 18.0
+  },
+  {
+    "Name": "Коронавирус IgG Ab SARS-CoV-2(COVID-19)",
+    "Price": 25.0
+  },
+  {
+    "Name": "Коронавирус (Бърз антигенен тест на SARS CoV-2)",
+    "Price": 10.0
+  },
+  {
+    "Name": "Коронавирус (Бърз антигенен тест на SARS CoV-2) + Грип А + В)",
+    "Price": 25.0
+  },
+  {
+    "Name": "Грип - бърз тест Грип А + Грип В",
+    "Price": 22.0
+  },
+  {
+    "Name": "Туберкулоза (Quantiferon-TB Gold Plus)",
+    "Price": 166.0
+  },
+  {
+    "Name": "Парвовирус B19 IgG",
+    "Price": 37.0
+  },
+  {
+    "Name": "Парвовирус B19 IgM",
+    "Price": 42.0
+  },
+  {
+    "Name": "Лабиален херпес IgG (HSV-1 type specific IgG)",
+    "Price": 26.0
+  },
+  {
+    "Name": "Генитален херпес IgG (HSV-2 type specific IgG)",
+    "Price": 26.0
+  },
+  {
+    "Name": "Западнонилска треска IgM",
+    "Price": 51.0
+  },
+  {
+    "Name": "Западнонилска треска IgG",
+    "Price": 51.0
+  },
+  {
+    "Name": "CMV IgG Авидитет",
+    "Price": 96.0
+  },
+  {
+    "Name": "ANA Detect – Elisa",
+    "Price": 25.0
+  },
+  {
+    "Name": "Антитела срещу нуклеарни антигени (Ig G) ANA Profile 5",
+    "Price": 60.0
+  },
+  {
+    "Name": "Антитела срещу нуклеарни антигени (Ig G) ANA Profile 23",
+    "Price": 80.0
+  },
+  {
+    "Name": "Антитела срещу нуклеарни антигени (Ig G) ANA Profile 44",
+    "Price": 120.0
+  },
+  {
+    "Name": "ANA - IFT",
+    "Price": 50.0
+  },
+  {
+    "Name": "Антитела срещу митохондрии (AMA)",
+    "Price": 29.0
+  },
+  {
+    "Name": "Автоимунни заболявания на черния дроб (Ig G)",
+    "Price": 65.0
+  },
+  {
+    "Name": "Паранеопластични неврологични сидроми 12 Ag (Ig G)",
+    "Price": 75.0
+  },
+  {
+    "Name": "Миозитни антигени Профил 3",
+    "Price": 65.0
+  },
+  {
+    "Name": "Системна склероза (нуклеоли) Профил Ig G",
+    "Price": 65.0
+  },
+  {
+    "Name": "Антифосфолипиден синдром : Anti-Cardiolipin IgG; Anti-Cardiolipin IgM; Anti-beta-2-Glycoprotein IgG; Anti-beta-2-Glycoprotein IgM; Anti-Prothrombin IgG; Anti-Prothrombin IgM",
+    "Price": 135.0
+  },
+  {
+    "Name": "Автоимунни възпалителни миопатии 20 Ag (Ig G) : Mi-2α, Mi-2ß, TIF1ʏ, Ku, MDA5, NXP2, SAE1, SRP, PM-Scl100, PM-Scl75, Jo-1, PL-7, PL-12, cN-1A, Ha, Ks, Zo, EJ, OJ и Ro-52",
+    "Price": 98.0
+  },
+  {
+    "Name": "Глутенова ентеропатия: Anti DGP IgG; Anti DGP IgA; Анти - глиадинови антитела (Gliadin AB) IgA; Анти - глиадинови антитела (Gliadin AB) IgG; Anti-Tissue-Transglutaminase IgA; Anti-Tissue-Transglutaminase IgG",
+    "Price": 152.0
+  },
+  {
+    "Name": "C4 - Complement",
+    "Price": 17.0
+  },
+  {
+    "Name": "C3 - Complement",
+    "Price": 17.0
+  },
+  {
+    "Name": "Anti-Cardiolipin IgG",
+    "Price": 38.0
+  },
+  {
+    "Name": "Anti-Cardiolipin IgM",
+    "Price": 38.0
+  },
+  {
+    "Name": "Anti-beta-2-Glycoprotein IgG",
+    "Price": 38.0
+  },
+  {
+    "Name": "Anti-beta-2-Glycoprotein IgM",
+    "Price": 38.0
+  },
+  {
+    "Name": "Anti-Tissue-Transglutaminase IgA",
+    "Price": 38.0
+  },
+  {
+    "Name": "Anti-Tissue-Transglutaminase IgG",
+    "Price": 38.0
+  },
+  {
+    "Name": "Anti-Tissue-Transglutaminase Screen",
+    "Price": 40.0
+  },
+  {
+    "Name": "Anti-CCP hs",
+    "Price": 45.0
+  },
+  {
+    "Name": "Anti-SS-A",
+    "Price": 31.0
+  },
+  {
+    "Name": "Anti-SS-B",
+    "Price": 31.0
+  },
+  {
+    "Name": "Anti-DGP Screen",
+    "Price": 40.0
+  },
+  {
+    "Name": "Anti DGP IgG",
+    "Price": 40.0
+  },
+  {
+    "Name": "Anti DGP IgA",
+    "Price": 40.0
+  },
+  {
+    "Name": "Анти - глиадинови антитела (Gliadin AB) IgA",
+    "Price": 38.0
+  },
+  {
+    "Name": "Анти - глиадинови антитела (Gliadin AB) IgG",
+    "Price": 38.0
+  },
+  {
+    "Name": "Anti-MCV",
+    "Price": 35.0
+  },
+  {
+    "Name": "Anti-dsDNA Screen",
+    "Price": 31.0
+  },
+  {
+    "Name": "Ревматоиден фактор Screen /IgA+IgM+IgG/",
+    "Price": 25.0
+  },
+  {
+    "Name": "Ревма Фактор IgA (Rheumatoid factor IgA)",
+    "Price": 25.0
+  },
+  {
+    "Name": "Ревма Фактор IgM (Rheumatoid factor IgM)",
+    "Price": 25.0
+  },
+  {
+    "Name": "Ревма Фактор IgG (Rheumatoid factor IgG)",
+    "Price": 25.0
+  },
+  {
+    "Name": "Ревматоиден пакет /Малък/: Anti-CCP hs (high sensitive); Anti-MCV; Ревматоиден фактор Screen",
+    "Price": 85.0
+  },
+  {
+    "Name": "Ревматоиден пакет /Голям/: Anti-CCP hs (high sensitive); Anti-MCV; Ревма Фактор IgA ( Rheumatoid factor IgA ); Ревма Фактор IgM ( Rheumatoid factor IgM ); Ревма Фактор IgG ( Rheumatoid factor IgG )",
+    "Price": 125.0
+  },
+  {
+    "Name": "Anti-MPO",
+    "Price": 38.0
+  },
+  {
+    "Name": "Anti-PR3",
+    "Price": 38.0
+  },
+  {
+    "Name": "Anti-Scl-70",
+    "Price": 33.0
+  },
+  {
+    "Name": "Anti-Sm",
+    "Price": 31.0
+  },
+  {
+    "Name": "Anti-Jo-1",
+    "Price": 33.0
+  },
+  {
+    "Name": "Anti – RNP -70",
+    "Price": 31.0
+  },
+  {
+    "Name": "Anti-Prothrombin IgG",
+    "Price": 32.0
+  },
+  {
+    "Name": "Anti-Prothrombin IgM",
+    "Price": 32.0
+  },
+  {
+    "Name": "Anti-Prothrombin IgG + Anti-Prothrombin IgM",
+    "Price": 50.0
+  },
+  {
+    "Name": "Хламидия пневмония IgA (Chlamydia-pneumoniae (IgA))",
+    "Price": 32.0
+  },
+  {
+    "Name": "Хламидия пневмония IgG (Chlamydia-pneumoniae (IgG))",
+    "Price": 32.0
+  },
+  {
+    "Name": "Хламидия пневмония IgM (Chlamydia-pneumoniae (IgM))",
+    "Price": 32.0
+  },
+  {
+    "Name": "Хламидия пневмония IgM, IgA, IgG (Chlamydia-pneumoniae IgM, IgA, IgG)",
+    "Price": 70.0
+  },
+  {
+    "Name": "Mycoplasma- pneumoniae (IgA)",
+    "Price": 30.0
+  },
+  {
+    "Name": "Mycoplasma- pneumoniae (IgG)",
+    "Price": 30.0
+  },
+  {
+    "Name": "Mycoplasma- pneumoniae (IgM)",
+    "Price": 30.0
+  },
+  {
+    "Name": "Mycoplasma- pneumoniae IgA, IgG, IgM",
+    "Price": 65.0
+  },
+  {
+    "Name": "Anti Insulin Ab",
+    "Price": 38.0
+  },
+  {
+    "Name": "ASMA",
+    "Price": 35.0
+  },
+  {
+    "Name": "АМА М2",
+    "Price": 38.0
+  },
+  {
+    "Name": "LKM",
+    "Price": 38.0
+  },
+  {
+    "Name": "ANCA",
+    "Price": 55.0
+  },
+  {
+    "Name": "Центромер β антитела",
+    "Price": 41.0
+  },
+  {
+    "Name": "Anti – Bordetella pertussis IgG (коклюш)",
+    "Price": 30.0
+  },
+  {
+    "Name": "Anti – Bordetella pertussis IgА (коклюш)",
+    "Price": 30.0
+  },
+  {
+    "Name": "Anti – Bordetella pertussis IgА+IgG (коклюш)",
+    "Price": 50.0
+  },
+  {
+    "Name": "Anti-Annexin V IgA",
+    "Price": 35.0
+  },
+  {
+    "Name": "Anti-Annexin V IgG",
+    "Price": 35.0
+  },
+  {
+    "Name": "Anti-Phospatidylserin IgA",
+    "Price": 45.0
+  },
+  {
+    "Name": "Anti-Phospatidylserin IgG",
+    "Price": 45.0
+  },
+  {
+    "Name": "ASCA IgA",
+    "Price": 45.0
+  },
+  {
+    "Name": "ASCA IgG",
+    "Price": 45.0
+  },
+  {
+    "Name": "Anti-Yersinia IgG",
+    "Price": 37.0
+  },
+  {
+    "Name": "Anti-Yersinia IgА",
+    "Price": 37.0
+  },
+  {
+    "Name": "Антитела глутамат (AAb to GAD II)",
+    "Price": 43.0
+  },
+  {
+    "Name": "Антитела срещу тирозинфосфатазата - IA2",
+    "Price": 43.0
+  },
+  {
+    "Name": "Microblot-Array Helicobacter Pylori Ig A",
+    "Price": 80.0
+  },
+  {
+    "Name": "Microblot-Array Helicobacter Pylori Ig G",
+    "Price": 80.0
+  },
+  {
+    "Name": "Microblot-Array Chlamydia IgA",
+    "Price": 80.0
+  },
+  {
+    "Name": "Microblot-Array Chlamydia IgG",
+    "Price": 80.0
+  },
+  {
+    "Name": "Microblot Anti-Gangliosides Ig G",
+    "Price": 70.0
+  },
+  {
+    "Name": "Стандартен панел чревен Микробиом (Молекулярно-биологичен анализ за цялостна оценка на чревната флора)",
+    "Price": 315.0
+  },
+  {
+    "Name": "Разширен панел Микробиом",
+    "Price": 380.0
+  },
+  {
+    "Name": "Пълен панел Микробиом",
+    "Price": 967.0
+  },
+  {
+    "Name": "Панкреатична еластаза",
+    "Price": 55.0
+  },
+  {
+    "Name": "Секреторен имуноглобулин A (sIgA)",
+    "Price": 38.0
+  },
+  {
+    "Name": "Еозинофилен невротоксин (EDN/EDX)",
+    "Price": 52.0
+  },
+  {
+    "Name": "Дефензин",
+    "Price": 47.0
+  },
+  {
+    "Name": "Зонулин",
+    "Price": 85.0
+  },
+  {
+    "Name": "Алфа-1-антитрипсин",
+    "Price": 37.0
+  },
+  {
+    "Name": "Калпротектин (количествен тест)",
+    "Price": 42.0
+  },
+  {
+    "Name": "Лактоферин (количествен тест)",
+    "Price": 73.0
+  },
+  {
+    "Name": "Окултна кръв",
+    "Price": 10.0
+  },
+  {
+    "Name": "Пакетно изследване на Калпротектин, Лактоферин, Хемоглобин, Трансферин (качествен тест)",
+    "Price": 35.0
+  },
+  {
+    "Name": "Хистамин",
+    "Price": 66.0
+  },
+  {
+    "Name": "Гастроинтестинален панел (Real-time PCR)",
+    "Price": 120.0
+  },
+  {
+    "Name": "Пакетно изследване за Shigella + Salmonella + Escherichia coli + Yersinia + Campylobacter + Clostridium difficille toxin A+B + Candida + Helicobacter pylori.",
+    "Price": 92.0
+  },
+  {
+    "Name": "Клостридиум (Clostridium difficille Toxin A+B)",
+    "Price": 30.0
+  },
+  {
+    "Name": "Клостридиум (Clostridium difficille Toxin A+B) DNA",
+    "Price": 98.0
+  },
+  {
+    "Name": "Хеликобактер пилори-директен тест Ag",
+    "Price": 40.0
+  },
+  {
+    "Name": "Ротавирус + Аденовирус (качествен тест)",
+    "Price": 22.0
+  },
+  {
+    "Name": "Bile Acid in stool",
+    "Price": 51.0
+  },
+  {
+    "Name": "Морфологично изследване за чревни паразити + Cryptosporidium + Entamoeba + Giardia Lamblia.",
+    "Price": 55.0
+  },
+  {
+    "Name": "Кръвна група-АВО, Rh фактор",
+    "Price": 20.0
+  },
+  {
+    "Name": "Определяне на подгрупите на А антигена (А1 и А2) с тест-реагенти с анти-А и анти-Н",
+    "Price": 25.0
+  },
+  {
+    "Name": "Определяне на слаб D антиген (Du) по индиректен тест на Coombs",
+    "Price": 50.0
+  },
+  {
+    "Name": "Изследване за автоеритроантитела при фиксирани антитела върху еритроцитите - директен Coombs",
+    "Price": 40.0
+  },
+  {
+    "Name": "Изследване за алоеритроантитела",
+    "Price": 45.0
+  },
+  {
+    "Name": "Определяне на Rh фенотип (СсDЕе) и Kell антиген",
+    "Price": 45.0
+  },
+  {
+    "Name": "Специфичност на еритроантителата",
+    "Price": 48.0
+  },
+  {
+    "Name": "Титър на еритроантитела",
+    "Price": 50.0
+  },
+  {
+    "Name": "Титър на имунните анти-А и анти-В антитела",
+    "Price": 35.0
+  },
+  {
+    "Name": "Нeинвазивна пренатална диагностика на фетален Rh(D) антиген",
+    "Price": 170.0
+  },
+  {
+    "Name": "Ревматоиден фактор (RF количествен)",
+    "Price": 7.0
+  },
+  {
+    "Name": "Антистрептолизин (ASO)",
+    "Price": 7.0
+  },
+  {
+    "Name": "Урокултура (стерилна урина)",
+    "Price": 15.0
+  },
+  {
+    "Name": "Трикратна стерилна урина",
+    "Price": 30.0
+  },
+  {
+    "Name": "Гърлен секрет",
+    "Price": 27.0
+  },
+  {
+    "Name": "Бърз тест- β хемолитичен стрептокок /гр.А/",
+    "Price": 15.0
+  },
+  {
+    "Name": "Гърлен секрет + тест за скарлатина",
+    "Price": 37.0
+  },
+  {
+    "Name": "Храчка",
+    "Price": 27.0
+  },
+  {
+    "Name": "Носен секрет",
+    "Price": 27.0
+  },
+  {
+    "Name": "Носен + гърлен секрет",
+    "Price": 42.0
+  },
+  {
+    "Name": "Носен + гърлен секрет + грип",
+    "Price": 57.0
+  },
+  {
+    "Name": "Стафилококово носителство",
+    "Price": 18.0
+  },
+  {
+    "Name": "Ушен секрет",
+    "Price": 27.0
+  },
+  {
+    "Name": "Очен секрет",
+    "Price": 27.0
+  },
+  {
+    "Name": "Влагалищен секрет",
+    "Price": 27.0
+  },
+  {
+    "Name": "Влагалищен секрет + Трихомонас вагиналис",
+    "Price": 40.0
+  },
+  {
+    "Name": "Цервикален секрет",
+    "Price": 27.0
+  },
+  {
+    "Name": "Еякулат (семенна течнност)",
+    "Price": 27.0
+  },
+  {
+    "Name": "Трихомонас вагиналис (Trichomonas vaginalis)",
+    "Price": 17.0
+  },
+  {
+    "Name": "Гонорея – бърз тест",
+    "Price": 17.0
+  },
+  {
+    "Name": "Йерсиния Ентероколитика (Yersinia Enterocolitica)",
+    "Price": 19.0
+  },
+  {
+    "Name": "Салмонела – бърз тест",
+    "Price": 22.0
+  },
+  {
+    "Name": "Кандида (Candida Faeces)",
+    "Price": 17.0
+  },
+  {
+    "Name": "Микоплазма IST",
+    "Price": 30.0
+  },
+  {
+    "Name": "Простатен секрет",
+    "Price": 27.0
+  },
+  {
+    "Name": "Уретрален секрет",
+    "Price": 27.0
+  },
+  {
+    "Name": "Фецес",
+    "Price": 25.0
+  },
+  {
+    "Name": "Чревно носителство",
+    "Price": 20.0
+  },
+  {
+    "Name": "Хеликобактер пилори IgG",
+    "Price": 22.0
+  },
+  {
+    "Name": "Хеликобактер пилори-директен тест Ag",
+    "Price": 40.0
+  },
+  {
+    "Name": "Кампилобактер (Campylobacter)",
+    "Price": 18.0
+  },
+  {
+    "Name": "Клостридиум (Clostridium difficille Toxin A+B)",
+    "Price": 30.0
+  },
+  {
+    "Name": "Shigella + Salmonella + Escherichia coli + Yersinia + Campylobacter + Clostridium difficille toxin A+B + H.pylori",
+    "Price": 92.0
+  },
+  {
+    "Name": "Shigella + Salmonella + Escherichia coli + Yersinia + Campylobacter + Clostridium difficille toxin A+B + H.pylori + Окултна кръв",
+    "Price": 100.0
+  },
+  {
+    "Name": "Ротавирус + Аденовирус",
+    "Price": 22.0
+  },
+  {
+    "Name": "Раневи секрет",
+    "Price": 28.0
+  },
+  {
+    "Name": "Други секрети",
+    "Price": 28.0
+  },
+  {
+    "Name": "Антибиограма (само при изолиран причинител)",
+    "Price": 10.0
+  },
+  {
+    "Name": "Микограма (чувствителност към антимикотици)",
+    "Price": 20.0
+  },
+  {
+    "Name": "Дерматофити",
+    "Price": 30.0
+  },
+  {
+    "Name": "Идентификация на анаеробни микроорганизми – MALDI-TOF.",
+    "Price": 12.0
+  },
+  {
+    "Name": "Борелия (Borrelia Ab IgM)",
+    "Price": 26.0
+  },
+  {
+    "Name": "Борелия (Borrelia Ab IgG)",
+    "Price": 26.0
+  },
+  {
+    "Name": "Борелия (Borrelia Ab IgM) имуноблот",
+    "Price": 55.0
+  },
+  {
+    "Name": "Борелия (Borrelia Ab IgG) имуноблот",
+    "Price": 55.0
+  },
+  {
+    "Name": "Фелиноза IgG (Bartonella henselae IgG)",
+    "Price": 76.0
+  },
+  {
+    "Name": "Фелиноза IgG (Bartonella henselae IgG)",
+    "Price": 76.0
+  },
+  {
+    "Name": "Влагалищна цитонамазка",
+    "Price": 30.0
+  },
+  {
+    "Name": "Цитологично изследване на секрет",
+    "Price": 30.0
+  },
+  {
+    "Name": "Цитологично изследване на пунктат/лаваж",
+    "Price": 30.0
+  },
+  {
+    "Name": "Циттологично изследване на секрет – второ мнение",
+    "Price": 25.0
+  },
+  {
+    "Name": "Течно-базирана цитонамазка",
+    "Price": 50.0
+  },
+  {
+    "Name": "Хистология – биопсичен материал над 10мм. /2бл./",
+    "Price": 55.0
+  },
+  {
+    "Name": "Хистобиопсичен материал - второ мнение",
+    "Price": 55.0
+  },
+  {
+    "Name": "Комплексно хистологично изследване /до 5 бл./",
+    "Price": 95.0
+  },
+  {
+    "Name": "Спермограма - пълен анализ на семенна течност (сперма)",
+    "Price": 160.0
+  },
+  {
+    "Name": "Комбиниран тест за алергии ALEX 2- Allergy Explorer (sIgE)",
+    "Price": 360.0
+  },
+  {
+    "Name": "Food Xplorer (FOX) хранителен скрининг (283 храни – непоносимост IgG)",
+    "Price": 360.0
+  },
+  {
+    "Name": "Изследване за чревни протозои и хелминти",
+    "Price": 17.0
+  },
+  {
+    "Name": "Трикратно изследване за чревни протозои и хелминти",
+    "Price": 40.0
+  },
+  {
+    "Name": "Перианален отпечатък за ентеробиоза (острици), тениаринхоза",
+    "Price": 9.0
+  },
+  {
+    "Name": "перианален отпечатък",
+    "Price": 22.0
+  },
+  {
+    "Name": "Изследване за чревни протозои и хелминти + перианален отпечатък",
+    "Price": 20.0
+  },
+  {
+    "Name": "Трикратно изследване на перианален отпечатък за ентеробиоза (острици), тениаринхоза (по клинични индикации)",
+    "Price": 20.0
+  },
+  {
+    "Name": "Токсоплазмоза IgG (Тoxoplasma gondii IgG)",
+    "Price": 20.0
+  },
+  {
+    "Name": "Токсоплазмоза IgM (Тoxoplasma gondii IgМ)",
+    "Price": 25.0
+  },
+  {
+    "Name": "Токсоплазмоза IgG+IgM (Тoxoplasma gondii IgG+IgM)",
+    "Price": 42.0
+  },
+  {
+    "Name": "Ехинококоза (Echinococcus Ab)",
+    "Price": 24.0
+  },
+  {
+    "Name": "Трихинелоза (Trichinella Ab)",
+    "Price": 24.0
+  },
+  {
+    "Name": "Токсокароза (Toxocara Ab)",
+    "Price": 24.0
+  },
+  {
+    "Name": "Криптоспоридиоза (Cryptosporidium spp Ag)",
+    "Price": 14.0
+  },
+  {
+    "Name": "Амебиаза (Entamoeba histolytica/dispar Ag)",
+    "Price": 16.0
+  },
+  {
+    "Name": "Ламблиоза (Giardia (Lamblia) intestinalis Ag)",
+    "Price": 14.0
+  },
+  {
+    "Name": "Разширен пакет чревни паразити (Изследване за чревни протозои и хелминти + перианален отпечатък + Cryptosporidium + Entamoeba + Giardia Lamblia)",
+    "Price": 55.0
+  },
+  {
+    "Name": "Вродени тромбофилии (Factor V (Leiden) + Factor II (G20210A) + MTHFR (C677T))",
+    "Price": 150.0
+  },
+  {
+    "Name": "PAI",
+    "Price": 70.0
+  },
+  {
+    "Name": "Панел  Вродени тромбофилии + PAI",
+    "Price": 180.0
+  },
+  {
+    "Name": "Панел вродени тромбофилии - разширен",
+    "Price": 210.0
+  },
+  {
+    "Name": "Цитомегаловирус (CMV-DNA)",
+    "Price": 150.0
+  },
+  {
+    "Name": "Хепатит Б (HBV-DNA)",
+    "Price": 180.0
+  },
+  {
+    "Name": "Хепатит C (HCV-RNA)",
+    "Price": 150.0
+  },
+  {
+    "Name": "Епщайн Бар вирус (EBV-DNA)",
+    "Price": 198.0
+  },
+  {
+    "Name": "Човешки Папилома вирус (HPV-DNA)",
+    "Price": 90.0
+  },
+  {
+    "Name": "Човешки Папилома вирус 28 генотипа (HPV-DNA)",
+    "Price": 125.0
+  },
+  {
+    "Name": "Коронавирус PCR SARS-CoV-2 (COVID-19)",
+    "Price": 80.0
+  },
+  {
+    "Name": "PCR Полово предавани инфекции – 4 патогена (Chlamydia trachomatis, Neisseria gonorrhoeae, Mycoplasma genitalium, Trichomonas vaginalis)",
+    "Price": 70.0
+  },
+  {
+    "Name": "PCR Полово предавани инфекции – 7 патогена (Chlamydia trachomatis, Neisseria gonorrhoeae, Mycoplasma genitalium, Mycoplasma hominis, Trichomonas vaginalis, Ureaplasma parvum, Ureaplasma urealyticum, Herpes Simplex virus 1, Herpes Simplex virus 2, Treponema pallidum, Candida albicans, Gardnerella vaginalis)",
+    "Price": 100.0
+  },
+  {
+    "Name": "PCR Полово предавани инфекции -12 патогена (Chlamydia trachomatis, Neisseria gonorrhoeae, Mycoplasma genitalium, Mycoplasma hominis, Trichomonas vaginalis, Ureaplasma parvum, Ureaplasma urealyticum, Herpes Simplex virus 1, Herpes Simplex virus 2, Treponema pallidum, Candida albicans, Gardnerella vaginalis)",
+    "Price": 130.0
+  },
+  {
+    "Name": "HPV + Полово предавани инфекции – 4 патогена",
+    "Price": 130.0
+  },
+  {
+    "Name": "HPV + Полово предавани инфекции – 7 патогена",
+    "Price": 150.0
+  },
+  {
+    "Name": "HPV + Полово предавани инфекции – 12 патогена",
+    "Price": 170.0
+  },
+  {
+    "Name": "PCR Гастроинтестинален панел (Salmonella; Yersinia enterocolitica; Campylobacter; Sigella/EIEc-(Enteroinvasive E.coli); Giardia lamblia; Entamoeba histolytica; Cryptosporidium; Noroviruses GI/GII; Rotavirus; Sapovirus; Adenovirus – (40/41); Astrovirus)",
+    "Price": 120.0
+  },
+  {
+    "Name": "HLA-B27",
+    "Price": 77.0
+  },
+  {
+    "Name": "Коклюш (Bordetella)",
+    "Price": 85.0
+  },
+  {
+    "Name": "Хепатит Е (HEV-RNA)",
+    "Price": 364.0
+  },
+  {
+    "Name": "Pharmacogenetics Gene (PGx) Panel",
+    "Price": 640.0
+  },
+  {
+    "Name": "CYP2D6 Genotyping",
+    "Price": 580.0
+  },
+  {
+    "Name": "CYP2C9 Genotyping",
+    "Price": 430.0
+  },
+  {
+    "Name": "DPYD Genotyping",
+    "Price": 290.0
+  },
+  {
+    "Name": "UGT1A1-Gene (Meulengracht syndrome)",
+    "Price": 580.0
+  },
+  {
+    "Name": "Meulengracht Syndrom UGT1A1",
+    "Price": 161.0
+  },
+  {
+    "Name": "Fibrotest (ч.др.фиброза+вирусна активност)",
+    "Price": 220.0
+  },
+  {
+    "Name": "FibroMax (Fibrotest +стеатоза метаболитна/алкохолна)",
+    "Price": 300.0
+  },
+  {
+    "Name": "Veracity (основен панел – Т21, Т18, Т13)",
+    "Price": 687.0
+  },
+  {
+    "Name": "Veracity  (основен панел и пол на плода)",
+    "Price": 699.0
+  },
+  {
+    "Name": "Veracity (разширен панел -T21, T18, T13; анеуплоидии X, Y; пол на плода )",
+    "Price": 960.0
+  },
+  {
+    "Name": "Veracity  (разширен панел + микроделеции)",
+    "Price": 960.0
+  },
+  {
+    "Name": "Veragene (Veracity разширен панел + 50 микроделеции + 100 моногенни заболявания)",
+    "Price": 1170.0
+  },
+  {
+    "Name": "Adventia – A Thalassemia",
+    "Price": 235.0
+  },
+  {
+    "Name": "Adventia – B Haemoglobinopathies",
+    "Price": 235.0
+  },
+  {
+    "Name": "Adventia – Cystic Fibrosis",
+    "Price": 445.0
+  },
+  {
+    "Name": "Adventia – Spinal Muscular Atrophy",
+    "Price": 235.0
+  },
+  {
+    "Name": "Adventia – Fragile X",
+    "Price": 285.0
+  },
+  {
+    "Name": "Adventia – Guidelines Panel (19 diseases)",
+    "Price": 785.0
+  },
+  {
+    "Name": "Adventia – Comprehensive Panel (229 diseases -one person)",
+    "Price": 1045.0
+  },
+  {
+    "Name": "Adventia – Comprehensive Panel (229 diseases - Both partners)",
+    "Price": 1675.0
+  },
+  {
+    "Name": "Пакет Щитовидна жлеза (TSH, fT4, fT3)",
+    "Price": 43.0
+  },
+  {
+    "Name": "Пакет Щитовидна жлеза – разширен (TSH, fT4, fT3, TAT, MAT)",
+    "Price": 69.0
+  },
+  {
+    "Name": "Пакет Хашимото (TSH, TAT, MAT)",
+    "Price": 45.0
+  },
+  {
+    "Name": "Пакет Най-важните витамини (Витамин D (25-OH), Витамин B12, Фолиева киселина)",
+    "Price": 60.0
+  },
+  {
+    "Name": "Пакет Витамини В1, В2, В6",
+    "Price": 100.0
+  },
+  {
+    "Name": "Пакет Полови хормони (LH, FSH, Естрадиол, Пролактин)",
+    "Price": 56.0
+  },
+  {
+    "Name": "Пакет Предопаративен – минимален (ПКК, ДКК, СУЕ, Глюкоза, Креатинин, Протромбиново време(INR), Общ белтък, АСАТ, АЛАТ, урина+седимент)",
+    "Price": 30.0
+  },
+  {
+    "Name": "Пакет Предоперативен – оптимален (ПКК, ДКК, СУЕ, Глюкоза, Креатинин, Общ бетък, АСАТ, АЛАТ, урина+седимент, Протромбиново време(INR), HIV, Сифилис, HBsAg, Кръвна група)",
+    "Price": 82.0
+  },
+  {
+    "Name": "Пакет Начало на бременност (ПКК, ДКК, СУЕ, Глюкоза, Желязо, Урина, HIV, Тест за Сифилис, HBsAg, Кръвна група)",
+    "Price": 72.0
+  },
+  {
+    "Name": "Пакет Начало на бременност - TORCH панел (Рубеола (Rubella) IgG, Цитомегаловирус (CMV) IgG, Херпес Симплекс тип 2 IgG (HSV2), Токсоплазмоза IgG (Toxoplasma gondii)",
+    "Price": 75.0
+  },
+  {
+    "Name": "Пакет Начало на бременност - TORCH панел IgM (Рубеола (Rubella) IgM, Цитомегаловирус (CMV) IgM, Херпес Симплекс тип 2 IgM (HSV2), Токсоплазмоза IgM (Toxoplasma gondii)",
+    "Price": 90.0
+  },
+  {
+    "Name": "Пакет Начало на бременност - TORCH панел разширен (Рубеола (Rubella) IgG+IgM, Цитомегаловирус (CMV) IgG+IgM, Херпес Симплекс тип 2 IgG+IgM (HSV2), Токсоплазмоза IgG+IgM (Toxoplasma gondii)",
+    "Price": 160.0
+  },
+  {
+    "Name": "Пакет HPV + полово предавани инфекции (4 патогена)",
+    "Price": 130.0
+  },
+  {
+    "Name": "Пакет HPV + полово предавани инфекции (7 патогена)",
+    "Price": 150.0
+  },
+  {
+    "Name": "Пакет HPV + полово предавани инфекции (12 патогена)",
+    "Price": 170.0
+  },
+  {
+    "Name": "Пакет Анемия (ПКК, СУЕ, Желязо, ЖСК, Витамин В12, Фолиева киселина, Морфология на еритроцити в кръв)",
+    "Price": 60.0
+  },
+  {
+    "Name": "Пакет Болест на Алцхаймер и деменции (Amyloid 1-40, Amyloid 1-42, tTau протеин, фосфо-Tau в ликвор)",
+    "Price": 350.0
+  },
+  {
+    "Name": "Пакет Кардио (ПКК, Глюкоза, Креатинин, АСАТ, АЛАТ, ГГТ, CPK, Липиден статус, Натрий, Калий, Пикочна киселина, hs-CRP)",
+    "Price": 50.0
+  },
+  {
+    "Name": "Пакет Сърдечно-съдов риск (Липиден профил, hs-CRP, NT-PRO-BNP, Хомоцистеин)",
+    "Price": 88.0
+  },
+  {
+    "Name": "Пакет остеопороза (β-CrossLaps (Маркер за костно разграждане), PTH (Паратхормон), Витамин D (25-OH), Калций, Фосфор, АФ (Алкална фосфатаза)",
+    "Price": 82.0
+  },
+  {
+    "Name": "Пакет Надбъбрек (ACTH, трикратен Кортизол в слюнка, DHEA",
+    "Price": 80.0
+  },
+  {
+    "Name": "Пакет Детска градина – фецес (Чревно носителство, Паразитологично изследване (Морфологично изследване за чревни паразити + Перианален отпечатък)",
+    "Price": 23.0
+  },
+  {
+    "Name": "Пакет Детска градина – пълен (Кръвна картина (14 Показатели), Урина + Седимент, Чревно носителство, Паразитологично изследване (Морфологично изследване за чревни паразити + Перианален отпечатък)",
+    "Price": 35.0
+  },
+  {
+    "Name": "Пакет COVID - 19 Малък пакет (Кръвна картина (14 показателя), ДКК, СУЕ, АлАТ, АсАТ, Глюкоза, Креатинин, CRP количествен)",
+    "Price": 20.0
+  },
+  {
+    "Name": "Пакет COVID - 19 Голям пакет (Кръвна картина (14 показателя), ДКК, СУЕ, АлАТ,АсАТ, Глюкоза, Креатинин, Албумин, LDH, CRP количествен, Ferritin, D dimers, Фибриноген, Протромбиново време)",
+    "Price": 68.0
+  },
+  {
+    "Name": "Пакет Пост COVID - 19 пакет (Кръвна картина (14 показателя), ДКК, СУЕ, АлАТ, АсАТ, Глюкоза, Креатинин, CRP количествен, D-dimer, Протромбиново време, Фибриноген, SARS-CoV-2 IgG)",
+    "Price": 75.0
+  },
+  {
+    "Name": "Пакет Veggie-Check Basis (ПКК, калций, желязо, трансферин)",
+    "Price": 21.0
+  },
+  {
+    "Name": "Пакет Veggie-Check Standard (ПКК, CRP, желязо, трансферин, феритин, белтък, урея, калций, витамин D, витамин В12, фолиева киселина)",
+    "Price": 101.0
+  },
+  {
+    "Name": "Пакет Veggie-Check Plus (ПКК, CRP, белтък, желязо, трансферин, феритин, урея, калций, витамин D, витамин В12, фолиева киселина, селен, цинк, Омега-3 мастни киселини)",
+    "Price": 241.0
+  },
+  {
+    "Name": "Пакет Хронична умора (ПКК, HbA1C - гликиран хемоглобин, феритин, TSH, паратхормон (PTH), кортизол (серум), витамин D (25-OH), фолиева киселина, селен, цинк)",
+    "Price": 180.0
+  }
+]
