@@ -80,18 +80,20 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
     }
     protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    private void SearchByEGN(object sender, EventArgs e)
+    private void SearchByEGNorPhoneNumber(object sender, EventArgs e)
     {
-        SendPatientToCard(_patients.FirstOrDefault(p => p.EGN == EGNEntry.Text!.Trim())!);
+        var user = _patients.FirstOrDefault(p => p.EGN == InputEntry.Text!.Trim() || 
+                                                 p.PhoneNumber == InputEntry.Text!.Trim())!;
+        SendPatientToCard(user);
 
         HistoryList.ItemsSource = patients
-            .OrderByDescending(m => m.EGN == EGNEntry.Text!.Trim())
+            .OrderByDescending(m => m.EGN == InputEntry.Text!.Trim())
             .Take(10);
     }
 
-    private void ClearEGNSearch(object sender, EventArgs e)
+    private void ClearSearchBar(object sender, EventArgs e)
     {
-        EGNEntry.Text = "";
+        InputEntry.Text = "";
 
         HistoryList.ItemsSource = patients.OrderByDescending(p => p.Date).Take(10);
         SelectedPatient = _patients.First();

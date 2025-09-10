@@ -9,20 +9,19 @@
 
     <AbsoluteLayout>
         <ScrollView AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
-            <VerticalStackLayout Padding="10" Spacing="10" >
-                <Label Text="Търси по:" FontAttributes="Bold" FontSize="14" TextColor="DarkGray" />
+            <VerticalStackLayout  Spacing="10" >
                 <Grid ColumnDefinitions="auto,*,auto" ColumnSpacing="8" x:Name="SearchGrid">
 
                     <toolkit:Expander x:Name="ExpanderEGN" Grid.Column="1" Grid.ColumnSpan="1" IsExpanded="True">
                         <VerticalStackLayout Padding="10">
-                            <Entry x:Name="EGNEntry" Placeholder="Въведи ЕГН..." FontSize="18"/>
+                            <Entry x:Name="InputEntry" Placeholder="Тук въведи ЕГН или Телефонен Номер" FontSize="15"/>
                             <Grid ColumnSpacing="3" Margin="0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Text="Търси" FontSize="12" BackgroundColor="#007ACC" TextColor="White" Clicked="SearchByEGN" />
-                                <Button Grid.Column="3" Text="Изтрий" FontSize="10" BackgroundColor="DarkRed" TextColor="White" Clicked="ClearEGNSearch" />
+                                <Button Grid.Column="0" Text="Търси" FontSize="12" BackgroundColor="#007ACC" TextColor="White" Clicked="SearchByEGNorPhoneNumber" />
+                                <Button Grid.Column="3" Text="Зачисти" FontSize="10" BackgroundColor="DarkRed" TextColor="White" Clicked="ClearSearchBar" />
                             </Grid>
                         </VerticalStackLayout>
                     </toolkit:Expander>
