@@ -11,29 +11,29 @@
 
         <!-- Scrollable form -->
         <ScrollView AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
-            <VerticalStackLayout  Spacing="10">
+            <VerticalStackLayout Spacing="5">
 
                 <!-- Заглавие -->
                 <Label Text="Катетри" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
 
                 <!-- Име -->
-                <Border Stroke="#CCCCCC" StrokeThickness="0.5" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,5">
+                <Border Stroke="#CCCCCC" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,0">
                     <Entry x:Name="PatientNameEntry" Placeholder="Име на пациента" FontSize="18" BackgroundColor="Transparent" TextColor="#000" HeightRequest="45"/>
                 </Border>
 
                 <!-- Телефон -->
-                <Border Stroke="#CCCCCC" StrokeThickness="0.5" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,5">
+                <Border Stroke="#CCCCCC" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,0">
                     <Entry x:Name="PhoneEntry" Placeholder="Телефон" Keyboard="Numeric" FontSize="18" BackgroundColor="Transparent" TextColor="#000" HeightRequest="45"/>
                 </Border>
 
                 <!-- Дата на поставяне -->
-                <Label Text="Дата на поставяне" FontAttributes="Bold" FontSize="16" Margin="5,10,0,0"/>
-                <Border Stroke="#CCCCCC" StrokeThickness="0.5" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,5">
+                <Label Text="Дата на поставяне" FontAttributes="Bold" FontSize="16" Margin="10,10,0,0"/>
+                <Border Stroke="#CCCCCC" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,0">
                     <DatePicker x:Name="CatheterDatePicker" FontSize="18" />
                 </Border>
 
                 <!-- Адрес -->
-                <Border Stroke="#CCCCCC" StrokeThickness="0.5" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,5">
+                <Border Stroke="#CCCCCC" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,0">
                     <Editor x:Name="AddressEntry" Placeholder="Адрес" FontSize="16" AutoSize="TextChanges" HeightRequest="100" BackgroundColor="Transparent"/>
                 </Border>
 
