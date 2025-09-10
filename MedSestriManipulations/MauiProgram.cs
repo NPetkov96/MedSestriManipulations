@@ -32,6 +32,7 @@ namespace MedSestriManipulations
 
             builder.Services.AddSingleton<PaginationState>();
             builder.Services.AddSingleton<API>();
+            builder.Services.AddSingleton<CachedDataService>();
 
 #if DEBUG
             builder.Logging.AddDebug();

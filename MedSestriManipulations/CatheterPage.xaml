@@ -11,7 +11,7 @@
 
         <!-- Scrollable form -->
         <ScrollView AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
-            <VerticalStackLayout Padding="10" Spacing="10">
+            <VerticalStackLayout  Spacing="10">
 
                 <!-- Заглавие -->
                 <Label Text="Катетри" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
@@ -39,17 +39,8 @@
 
                 <!-- Бутон за записване -->
                 <HorizontalStackLayout HorizontalOptions="Center" Spacing="15">
-                    <Button Text="Запиши" Clicked="OnSaveClicked" BackgroundColor="#007BFF" TextColor="White" CornerRadius="20" Padding="40,10" FontAttributes="Bold">
-                        <Button.Shadow>
-                            <Shadow Brush="Black" Offset="-10,5" Radius="10" Opacity="0.5" />
-                        </Button.Shadow>
-                    </Button>
-
-                    <Button Text="Изчисти" Clicked="ClearFields" BackgroundColor="DarkRed" TextColor="White" CornerRadius="20" Padding="40,10" FontAttributes="Bold">
-                        <Button.Shadow>
-                            <Shadow Brush="Black" Offset="10,5" Radius="10" Opacity="0.5" />
-                        </Button.Shadow>
-                    </Button>
+                    <Button Text="Запиши" Clicked="OnSaveClicked" BackgroundColor="#007BFF" TextColor="White" CornerRadius="20" Padding="40,10" FontAttributes="Bold"></Button>
+                    <Button Text="Изчисти" Clicked="ClearFields" BackgroundColor="DarkRed" TextColor="White" CornerRadius="20" Padding="40,10" FontAttributes="Bold"> </Button>
                 </HorizontalStackLayout>
 
                 <!-- Списък с въведени катетри -->
@@ -71,15 +62,13 @@
                                 <Grid ColumnSpacing="10">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
-                                        <!-- Бутоните ще са в първата колона -->
                                         <ColumnDefinition Width="*" />
-                                        <!-- Основната информация ще е втора колона -->
+                                        <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <!-- Бутоните (вляво) -->
                                     <VerticalStackLayout Grid.Column="0" Spacing="10" HorizontalOptions="Start" VerticalOptions="Center">
                                         <Button Text="✔️" BackgroundColor="#007BFF" TextColor="White" CornerRadius="10" HeightRequest="30" WidthRequest="40" FontSize="14"
-                                        Clicked="UpdateCatheterAppointment_Clicked" CommandParameter="{Binding .}" />
+                                        Clicked="CheckCatheterAppointment" CommandParameter="{Binding .}" />
                                     </VerticalStackLayout>
 
                                     <!-- Основна информация (вдясно) -->
@@ -88,6 +77,11 @@
                                         <Label Text="{Binding PhoneNumber}" FontSize="14"/>
                                         <Label Text="{Binding Date, StringFormat='Дата: {0:dd.MM.yyyy}'}" FontSize="14"/>
                                         <Label Text="{Binding Address}" FontSize="14"/>
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Column="2" Spacing="10" HorizontalOptions="Start" VerticalOptions="Center">
+                                        <Button Text="I" BackgroundColor="DarkSeaGreen" TextColor="White" CornerRadius="10" HeightRequest="30" WidthRequest="40" FontSize="14"
+                                        Clicked="UpdateCatheterAppointment" CommandParameter="{Binding .}" />
                                     </VerticalStackLayout>
                                 </Grid>
 

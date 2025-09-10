@@ -16,6 +16,9 @@ namespace MedSestriManipulations.ApiHandler
             _httpClient.BaseAddress = new Uri("https://homeserver.ngrok.pro/");
         }
 
+        //
+        //
+        //                                      BLOOD TEST
         public async Task<List<BloodTest>> GetAllBloodTest()
         {
             var response = await _httpClient.GetAsync("api/Bodimed/allBloodTests");
@@ -31,9 +34,13 @@ namespace MedSestriManipulations.ApiHandler
             return result!;
         }
 
+        //
+        //
+        //                                      PATIENTS
         public async Task<HttpResponseMessage> CreateNewPatient(Patient model)
         {
             string json = JsonSerializer.Serialize(model, new JsonSerializerOptions { WriteIndented = true });
+
 
             var response = await _httpClient.PostAsJsonAsync("api/Bodimed/createPatient", model);
             return response;
@@ -62,6 +69,9 @@ namespace MedSestriManipulations.ApiHandler
             return await _httpClient.PostAsync("api/Bodimed/deletePatient", content);
         }
 
+        //
+        //
+        //                                      CATHETERS
         public async Task<HttpResponseMessage> CreateCatheterappointment(Catheter model)
         {
             string json = JsonSerializer.Serialize(model, new JsonSerializerOptions { WriteIndented = true });
@@ -87,6 +97,13 @@ namespace MedSestriManipulations.ApiHandler
             string json = JsonSerializer.Serialize(model, new JsonSerializerOptions { WriteIndented = true });
 
             await _httpClient.PutAsJsonAsync("api/Bodimed/checkCatheterAppointment", model);
+        }
+
+        public async Task UpdateCatheterAppointment(Catheter model)
+        {
+            string json = JsonSerializer.Serialize(model, new JsonSerializerOptions { WriteIndented = true });
+
+            await _httpClient.PutAsJsonAsync("api/Bodimed/updateCatheterAppointment", model);
         }
     }
 }

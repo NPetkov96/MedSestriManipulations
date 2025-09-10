@@ -9,6 +9,7 @@ namespace MedSestriManipulations
 {
     public partial class MainPage : ContentPage
     {
+        private bool _isMenuOpen = false;
         private CancellationTokenSource _filterCts;
 
         public ObservableCollection<BloodTest> BloodTestsList = new();
@@ -16,14 +17,16 @@ namespace MedSestriManipulations
 
         private readonly PaginationState _paginationState;
         private readonly API _api;
+        private readonly CachedDataService _cachedData;
 
-        public MainPage(PaginationState paginationState, API api)
+        public MainPage(PaginationState paginationState, API api, CachedDataService cachedData)
         {
             InitializeComponent();
             BindingContext = this;
 
             _paginationState = paginationState;
             _api = api;
+            _cachedData = cachedData;
         }
 
         protected override async void OnAppearing()
@@ -31,7 +34,7 @@ namespace MedSestriManipulations
             base.OnAppearing();
             try
             {
-                var bloodTestsListResponse = await _api.GetAllBloodTest();
+                var bloodTestsListResponse = await _cachedData.GetBloodTestsAsync();
                 BloodTestsList = new ObservableCollection<BloodTest>(bloodTestsListResponse);
                 ProcedureList.ItemsSource = BloodTests;
 
@@ -44,12 +47,17 @@ namespace MedSestriManipulations
                     EGNEntry.Text = reusedPatient.EGN;
                     PhoneEntry.Text = reusedPatient.PhoneNumber;
 
-                    foreach (var test in reusedPatient.BloodTests)
+                    if (await DisplayAlert("Потвърждение", $"Искаш ли да се заредят лабораторните изследвания?", "ДА", "НЕ"))
                     {
-                        BloodTestsList.FirstOrDefault(x => x.Name == test.Name)!.IsSelected = true;
+                        foreach (var test in reusedPatient.BloodTests)
+                        {
+                            BloodTestsList.FirstOrDefault(x => x.Name == test.Name)!.IsSelected = true;
+                        }
                     }
 
                     SelectedPatientService.PatientToReuse = null;
+                    _isMenuOpen = true;
+                    OnMainFabClicked(null, null);
                 }
                 else
                 {
@@ -136,7 +144,7 @@ namespace MedSestriManipulations
                     Title = "Изпрати чрез Viber"
                 });
 
-                var response = await _api.CreateNewPatient(new Patient
+                var createPatient = new Patient()
                 {
                     FullName = name,
                     Note = message,
@@ -144,7 +152,10 @@ namespace MedSestriManipulations
                     PhoneNumber = phone,
                     Date = DateTime.Now,
                     BloodTests = selected
-                });
+                };
+
+                var response = await _api.CreateNewPatient(createPatient);
+                _cachedData._isPatientsLoaded = false;
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -222,14 +233,13 @@ namespace MedSestriManipulations
             _paginationState.IsLoading = false;
         }
 
-        private bool _fabOpen = false;
 
         private void OnMainFabClicked(object sender, EventArgs e)
         {
-            _fabOpen = !_fabOpen;
+            _isMenuOpen = !_isMenuOpen;
 
-            CatheterButton.IsVisible = _fabOpen;
-            HistoryButton.IsVisible = _fabOpen;
+            CatheterButton.IsVisible = _isMenuOpen;
+            HistoryButton.IsVisible = _isMenuOpen;
         }
 
     }

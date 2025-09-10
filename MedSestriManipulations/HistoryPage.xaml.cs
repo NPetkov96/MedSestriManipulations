@@ -10,8 +10,11 @@ namespace MedSestriManipulations;
 
 public partial class HistoryPage : ContentPage, INotifyPropertyChanged
 {
+    private readonly CachedDataService _cachedData;
     private readonly API _api;
     private List<Patient> _patients;
+    private bool _isMenuOpen = false;
+
 
     public new event PropertyChangedEventHandler? PropertyChanged;
     private ObservableCollection<Patient> patients;
@@ -34,7 +37,7 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
     }
 
 
-    public HistoryPage(API api)
+    public HistoryPage(API api, CachedDataService cachedData)
     {
         InitializeComponent();
         BindingContext = this;
@@ -42,6 +45,7 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
 
         _patients = new List<Patient>();
         _api = api;
+        _cachedData = cachedData;
     }
 
     protected override async void OnAppearing()
@@ -52,13 +56,16 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
             LoadingIndicator.IsVisible = true;
             LoadingIndicator.IsRunning = true;
 
-            _patients = await _api.GetAllPatientsHistory();
+            _patients = await _cachedData.GetPatientsAsync();
 
             patients = new ObservableCollection<Patient>(_patients);
             HistoryList.ItemsSource = patients.Take(10);
             SelectedPatient = _patients.First();
+
+            _isMenuOpen = true;
+            OnMainFabClicked(null,null);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await DisplayAlert("Грешка", $"{ex.Message}", "OK");
 #if ANDROID
@@ -86,7 +93,7 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
     {
         EGNEntry.Text = "";
 
-        HistoryList.ItemsSource = patients.OrderByDescending(p=>p.Date).Take(10);
+        HistoryList.ItemsSource = patients.OrderByDescending(p => p.Date).Take(10);
         SelectedPatient = _patients.First();
     }
 
@@ -107,10 +114,13 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
             if (await DisplayAlert("Потвърждение", $"Пациент: {SelectedPatient!.FullName} - ЕГН: {SelectedPatient.EGN} \n ИЗТРИЙ?", "ДА", "НЕ"))
             {
                 var result = await _api.DeletePatient(SelectedPatient.Date);
+
                 if (result.IsSuccessStatusCode)
                 {
                     if (SelectedPatient != null && patients.Contains(SelectedPatient))
                     {
+                        _cachedData._patients.Remove(SelectedPatient);
+
                         patients.Remove(SelectedPatient);
                         HistoryList.ItemsSource = patients.Take(10);
                     }
@@ -140,13 +150,12 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
         }
     }
 
-    private bool _fabOpen = false;
 
     private void OnMainFabClicked(object sender, EventArgs e)
     {
-        _fabOpen = !_fabOpen;
+        _isMenuOpen = !_isMenuOpen;
 
-        CatheterButton.IsVisible = _fabOpen;
-        MainWindowButton.IsVisible = _fabOpen;
+        CatheterButton.IsVisible = _isMenuOpen;
+        MainWindowButton.IsVisible = _isMenuOpen;
     }
 }

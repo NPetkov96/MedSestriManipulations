@@ -1,5 +1,6 @@
 ﻿using MedSestriManipulations.ApiHandler;
 using MedSestriManipulations.Models;
+using MedSestriManipulations.Services;
 using System.Collections.ObjectModel;
 
 namespace MedSestriManipulations;
@@ -7,15 +8,19 @@ namespace MedSestriManipulations;
 public partial class CatheterPage : ContentPage
 {
     private readonly API _api;
+    private readonly CachedDataService _cacheData;
+    private bool _isMenuOpen = false;
+
     private List<Catheter> _cathers;
     private ObservableCollection<Catheter> cathers;
 
-    public CatheterPage(API api)
+    public CatheterPage(API api, CachedDataService cacheData)
     {
         InitializeComponent();
         BindingContext = this;
 
         _api = api;
+        _cacheData = cacheData;
         _cathers = new List<Catheter>();
     }
 
@@ -23,16 +28,18 @@ public partial class CatheterPage : ContentPage
     {
         base.OnAppearing();
 
-        _cathers = await _api.GetAllCatheterAppointments();
+        _cathers = await _cacheData.GetCathetersAsync();
         cathers = new ObservableCollection<Catheter>(_cathers);
         CathetersListView.ItemsSource = cathers;
+
+        _isMenuOpen = true;
+        OnMainFabClicked(null, null);
     }
 
     private async void OnSaveClicked(object sender, EventArgs e)
     {
         try
         {
-
             if (PhoneEntry.Text.Length != 10 && PhoneEntry.Text.Length != 13)
             {
                 await DisplayAlert("Грешка", "Телефонният номер трябва да съдържа точно 10 или 13 символа", "OK");
@@ -48,13 +55,26 @@ public partial class CatheterPage : ContentPage
                 IsChecked = false
             };
 
-            var result = await _api.CreateCatheterappointment(model);
-            if (result.IsSuccessStatusCode)
+            var existingCatheter = _cathers.FirstOrDefault(c => c.ClientName == model.ClientName ||
+                               c.Address == model.Address ||
+                               c.PhoneNumber == model.PhoneNumber);
+
+            if (existingCatheter != null)
             {
-                cathers.Add(model);
-                CathetersListView.ItemsSource = cathers;
-                ClearFields(null!, null!);
+                model.Id = existingCatheter.Id;
+                await _api.UpdateCatheterAppointment(model);
+                cathers.Remove(existingCatheter);
             }
+            else
+            {
+                var result = await _api.CreateCatheterappointment(model);
+            }
+
+            cathers.Add(model);
+            CathetersListView.ItemsSource = cathers;
+            _cacheData._isCathetersLoaded = false;
+            ClearFields(null!, null!);
+
         }
         catch
         {
@@ -70,24 +90,35 @@ public partial class CatheterPage : ContentPage
         AddressEntry.Text = string.Empty;
     }
 
-    private async void UpdateCatheterAppointment_Clicked(object sender, EventArgs e)
+    private async void CheckCatheterAppointment(object sender, EventArgs e)
     {
         if (sender is Button button && button.CommandParameter is Catheter catheter)
         {
             await _api.CheckCatheterAppointment(catheter);
             cathers.Remove(catheter);
             CathetersListView.ItemsSource = cathers.OrderBy(d => d.Date);
+            _cacheData._isCathetersLoaded = false;
+        }
+    }
+
+    private async void UpdateCatheterAppointment(object sender, EventArgs e)
+    {
+        if (sender is Button button && button.CommandParameter is Catheter catheter)
+        {
+            PatientNameEntry.Text = catheter.ClientName;
+            PhoneEntry.Text = catheter.PhoneNumber;
+            CatheterDatePicker.Date = catheter.Date;
+            AddressEntry.Text = catheter.Address;
         }
 
     }
 
-    private bool _fabOpen = false;
 
     private void OnMainFabClicked(object sender, EventArgs e)
     {
-        _fabOpen = !_fabOpen;
+        _isMenuOpen = !_isMenuOpen;
 
-        HistoryButton.IsVisible = _fabOpen;
-        MainWindowButton.IsVisible = _fabOpen;
+        HistoryButton.IsVisible = _isMenuOpen;
+        MainWindowButton.IsVisible = _isMenuOpen;
     }
 }
