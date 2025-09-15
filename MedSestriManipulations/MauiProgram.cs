@@ -25,10 +25,7 @@ namespace MedSestriManipulations
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-            builder.Services.AddHttpClient("ApiClient", client =>
-            {
-                client.BaseAddress = new Uri("https://medsestribackendapi20250430210231-d9b9grdkdnecc0aw.italynorth-01.azurewebsites.net/");
-            });
+            builder.Services.AddHttpClient();
 
             builder.Services.AddSingleton<PaginationState>();
             builder.Services.AddSingleton<API>();

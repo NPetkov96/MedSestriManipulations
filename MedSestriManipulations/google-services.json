@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "905109028437",
+    "project_id": "medsestri-bg",
+    "storage_bucket": "medsestri-bg.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905109028437:android:74ce9f6e8b3c7ea0cddedc",
+        "android_client_info": {
+          "package_name": "com.companyname.medsestrimanipulations"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuXPvbzJppVmj5joWpM8ETGObxzKmjjF8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

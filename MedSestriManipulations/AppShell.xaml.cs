@@ -5,7 +5,7 @@
         public AppShell()
         {
             InitializeComponent();
-            Shell.SetNavBarIsVisible(this, false); // ⬅️ Това скрива горната лента навсякъде
+            Shell.SetNavBarIsVisible(this, false);
             Shell.SetTabBarIsVisible(this, false);
         }
 

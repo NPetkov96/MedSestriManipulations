@@ -7,6 +7,9 @@ using Android.Provider;
 using Android.Views;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
+using Firebase.Messaging;
+using MedSestriManipulations.Services;
+using Plugin.Firebase.CloudMessaging;
 using Color = Android.Graphics.Color;
 
 namespace MedSestriManipulations.Platforms.Android
@@ -16,54 +19,47 @@ namespace MedSestriManipulations.Platforms.Android
                                ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
     public class MainActivity : MauiAppCompatActivity
     {
+        private CachedDataService _cacheData;
+
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            _cacheData = MauiApplication.Current.Services.GetService<CachedDataService>();
+
+            HandleIntent(Intent);
+
+            FirebaseMessaging.Instance.SubscribeToTopic("all");
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop && Window != null)
             {
                 Window.SetStatusBarColor(Color.ParseColor("#007BFF"));
             }
 
-            TryIgnoreBatteryOptimizations();
-            RequestSmsPermissions();
         }
 
-        private void TryIgnoreBatteryOptimizations()
+        protected override void OnNewIntent(Intent intent)
         {
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-            {
-                PowerManager? pm = (PowerManager?)GetSystemService(PowerService);
-                string packageName = PackageName;
-
-                if (pm != null && !pm.IsIgnoringBatteryOptimizations(packageName))
-                {
-                    Intent intent = new Intent(Settings.ActionRequestIgnoreBatteryOptimizations);
-                    intent.SetData(global::Android.Net.Uri.Parse("package:" + packageName));
-                    StartActivity(intent);
-                }
-            }
+            base.OnNewIntent(intent);
+            HandleIntent(intent);
         }
 
-        private void RequestSmsPermissions()
+        private void HandleIntent(Intent intent)
         {
-            string[] permissions = new[]
+            if (intent?.Extras != null && intent.Extras.ContainsKey("navigate"))
             {
-                Manifest.Permission.ReceiveSms,
-                Manifest.Permission.ReadSms,
-                Manifest.Permission.SendSms
-            };
-
-            const int RequestId = 1001;
-
-            foreach (var permission in permissions)
-            {
-                if (ContextCompat.CheckSelfPermission(this, permission) != Permission.Granted)
+                var destination = intent.Extras.GetString("navigate");
+                if (destination == "catheter")
                 {
-                    ActivityCompat.RequestPermissions(this, permissions, RequestId);
-                    break;
+                    _cacheData._isCathetersLoaded = false;
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        Shell.Current.GoToAsync("//CatheterPage");
+                    });
                 }
             }
+            FirebaseCloudMessagingImplementation.OnNewIntent(intent);
+
         }
     }
 }
