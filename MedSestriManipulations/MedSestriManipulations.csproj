@@ -82,6 +82,9 @@
 		<MauiXaml Update="CatheterPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
+		<MauiXaml Update="CatheterPopup.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="HistoryPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit" Color ="Transparent"
+    x:Class="MedSestriManipulations.CatheterPopup">
+
+    <Frame HorizontalOptions="Center" VerticalOptions="Center" Background="White" CornerRadius="20" Padding="20">
+        <VerticalStackLayout Spacing="20">
+
+            <Frame BackgroundColor="#E0F7FA" CornerRadius="15" Padding="15">
+                <VerticalStackLayout Spacing="5">
+
+                    <Label Text="{Binding ClientName}" FontSize="24" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="Black"/>
+                    <Label Text="{Binding PhoneNumber}" FontSize="16" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="Black"/>
+                    <Label Text="{Binding Date, StringFormat='Дата: {0:dd.MM.yyyy}'}" FontSize="14" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="Black"/>
+                    <Label Text="{Binding Address}" FontSize="16" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="Black"/>
+
+                </VerticalStackLayout>
+            </Frame>
+
+            <Grid ColumnSpacing="10" RowSpacing="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Първи два бутона - ред 0 -->
+                <Button Grid.Row="0" Grid.Column="0"
+            Text="Премахни"
+            BackgroundColor="DarkRed"
+            TextColor="White"
+            CornerRadius="10"
+            HeightRequest="40"
+            FontSize="14"
+            HorizontalOptions="Fill"
+            Clicked="CheckCatheterAppointment"
+            CommandParameter="{Binding .}" />
+
+                <Button Grid.Row="0" Grid.Column="1"
+            Text="Редактирай"
+            BackgroundColor="DarkSeaGreen"
+            TextColor="White"
+            CornerRadius="10"
+            HeightRequest="40"
+            FontSize="14"
+            HorizontalOptions="Fill"
+            Clicked="UpdateCatheterAppointment"
+            CommandParameter="{Binding .}" />
+
+                <Button Grid.Row="1" Grid.ColumnSpan="2"
+            Text="Обади се"
+            BackgroundColor="SteelBlue"
+            TextColor="White"
+            CornerRadius="10"
+            HeightRequest="50"
+            FontSize="14"
+            HorizontalOptions="Fill"
+            Clicked="CallCatheter" />
+            </Grid>
+
+
+        </VerticalStackLayout>
+    </Frame>
+
+
+
+</toolkit:Popup>

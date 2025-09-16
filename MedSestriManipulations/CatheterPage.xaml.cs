@@ -1,7 +1,9 @@
-﻿using MedSestriManipulations.ApiHandler;
+﻿using CommunityToolkit.Maui.Views;
+using MedSestriManipulations.ApiHandler;
 using MedSestriManipulations.Models;
 using MedSestriManipulations.Services;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace MedSestriManipulations;
 
@@ -13,6 +15,13 @@ public partial class CatheterPage : ContentPage
 
     private List<Catheter> _cathers;
     private ObservableCollection<Catheter> cathers;
+
+    public ICommand ShowPopupCommand => new Command<object>(async (item) =>
+    {
+        if (item == null) return;
+
+        ManipulateCatheter((Catheter)item);
+    });
 
     public CatheterPage(API api, CachedDataService cacheData)
     {
@@ -34,6 +43,33 @@ public partial class CatheterPage : ContentPage
 
         _isMenuOpen = true;
         OnMainFabClicked(null, null);
+
+        var overdueCatheter = _cathers.FirstOrDefault(c=>c.IsOverdue == true);
+
+        if(overdueCatheter != null) ManipulateCatheter(overdueCatheter!);
+    }
+
+    private async void ManipulateCatheter(Catheter catheter)
+    {
+        var popup = new CatheterPopup(catheter);
+
+        popup.Check += (s, catheterObj) =>
+        {
+            if (catheterObj is Catheter catheter)
+            {
+                CheckCatheterAppointment(catheter);
+            }
+        };
+
+        popup.Update += (s, catheterObj) =>
+        {
+            if (catheterObj is Catheter catheter)
+            {
+                UpdateCatheterAppointment(catheter);
+            }
+        };
+
+        await Application.Current.MainPage.ShowPopupAsync(popup);
     }
 
     private async void OnSaveClicked(object sender, EventArgs e)
@@ -90,29 +126,21 @@ public partial class CatheterPage : ContentPage
         AddressEntry.Text = string.Empty;
     }
 
-    private async void CheckCatheterAppointment(object sender, EventArgs e)
+    private async void CheckCatheterAppointment(Catheter catheter)
     {
-        if (sender is Button button && button.CommandParameter is Catheter catheter)
-        {
-            await _api.CheckCatheterAppointment(catheter);
-            cathers.Remove(catheter);
-            CathetersListView.ItemsSource = cathers.OrderBy(d => d.Date);
-            _cacheData._isCathetersLoaded = false;
-        }
+        await _api.CheckCatheterAppointment(catheter);
+        cathers.Remove(catheter);
+        CathetersListView.ItemsSource = cathers.OrderBy(d => d.Date);
+        _cacheData._isCathetersLoaded = false;
     }
 
-    private async void UpdateCatheterAppointment(object sender, EventArgs e)
+    private async void UpdateCatheterAppointment(Catheter catheter)
     {
-        if (sender is Button button && button.CommandParameter is Catheter catheter)
-        {
-            PatientNameEntry.Text = catheter.ClientName;
-            PhoneEntry.Text = catheter.PhoneNumber;
-            CatheterDatePicker.Date = catheter.Date;
-            AddressEntry.Text = catheter.Address;
-        }
-
+        PatientNameEntry.Text = catheter.ClientName;
+        PhoneEntry.Text = catheter.PhoneNumber;
+        CatheterDatePicker.Date = catheter.Date;
+        AddressEntry.Text = catheter.Address;
     }
-
 
     private void OnMainFabClicked(object sender, EventArgs e)
     {
