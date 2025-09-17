@@ -14,13 +14,13 @@
 
                     <toolkit:Expander x:Name="ExpanderEGN" Grid.Column="1" Grid.ColumnSpan="1" IsExpanded="True">
                         <VerticalStackLayout Padding="10">
-                            <Entry x:Name="InputEntry" Placeholder="Тук въведи ЕГН или Телефонен Номер" FontSize="15"/>
+                            <Entry x:Name="InputEntry" Placeholder="Търси пациент" FontSize="15"/>
                             <Grid ColumnSpacing="3" Margin="0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Text="Търси" FontSize="12" BackgroundColor="#007ACC" TextColor="White" Clicked="SearchByEGNorPhoneNumber" />
+                                <Button Grid.Column="0" Text="Търси" FontSize="12" BackgroundColor="#007ACC" TextColor="White" Clicked="SearchText" />
                                 <Button Grid.Column="3" Text="Зачисти" FontSize="10" BackgroundColor="DarkRed" TextColor="White" Clicked="ClearSearchBar" />
                             </Grid>
                         </VerticalStackLayout>

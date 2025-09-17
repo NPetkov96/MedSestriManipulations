@@ -59,11 +59,11 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
             _patients = await _cachedData.GetPatientsAsync();
 
             patients = new ObservableCollection<Patient>(_patients);
-            HistoryList.ItemsSource = patients.Take(10);
+            HistoryList.ItemsSource = patients.Take(15);
             SelectedPatient = _patients.First();
 
             _isMenuOpen = true;
-            OnMainFabClicked(null,null);
+            OnMainFabClicked(null, null);
         }
         catch (Exception ex)
         {
@@ -80,22 +80,24 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
     }
     protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    private void SearchByEGNorPhoneNumber(object sender, EventArgs e)
+    private void SearchText(object sender, EventArgs e)
     {
-        var user = _patients.FirstOrDefault(p => p.EGN == InputEntry.Text!.Trim() || 
-                                                 p.PhoneNumber == InputEntry.Text!.Trim())!;
+        var user = _patients.FirstOrDefault(p => p.EGN == InputEntry.Text!.Trim() ||
+                                                 p.PhoneNumber == InputEntry.Text!.Trim() ||
+                                                 p.FullName.ToLower().Trim().Contains(InputEntry.Text!.ToLower().Trim()))!;
         SendPatientToCard(user);
 
         HistoryList.ItemsSource = patients
-            .OrderByDescending(m => m.EGN == InputEntry.Text!.Trim())
-            .Take(10);
+            .OrderByDescending(m => m.FullName.ToLower().Trim().Contains(InputEntry.Text!.ToLower().Trim()))
+            .Take(15);
+        InputEntry.Text = "";
     }
 
     private void ClearSearchBar(object sender, EventArgs e)
     {
         InputEntry.Text = "";
 
-        HistoryList.ItemsSource = patients.OrderByDescending(p => p.Date).Take(10);
+        HistoryList.ItemsSource = patients.OrderByDescending(p => p.Date).Take(25);
         SelectedPatient = _patients.First();
     }
 
@@ -124,7 +126,7 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
                         _cachedData._patients.Remove(SelectedPatient);
 
                         patients.Remove(SelectedPatient);
-                        HistoryList.ItemsSource = patients.Take(10);
+                        HistoryList.ItemsSource = patients.Take(15);
                     }
 
                     SelectedPatient = patients.FirstOrDefault();
