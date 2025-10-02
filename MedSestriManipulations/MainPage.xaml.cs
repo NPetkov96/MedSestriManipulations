@@ -133,7 +133,7 @@ namespace MedSestriManipulations
             messageBuilder.AppendLine($"Общо сума: {total:F2} лв");
             messageBuilder.AppendLine("--------------------");
             messageBuilder.AppendLine($"Сума с отстъпка: {discountTotal:F2} лв");
-            messageBuilder.AppendLine("www.medsestri.com");
+            messageBuilder.AppendLine("https://medsestri.com/");
             string message = messageBuilder.ToString().Trim();
 
             try
