@@ -15,6 +15,7 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
     private List<Patient> _patients;
     private bool _isMenuOpen = false;
 
+    private int HistoryCountPatients;
 
     public new event PropertyChangedEventHandler? PropertyChanged;
     private ObservableCollection<Patient> patients;
@@ -58,8 +59,10 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
 
             _patients = await _cachedData.GetPatientsAsync();
 
+            HistoryCountPatients = _patients.Where(x=>x.Date > DateTime.Now.AddMonths(-1)).Count();
+
             patients = new ObservableCollection<Patient>(_patients);
-            HistoryList.ItemsSource = patients.Take(15);
+            HistoryList.ItemsSource = patients.Take(HistoryCountPatients);
             SelectedPatient = _patients.First();
 
             _isMenuOpen = true;
@@ -89,7 +92,7 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
 
         HistoryList.ItemsSource = patients
             .OrderByDescending(m => m.FullName.ToLower().Trim().Contains(InputEntry.Text!.ToLower().Trim()))
-            .Take(15);
+            .Take(HistoryCountPatients);
         InputEntry.Text = "";
     }
 
@@ -97,7 +100,7 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
     {
         InputEntry.Text = "";
 
-        HistoryList.ItemsSource = patients.OrderByDescending(p => p.Date).Take(25);
+        HistoryList.ItemsSource = patients.OrderByDescending(p => p.Date).Take(HistoryCountPatients);
         SelectedPatient = _patients.First();
     }
 
@@ -126,7 +129,7 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
                         _cachedData._patients.Remove(SelectedPatient);
 
                         patients.Remove(SelectedPatient);
-                        HistoryList.ItemsSource = patients.Take(15);
+                        HistoryList.ItemsSource = patients.Take(HistoryCountPatients);
                     }
 
                     SelectedPatient = patients.FirstOrDefault();

@@ -43,6 +43,7 @@ namespace MedSestriManipulations
                 var reusedPatient = SelectedPatientService.PatientToReuse;
                 if (reusedPatient != null)
                 {
+                    ClearAllFeald();
                     CurrentName.Text = reusedPatient.FullName;
                     EGNEntry.Text = reusedPatient.EGN;
                     PhoneEntry.Text = reusedPatient.PhoneNumber;
@@ -52,6 +53,8 @@ namespace MedSestriManipulations
                         foreach (var test in reusedPatient.BloodTests)
                         {
                             BloodTestsList.FirstOrDefault(x => x.Name == test.Name)!.IsSelected = true;
+                            //await LoadMorePaginationProceduresAsync();
+                            UpdateTotalSum();
                         }
                     }
 
@@ -198,8 +201,11 @@ namespace MedSestriManipulations
         }
         private void UpdateTotalSum()
         {
-            var total = BloodTestsList.Where(p => p.IsSelected).Sum(p => p.BngPrice);
-            TotalLabel.Text = $"{total:F2} лв";
+            var totalBNG = BloodTestsList.Where(p => p.IsSelected).Sum(p => p.BngPrice);
+            TotalBGNLabel.Text = $"{totalBNG:F2} лв";
+
+            var totalEURO = BloodTestsList.Where(p => p.IsSelected).Sum(p => p.EuroPrice);
+            TotalEURLabel.Text = $"{totalEURO:F2} €";
         }
 
         private async Task FilterBloodTests()
