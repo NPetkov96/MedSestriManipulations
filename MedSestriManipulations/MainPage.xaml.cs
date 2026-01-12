@@ -91,7 +91,8 @@ namespace MedSestriManipulations
         private async void OnSendClicked(object sender, EventArgs e)
         {
             var selected = BloodTestsList.Where(p => p.IsSelected).ToList();
-            var total = selected.Sum(p => p.BngPrice);
+            var totalBng = selected.Sum(p => p.BngPrice);
+            var totalEur = selected.Sum(p => p.EuroPrice);
 
             string name = CurrentName.Text?.Trim()!;
             string egn = EGNEntry.Text?.Trim()!;
@@ -118,9 +119,10 @@ namespace MedSestriManipulations
                 await DisplayAlert("Грешка", "УИН номерът трябва да съдържа точно 10 цифри.", "OK");
                 return;
             }
-            decimal discountTotal = total * 0.8m;
+            decimal discountTotalBng = totalBng * 0.8m;
+            decimal discountTotalEur = totalEur * 0.8m;
 
-            var manipulationsList = string.Join("\n", selected.Select((p, index) => $"{index + 1}. {p.Name} - {p.BngPrice:F2} лв"));
+            var manipulationsList = string.Join("\n", selected.Select((p, index) => $"{index + 1}. {p.Name} - {p.EuroPrice:F2} €"));
 
             var messageBuilder = new StringBuilder();
             messageBuilder.AppendLine($"Пациент: {name}");
@@ -133,9 +135,9 @@ namespace MedSestriManipulations
             if (!string.IsNullOrEmpty(uin)) messageBuilder.AppendLine($"УИН: {uin}");
 
             messageBuilder.AppendLine();
-            messageBuilder.AppendLine($"Общо сума: {total:F2} лв");
+            messageBuilder.AppendLine($"Общо сума: {totalEur} € / {totalBng:F2} лв");
             messageBuilder.AppendLine("--------------------");
-            messageBuilder.AppendLine($"Сума с отстъпка: {discountTotal:F2} лв");
+            messageBuilder.AppendLine($"Сума с отстъпка: {discountTotalEur} € / {discountTotalBng:F2} лв");
             messageBuilder.AppendLine("https://medsestri.com/");
             string message = messageBuilder.ToString().Trim();
 
