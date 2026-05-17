@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="MedSestriManipulations.LaunchPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="#F6FAFF"
+    Shell.NavBarIsVisible="False">
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
+                <GradientStop Color="#F9FBFF" Offset="0.0" />
+                <GradientStop Color="#E7F2FC" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Border
+            x:Name="GlowRing"
+            WidthRequest="220"
+            HeightRequest="220"
+            BackgroundColor="#99FFFFFF"
+            Opacity="0"
+            Scale="0.45"
+            StrokeThickness="0"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            TranslationY="-18"
+            StrokeShape="RoundRectangle 110" />
+
+        <Image
+            x:Name="LogoMark"
+            Source="medsestri_mark.png"
+            WidthRequest="240"
+            Opacity="0"
+            Scale="0.78"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            TranslationY="-18" />
+
+        <Grid VerticalOptions="End" HeightRequest="220" InputTransparent="True">
+            <Border
+                BackgroundColor="#D8EAFB"
+                HeightRequest="180"
+                Margin="-40,0,-40,-36"
+                Opacity="0.95"
+                StrokeThickness="0"
+                VerticalOptions="End"
+                StrokeShape="RoundRectangle 180,180,0,0" />
+
+            <Border
+                BackgroundColor="#B6D6F7"
+                HeightRequest="136"
+                Margin="-70,0,-20,-26"
+                Opacity="0.95"
+                StrokeThickness="0"
+                VerticalOptions="End"
+                StrokeShape="RoundRectangle 180,180,0,0" />
+
+            <Border
+                BackgroundColor="#93B5E2"
+                HeightRequest="88"
+                Margin="-20,0,-90,-20"
+                Opacity="0.95"
+                StrokeThickness="0"
+                VerticalOptions="End"
+                StrokeShape="RoundRectangle 180,180,0,0" />
+        </Grid>
+    </Grid>
+</ContentPage>

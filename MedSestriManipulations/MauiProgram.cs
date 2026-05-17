@@ -8,8 +8,6 @@ namespace MedSestriManipulations
 {
     public static class MauiProgram
     {
-        public static MauiApp AppInstance { get; private set; }
-
         public static MauiApp CreateMauiApp()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -25,20 +23,15 @@ namespace MedSestriManipulations
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-            builder.Services.AddHttpClient();
-
+            builder.Services.AddHttpClient<API>();
             builder.Services.AddSingleton<PaginationState>();
-            builder.Services.AddSingleton<API>();
             builder.Services.AddSingleton<CachedDataService>();
 
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
 
-            var app = builder.Build();
-            AppInstance = app;
-
-            return app;
+            return builder.Build();
         }
     }
 }

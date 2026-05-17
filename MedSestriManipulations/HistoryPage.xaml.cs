@@ -2,23 +2,19 @@
 using MedSestriManipulations.Models;
 using MedSestriManipulations.Services;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace MedSestriManipulations;
 
-public partial class HistoryPage : ContentPage, INotifyPropertyChanged
+public partial class HistoryPage : ContentPage
 {
     private readonly CachedDataService _cachedData;
     private readonly API _api;
     private List<Patient> _patients;
-    private bool _isMenuOpen = false;
 
     private int HistoryCountPatients;
 
-    public new event PropertyChangedEventHandler? PropertyChanged;
-    private ObservableCollection<Patient> patients;
+    private ObservableCollection<Patient> patients = new();
 
     public ICommand UpdateCard { get; }
 
@@ -59,21 +55,15 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
 
             _patients = await _cachedData.GetPatientsAsync();
 
-            HistoryCountPatients = _patients.Where(x=>x.Date > DateTime.Now.AddMonths(-1)).Count();
+            HistoryCountPatients = _patients.Count(x => x.Date > DateTime.Now.AddMonths(-1));
 
             patients = new ObservableCollection<Patient>(_patients);
             HistoryList.ItemsSource = patients.Take(HistoryCountPatients);
-            SelectedPatient = _patients.First();
-
-            _isMenuOpen = true;
-            OnMainFabClicked(null, null);
+            SelectedPatient = _patients.FirstOrDefault();
         }
         catch (Exception ex)
         {
             await DisplayAlert("Грешка", $"{ex.Message}", "OK");
-#if ANDROID
-            Java.Lang.JavaSystem.Exit(0);
-#endif
         }
         finally
         {
@@ -81,17 +71,18 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
             LoadingIndicator.IsVisible = false;
         }
     }
-    protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
     private void SearchText(object sender, EventArgs e)
     {
-        var user = _patients.FirstOrDefault(p => p.EGN == InputEntry.Text!.Trim() ||
-                                                 p.PhoneNumber == InputEntry.Text!.Trim() ||
-                                                 p.FullName.ToLower().Trim().Contains(InputEntry.Text!.ToLower().Trim()))!;
+        var searchText = InputEntry.Text?.Trim() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(searchText)) return;
+
+        var user = _patients.FirstOrDefault(p => p.EGN == searchText ||
+                                                 p.PhoneNumber == searchText ||
+                                                 p.FullName.Contains(searchText, StringComparison.CurrentCultureIgnoreCase));
         SendPatientToCard(user);
 
         HistoryList.ItemsSource = patients
-            .OrderByDescending(m => m.FullName.ToLower().Trim().Contains(InputEntry.Text!.ToLower().Trim()))
+            .OrderByDescending(m => m.FullName.Contains(searchText, StringComparison.CurrentCultureIgnoreCase))
             .Take(HistoryCountPatients);
         InputEntry.Text = "";
     }
@@ -101,7 +92,7 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
         InputEntry.Text = "";
 
         HistoryList.ItemsSource = patients.OrderByDescending(p => p.Date).Take(HistoryCountPatients);
-        SelectedPatient = _patients.First();
+        SelectedPatient = _patients.FirstOrDefault();
     }
 
     private async void Coppy(object sender, EventArgs e)
@@ -126,9 +117,8 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
                 {
                     if (SelectedPatient != null && patients.Contains(SelectedPatient))
                     {
-                        _cachedData._patients.Remove(SelectedPatient);
-
                         patients.Remove(SelectedPatient);
+                        _cachedData.InvalidatePatients();
                         HistoryList.ItemsSource = patients.Take(HistoryCountPatients);
                     }
 
@@ -138,7 +128,7 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
         }
     }
 
-    private void SendPatientToCard(Patient patient)
+    private void SendPatientToCard(Patient? patient)
     {
         if (patient == null)
             return;
@@ -155,14 +145,5 @@ public partial class HistoryPage : ContentPage, INotifyPropertyChanged
         {
             patient.IsSelected = patient == selected;
         }
-    }
-
-
-    private void OnMainFabClicked(object sender, EventArgs e)
-    {
-        _isMenuOpen = !_isMenuOpen;
-
-        CatheterButton.IsVisible = _isMenuOpen;
-        MainWindowButton.IsVisible = _isMenuOpen;
     }
 }

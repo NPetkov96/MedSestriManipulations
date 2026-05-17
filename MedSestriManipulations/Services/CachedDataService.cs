@@ -5,15 +5,19 @@ namespace MedSestriManipulations.Services
 {
     public class CachedDataService
     {
-        private API _api;
+        private readonly API _api;
+        private List<BloodTest> _bloodTests = new();
+        private List<Patient> _patients = new();
+        private List<Catheter> _catheters = new();
+        private bool _isBloodTestsLoaded;
+        private bool _isPatientsLoaded;
+        private bool _isCathetersLoaded;
 
         public CachedDataService(API api)
         {
             _api = api;
         }
 
-        private List<BloodTest> _bloodTests;
-        private bool _isBloodTestsLoaded = false;
         public async Task<List<BloodTest>> GetBloodTestsAsync()
         {
             if (!_isBloodTestsLoaded)
@@ -26,8 +30,6 @@ namespace MedSestriManipulations.Services
         }
 
 
-        public List<Patient> _patients;
-        public bool _isPatientsLoaded = false;
         public async Task<List<Patient>> GetPatientsAsync()
         {
             if (!_isPatientsLoaded)
@@ -40,8 +42,6 @@ namespace MedSestriManipulations.Services
         }
 
 
-        public List<Catheter> _catheters;
-        public bool _isCathetersLoaded = false;
         public async Task<List<Catheter>> GetCathetersAsync()
         {
             if (!_isCathetersLoaded)
@@ -51,6 +51,16 @@ namespace MedSestriManipulations.Services
             }
 
             return _catheters;
+        }
+
+        public void InvalidatePatients()
+        {
+            _isPatientsLoaded = false;
+        }
+
+        public void InvalidateCatheters()
+        {
+            _isCathetersLoaded = false;
         }
     }
 }

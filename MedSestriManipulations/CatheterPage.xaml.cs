@@ -11,12 +11,11 @@ public partial class CatheterPage : ContentPage
 {
     private readonly API _api;
     private readonly CachedDataService _cacheData;
-    private bool _isMenuOpen = false;
 
     private List<Catheter> _cathers;
-    private ObservableCollection<Catheter> cathers;
+    private ObservableCollection<Catheter> cathers = new();
 
-    public ICommand ShowPopupCommand => new Command<object>(async (item) =>
+    public ICommand ShowPopupCommand => new Command<object>(item =>
     {
         if (item == null) return;
 
@@ -40,9 +39,6 @@ public partial class CatheterPage : ContentPage
         _cathers = await _cacheData.GetCathetersAsync();
         cathers = new ObservableCollection<Catheter>(_cathers);
         CathetersListView.ItemsSource = cathers;
-
-        _isMenuOpen = true;
-        OnMainFabClicked(null, null);
 
         var overdueCatheter = _cathers.FirstOrDefault(c=>c.IsOverdue == true);
 
@@ -69,14 +65,15 @@ public partial class CatheterPage : ContentPage
             }
         };
 
-        await Application.Current.MainPage.ShowPopupAsync(popup);
+        await this.ShowPopupAsync(popup);
     }
 
     private async void OnSaveClicked(object sender, EventArgs e)
     {
         try
         {
-            if (PhoneEntry.Text.Length != 10 && PhoneEntry.Text.Length != 13)
+            var phone = PhoneEntry.Text?.Trim() ?? string.Empty;
+            if (phone.Length != 10 && phone.Length != 13)
             {
                 await DisplayAlert("Грешка", "Телефонният номер трябва да съдържа точно 10 или 13 символа", "OK");
                 return;
@@ -84,10 +81,10 @@ public partial class CatheterPage : ContentPage
 
             var model = new Catheter()
             {
-                ClientName = PatientNameEntry.Text,
-                PhoneNumber = PhoneEntry.Text,
+                ClientName = PatientNameEntry.Text?.Trim() ?? string.Empty,
+                PhoneNumber = phone,
                 Date = CatheterDatePicker.Date,
-                Address = AddressEntry.Text,
+                Address = AddressEntry.Text?.Trim() ?? string.Empty,
                 IsChecked = false
             };
 
@@ -103,18 +100,17 @@ public partial class CatheterPage : ContentPage
             }
             else
             {
-                var result = await _api.CreateCatheterappointment(model);
+                await _api.CreateCatheterappointment(model);
             }
 
             cathers.Add(model);
-            CathetersListView.ItemsSource = cathers;
-            _cacheData._isCathetersLoaded = false;
+            _cacheData.InvalidateCatheters();
             ClearFields(null!, null!);
 
         }
-        catch
+        catch (Exception ex)
         {
-
+            await DisplayAlert("Грешка", $"Неуспешно записване: {ex.Message}", "OK");
         }
     }
 
@@ -130,23 +126,14 @@ public partial class CatheterPage : ContentPage
     {
         await _api.CheckCatheterAppointment(catheter);
         cathers.Remove(catheter);
-        CathetersListView.ItemsSource = cathers.OrderBy(d => d.Date);
-        _cacheData._isCathetersLoaded = false;
+        _cacheData.InvalidateCatheters();
     }
 
-    private async void UpdateCatheterAppointment(Catheter catheter)
+    private void UpdateCatheterAppointment(Catheter catheter)
     {
         PatientNameEntry.Text = catheter.ClientName;
         PhoneEntry.Text = catheter.PhoneNumber;
         CatheterDatePicker.Date = catheter.Date;
         AddressEntry.Text = catheter.Address;
-    }
-
-    private void OnMainFabClicked(object sender, EventArgs e)
-    {
-        _isMenuOpen = !_isMenuOpen;
-
-        HistoryButton.IsVisible = _isMenuOpen;
-        MainWindowButton.IsVisible = _isMenuOpen;
     }
 }

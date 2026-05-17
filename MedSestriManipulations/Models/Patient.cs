@@ -13,7 +13,7 @@ namespace MedSestriManipulations.Models
         public string LabId { get; set; } = "";
         public string LabPassword { get; set; } = "";
         public DateTime Date { get; set; }
-        public List<BloodTest> BloodTests { get; set; }
+        public List<BloodTest> BloodTests { get; set; } = new();
 
         private bool isSelected;
 

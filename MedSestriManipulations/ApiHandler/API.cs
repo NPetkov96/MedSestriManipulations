@@ -39,9 +39,6 @@ namespace MedSestriManipulations.ApiHandler
         //                                      PATIENTS
         public async Task<HttpResponseMessage> CreateNewPatient(Patient model)
         {
-            string json = JsonSerializer.Serialize(model, new JsonSerializerOptions { WriteIndented = true });
-
-
             var response = await _httpClient.PostAsJsonAsync("api/Bodimed/createPatient", model);
             return response;
         }
@@ -74,8 +71,6 @@ namespace MedSestriManipulations.ApiHandler
         //                                      CATHETERS
         public async Task<HttpResponseMessage> CreateCatheterappointment(Catheter model)
         {
-            string json = JsonSerializer.Serialize(model, new JsonSerializerOptions { WriteIndented = true });
-
             var resposne = await _httpClient.PostAsJsonAsync("api/Bodimed/createCatheterAppointment", model);
             return resposne;
         }
@@ -94,15 +89,11 @@ namespace MedSestriManipulations.ApiHandler
 
         public async Task CheckCatheterAppointment(Catheter model)
         {
-            string json = JsonSerializer.Serialize(model, new JsonSerializerOptions { WriteIndented = true });
-
             await _httpClient.PutAsJsonAsync("api/Bodimed/checkCatheterAppointment", model);
         }
 
         public async Task UpdateCatheterAppointment(Catheter model)
         {
-            string json = JsonSerializer.Serialize(model, new JsonSerializerOptions { WriteIndented = true });
-
             await _httpClient.PutAsJsonAsync("api/Bodimed/updateCatheterAppointment", model);
         }
     }

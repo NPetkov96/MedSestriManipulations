@@ -2,96 +2,66 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:MedSestriManipulations"
+             xmlns:controls="clr-namespace:MedSestriManipulations.Controls"
+             xmlns:models="clr-namespace:MedSestriManipulations.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:services="clr-namespace:MedSestriManipulations.Services"
              BackgroundColor="#dfe9f5"
              x:Class="MedSestriManipulations.HistoryPage">
 
-    <AbsoluteLayout>
-        <ScrollView AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
-            <VerticalStackLayout  Spacing="10" >
-                <Grid ColumnDefinitions="auto,*,auto" ColumnSpacing="8" x:Name="SearchGrid">
+    <Grid RowDefinitions="Auto,*">
+        <controls:TopNavigationMenu Grid.Row="0" />
 
-                    <toolkit:Expander x:Name="ExpanderEGN" Grid.Column="1" Grid.ColumnSpan="1" IsExpanded="True">
-                        <VerticalStackLayout Padding="10">
-                            <Entry x:Name="InputEntry" Placeholder="Търси пациент" FontSize="15"/>
-                            <Grid ColumnSpacing="3" Margin="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Text="Търси" FontSize="12" BackgroundColor="#007ACC" TextColor="White" Clicked="SearchText" />
-                                <Button Grid.Column="3" Text="Зачисти" FontSize="10" BackgroundColor="DarkRed" TextColor="White" Clicked="ClearSearchBar" />
+        <CollectionView x:Name="HistoryList" Grid.Row="1" SelectionMode="None" BackgroundColor="#dfe9f5">
+            <CollectionView.Header>
+                <VerticalStackLayout Spacing="10" Padding="0,0,0,6">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" x:Name="SearchGrid">
+                        <toolkit:Expander x:Name="ExpanderEGN" Grid.Column="1" IsExpanded="True">
+                            <VerticalStackLayout Padding="10">
+                                <Entry x:Name="InputEntry" Placeholder="Търси пациент" FontSize="15" />
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="3">
+                                    <Button Grid.Column="0" Text="Търси" FontSize="12" BackgroundColor="#007ACC" TextColor="White" Clicked="SearchText" />
+                                    <Button Grid.Column="1" Text="Зачисти" FontSize="10" BackgroundColor="DarkRed" TextColor="White" Clicked="ClearSearchBar" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </toolkit:Expander>
+                    </Grid>
+
+                    <Border x:Name="SelectedPatientCard" Margin="10" Padding="15" BackgroundColor="#f0f4f8" Stroke="#D0DCEB" StrokeShape="RoundRectangle 15">
+                        <VerticalStackLayout>
+                            <Label x:Name="FullNameLabel" Text="{Binding SelectedPatient.FullName}" FontAttributes="Bold" FontSize="20" TextColor="Black" />
+                            <Label x:Name="DateLabel" Text="{Binding SelectedPatient.Date}" FontAttributes="Bold" FontSize="16" TextColor="Gray" />
+                            <Label x:Name="NoteLabel" Text="{Binding SelectedPatient.Note}" FontSize="14" TextColor="Gray" />
+                            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6" Margin="0,10,0,0">
+                                <Button Grid.Column="0" Text="Изтрий" FontSize="12" BackgroundColor="DarkRed" TextColor="White" Clicked="Delete" />
+                                <Button Grid.Column="1" Text="Копирай" FontSize="10" BackgroundColor="White" TextColor="Black" Clicked="Coppy" />
+                                <Button Grid.Column="2" Text="Използвай" FontSize="10" BackgroundColor="DarkSeaGreen" TextColor="Black" Clicked="ReUsePatient" />
                             </Grid>
                         </VerticalStackLayout>
-                    </toolkit:Expander>
+                    </Border>
+                </VerticalStackLayout>
+            </CollectionView.Header>
 
-                </Grid>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Patient">
+                    <Border Stroke="#dfe9f5" StrokeShape="RoundRectangle 20" Padding="7" Margin="5" BackgroundColor="#cbdbeb">
+                        <VerticalStackLayout Margin="5,0">
+                            <Label Text="{Binding FullName}" FontAttributes="Bold" FontSize="16" TextColor="DarkBlue">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HistoryPage}}, Path=BindingContext.UpdateCard}" CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
 
-                <Frame x:Name="SelectedPatientCard" Margin="10" Padding="15" BackgroundColor="#f0f4f8" CornerRadius="15" HasShadow="True">
-                    <VerticalStackLayout>
-                        <Label x:Name="FullNameLabel" Text="{Binding SelectedPatient.FullName}" FontAttributes="Bold" FontSize="20" TextColor="Black"/>
-                        <!--<Label x:Name="EGNLabel" Text="{Binding SelectedPatient.EGN}" FontAttributes="Bold" FontSize="16" TextColor="Gray"/>-->
-                        <Label x:Name="DateLabel" Text="{Binding SelectedPatient.Date}" FontAttributes="Bold" FontSize="16" TextColor="Gray"/>
-                        <Label x:Name="NoteLabel" Text="{Binding SelectedPatient.Note}" FontSize="14" TextColor="Gray"/>
-                        <Grid ColumnSpacing="6" Margin="0,10,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0" Text="Изтрий" FontSize="12" BackgroundColor="DarkRed" TextColor="White" Clicked="Delete" />
-                            <Button Grid.Column="1" Text="Копирай" FontSize="10" BackgroundColor="White" TextColor="Black" Clicked="Coppy" />
-                            <Button Grid.Column="2" Text="Използвай" FontSize="10" BackgroundColor="DarkSeaGreen" TextColor="Black" Clicked="ReUsePatient" />
-                        </Grid>
-                    </VerticalStackLayout>
-                </Frame>
+                            <Label Text="{Binding Date}" FontSize="14" TextColor="Gray">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HistoryPage}}, Path=BindingContext.UpdateCard}" CommandParameter="{Binding .}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
-                <CollectionView x:Name="HistoryList" SelectionMode="None" BackgroundColor="#dfe9f5">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Border Stroke="#dfe9f5" StrokeShape="RoundRectangle 20" Padding="7" Margin="5" BackgroundColor="#cbdbeb">
-
-                                <StackLayout Margin="5,0">
-                                    <Label Text="{Binding FullName}" FontAttributes="Bold" FontSize="16" TextColor="DarkBlue">
-                                        <Label.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HistoryPage}}, Path=BindingContext.UpdateCard}" CommandParameter="{Binding .}" />
-                                        </Label.GestureRecognizers>
-                                    </Label>
-
-                                    <HorizontalStackLayout>
-                                        <Label Text="{Binding Date}" FontSize="14" TextColor="Gray">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HistoryPage}}, Path=BindingContext.UpdateCard}" CommandParameter="{Binding .}" />
-                                            </Label.GestureRecognizers>
-                                        </Label>
-                                    </HorizontalStackLayout>
-                                </StackLayout>
-
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </VerticalStackLayout>
-        </ScrollView>
-
-
-
-        <!-- FAB меню бутон -->
-        <Frame x:Name="MainFabButton" BackgroundColor="White" CornerRadius="25" HasShadow="True" AbsoluteLayout.LayoutBounds="0.96,0.98,60,60" AbsoluteLayout.LayoutFlags="PositionProportional">
-            <ImageButton Source="medsestri_logo.png" Clicked="OnMainFabClicked" BackgroundColor="Transparent" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center" VerticalOptions="Center" />
-        </Frame>
-
-        <!-- Бутон 1: Катетри -->
-        <Frame x:Name="CatheterButton" BackgroundColor="White" CornerRadius="25" HeightRequest="60" WidthRequest="60" IsVisible="False" AbsoluteLayout.LayoutBounds="0.95,0.81,50,50" AbsoluteLayout.LayoutFlags="PositionProportional">
-            <ImageButton Source="catheter.png" Command="{x:Static services:NavigationService.NavigateToCatheterCommand}" BackgroundColor="Transparent" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center" VerticalOptions="Center"/>
-        </Frame>
-
-        <!-- Бутон 2: Начален екран -->
-        <Frame x:Name="MainWindowButton" BackgroundColor="#007BFF" CornerRadius="25" HeightRequest="60" WidthRequest="60" IsVisible="False" AbsoluteLayout.LayoutBounds="0.95,0.89,50,50" AbsoluteLayout.LayoutFlags="PositionProportional">
-            <ImageButton Source="home.png" Command="{x:Static services:NavigationService.NavigateToHomeCommand}" BackgroundColor="Transparent" WidthRequest="70" HeightRequest="70" HorizontalOptions="Center" VerticalOptions="Center"/>
-        </Frame>
-
-        <ActivityIndicator x:Name="LoadingIndicator" IsRunning="False" IsVisible="False" Color="DarkBlue" AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1" AbsoluteLayout.LayoutFlags="PositionProportional" WidthRequest="50" HeightRequest="50" />
-    </AbsoluteLayout>
+        <ActivityIndicator x:Name="LoadingIndicator" Grid.RowSpan="2" IsRunning="False" IsVisible="False" Color="DarkBlue" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="50" HeightRequest="50" />
+    </Grid>
 </ContentPage>

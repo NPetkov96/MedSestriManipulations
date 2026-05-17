@@ -7,20 +7,28 @@ namespace MedSestriManipulations
 {
     public partial class App : Application
     {
+        private bool _mainShellShown;
+
         public App()
         {
             InitializeComponent();
-
-            //AppLifetimeManager.StartTracking();
         }
-        protected override async void OnStart()
+        protected override void OnStart()
         {
-            await CheckNotificationPermissionAsync();
         }
 
         public async Task CheckNotificationPermissionAsync()
         {
 #if ANDROID
+            await CheckNotificationPermissionAndroidAsync();
+#else
+            await Task.CompletedTask;
+#endif
+        }
+
+#if ANDROID
+        private async Task CheckNotificationPermissionAndroidAsync()
+        {
             if (DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 13)
             {
                 var status = await Permissions.CheckStatusAsync<Notifications>();
@@ -31,7 +39,10 @@ namespace MedSestriManipulations
 
                     if (status != PermissionStatus.Granted)
                     {
-                        await Application.Current.MainPage.DisplayAlert(
+                        var page = Application.Current?.Windows.FirstOrDefault()?.Page;
+                        if (page == null) return;
+
+                        await page.DisplayAlert(
                             "Разрешение за известия",
                             "Известията са изключени. Моля, разрешете ги ръчно от настройките на телефона.",
                             "ОК");
@@ -40,8 +51,8 @@ namespace MedSestriManipulations
                     }
                 }
             }
-#endif
         }
+#endif
 
         public void OpenAppSettings()
         {
@@ -56,7 +67,26 @@ namespace MedSestriManipulations
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            return new Window(new LaunchPage());
+        }
+
+        public async Task ShowMainShellAsync()
+        {
+            if (_mainShellShown)
+            {
+                return;
+            }
+
+            _mainShellShown = true;
+
+            var window = Application.Current?.Windows.FirstOrDefault();
+            if (window == null)
+            {
+                return;
+            }
+
+            window.Page = new AppShell();
+            await CheckNotificationPermissionAsync();
         }
     }
 }

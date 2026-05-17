@@ -19,13 +19,13 @@ namespace MedSestriManipulations.Platforms.Android
                                ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
     public class MainActivity : MauiAppCompatActivity
     {
-        private CachedDataService _cacheData;
+        private CachedDataService? _cacheData;
 
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
-            _cacheData = MauiApplication.Current.Services.GetService<CachedDataService>();
+            _cacheData = IPlatformApplication.Current?.Services.GetService<CachedDataService>();
 
             HandleIntent(Intent);
 
@@ -38,20 +38,20 @@ namespace MedSestriManipulations.Platforms.Android
 
         }
 
-        protected override void OnNewIntent(Intent intent)
+        protected override void OnNewIntent(Intent? intent)
         {
             base.OnNewIntent(intent);
             HandleIntent(intent);
         }
 
-        private void HandleIntent(Intent intent)
+        private void HandleIntent(Intent? intent)
         {
             if (intent?.Extras != null && intent.Extras.ContainsKey("navigate"))
             {
                 var destination = intent.Extras.GetString("navigate");
                 if (destination == "catheter")
                 {
-                    _cacheData._isCathetersLoaded = false;
+                    _cacheData?.InvalidateCatheters();
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
                         Shell.Current.GoToAsync("//CatheterPage");

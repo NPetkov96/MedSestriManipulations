@@ -45,7 +45,7 @@ namespace MedSestriManipulations.Platforms.Android.Services
 
             var notificationManager = NotificationManager.FromContext(this);
 
-            notificationManager.Notify(0, notificationBuilder.Build());
+            notificationManager?.Notify(0, notificationBuilder.Build());
         }
     }
 }

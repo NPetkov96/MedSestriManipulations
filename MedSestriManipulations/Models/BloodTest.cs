@@ -6,7 +6,7 @@ namespace MedSestriManipulations.Models
     public class BloodTest : INotifyPropertyChanged
     {
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         [JsonPropertyName("bngPrice")]
         public decimal BngPrice { get; set; }

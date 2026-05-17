@@ -1,105 +1,75 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:services="clr-namespace:MedSestriManipulations.Services"
              x:Class="MedSestriManipulations.CatheterPage"
-             Title="Катетри"
              xmlns:local="clr-namespace:MedSestriManipulations"
+             xmlns:controls="clr-namespace:MedSestriManipulations.Controls"
+             xmlns:models="clr-namespace:MedSestriManipulations.Models"
              BackgroundColor="#dfe9f5">
 
-    <AbsoluteLayout>
+    <Grid RowDefinitions="Auto,*">
+        <controls:TopNavigationMenu Grid.Row="0" />
 
-        <!-- Scrollable form -->
-        <ScrollView AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
-            <VerticalStackLayout Padding="5">
+        <CollectionView x:Name="CathetersListView" Grid.Row="1" Margin="5,0,5,20">
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="0,5,0,8" Spacing="8">
+                    <Label Text="Катетри" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" />
 
-                <!-- Заглавие -->
-                <Label Text="Катетри" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Border Stroke="#CCCCCC" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,0">
+                        <Entry x:Name="PatientNameEntry" Placeholder="Име на пациента" FontSize="18" TextColor="#000" HeightRequest="45" />
+                    </Border>
 
-                <!-- Име -->
-                <Border Stroke="#CCCCCC" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,0">
-                    <Entry x:Name="PatientNameEntry" Placeholder="Име на пациента" FontSize="18" TextColor="#000" HeightRequest="45"/>
-                </Border>
+                    <Border Stroke="#CCCCCC" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,0">
+                        <Entry x:Name="PhoneEntry" Placeholder="Телефон" Keyboard="Numeric" FontSize="18" TextColor="#000" HeightRequest="45" />
+                    </Border>
 
-                <!-- Телефон -->
-                <Border Stroke="#CCCCCC" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,0">
-                    <Entry x:Name="PhoneEntry" Placeholder="Телефон" Keyboard="Numeric" FontSize="18" TextColor="#000" HeightRequest="45"/>
-                </Border>
+                    <Label Text="Дата на поставяне" FontAttributes="Bold" FontSize="16" Margin="10,10,0,0" />
+                    <Border Stroke="#CCCCCC" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,0">
+                        <DatePicker x:Name="CatheterDatePicker" FontSize="18" />
+                    </Border>
 
-                <!-- Дата на поставяне -->
-                <Label Text="Дата на поставяне" FontAttributes="Bold" FontSize="16" Margin="10,10,0,0"/>
-                <Border Stroke="#CCCCCC" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,0">
-                    <DatePicker x:Name="CatheterDatePicker" FontSize="18" />
-                </Border>
+                    <Border Stroke="#CCCCCC" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,0">
+                        <Editor x:Name="AddressEntry" Placeholder="Адрес" FontSize="16" AutoSize="TextChanges" HeightRequest="100" />
+                    </Border>
 
-                <!-- Адрес -->
-                <Border Stroke="#CCCCCC" BackgroundColor="White" StrokeShape="RoundRectangle 20" Padding="10,0">
-                    <Editor x:Name="AddressEntry" Placeholder="Адрес" FontSize="16" AutoSize="TextChanges" HeightRequest="100"/>
-                </Border>
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="15" Padding="0,10">
+                        <Button Text="Запиши" Clicked="OnSaveClicked" BackgroundColor="#007BFF" TextColor="White" CornerRadius="20" Padding="40,10" FontAttributes="Bold" />
+                        <Button Text="Изчисти" Clicked="ClearFields" BackgroundColor="DarkRed" TextColor="White" CornerRadius="20" Padding="40,10" FontAttributes="Bold" />
+                    </HorizontalStackLayout>
 
-                <!-- Бутон за записване -->
-                <HorizontalStackLayout HorizontalOptions="Center" Spacing="15" Padding="0,10">
-                    <Button Text="Запиши" Clicked="OnSaveClicked" BackgroundColor="#007BFF" TextColor="White" CornerRadius="20" Padding="40,10" FontAttributes="Bold"></Button>
-                    <Button Text="Изчисти" Clicked="ClearFields" BackgroundColor="DarkRed" TextColor="White" CornerRadius="20" Padding="40,10" FontAttributes="Bold"></Button>
-                </HorizontalStackLayout>
+                    <Label Text="Записани катетри:" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0" />
+                </VerticalStackLayout>
+            </CollectionView.Header>
 
-                <!-- Списък с въведени катетри -->
-                <Label Text="Записани катетри:" FontSize="18" FontAttributes="Bold" Margin="0,10,0,0"/>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Catheter">
+                    <Border BackgroundColor="White" Stroke="#D0DCEB" StrokeShape="RoundRectangle 12" Padding="10" Margin="0,5">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={x:Reference CathetersListView}, Path=BindingContext.ShowPopupCommand}" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
 
-                <CollectionView x:Name="CathetersListView" ItemsSource="{Binding cathers}" Margin="0,0,0,20" HeightRequest="900">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Frame BackgroundColor="White" CornerRadius="12" Padding="10" Margin="0,5">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding IsOverdue}" Value="True">
+                                <Setter Property="BackgroundColor" Value="#FFF4D6" />
+                            </DataTrigger>
+                        </Border.Triggers>
 
-                                <Frame.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={x:Reference CathetersListView}, Path=BindingContext.ShowPopupCommand}" CommandParameter="{Binding .}" />
-                                </Frame.GestureRecognizers>
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="{Binding ClientName}" FontSize="16" FontAttributes="Bold" />
+                            <Label Text="{Binding PhoneNumber}" FontSize="14" />
+                            <Label Text="{Binding Date, StringFormat='Дата: {0:dd.MM.yyyy}'}" FontSize="14" />
+                            <Label Text="{Binding Address}" FontSize="14" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
-                                <Frame.Triggers>
-                                    <DataTrigger TargetType="Frame" Binding="{Binding IsOverdue}" Value="True">
-                                        <Setter Property="BackgroundColor" Value="Beige" />
-                                    </DataTrigger>
-                                </Frame.Triggers>
-                                
-                                <Grid>
-                                    <VerticalStackLayout Grid.Column="1" Spacing="5">
-                                        <Label Text="{Binding ClientName}" FontSize="16" FontAttributes="Bold"/>
-                                        <Label Text="{Binding PhoneNumber}" FontSize="14"/>
-                                        <Label Text="{Binding Date, StringFormat='Дата: {0:dd.MM.yyyy}'}" FontSize="14"/>
-                                        <Label Text="{Binding Address}" FontSize="14"/>
-                                    </VerticalStackLayout>
-                                </Grid>
-
-                            </Frame>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-
-            </VerticalStackLayout>
-        </ScrollView>
-
-        <!-- FAB меню бутон -->
-        <Frame x:Name="MainFabButton" BackgroundColor="White" CornerRadius="25" HasShadow="True" AbsoluteLayout.LayoutBounds="0.96,0.98,60,60" AbsoluteLayout.LayoutFlags="PositionProportional">
-            <ImageButton Source="medsestri_logo.png" Clicked="OnMainFabClicked" BackgroundColor="Transparent" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center" VerticalOptions="Center" />
-        </Frame>
-
-        <!-- Бутон 1: История -->
-        <Frame x:Name="HistoryButton" BackgroundColor="#007BFF" CornerRadius="25" HeightRequest="60" WidthRequest="60" IsVisible="False" AbsoluteLayout.LayoutBounds="0.95,0.81,50,50" AbsoluteLayout.LayoutFlags="PositionProportional">
-            <ImageButton Source="history.png" Command="{x:Static services:NavigationService.NavigateToHistoryCommand}" BackgroundColor="Transparent" WidthRequest="40" HeightRequest="40" HorizontalOptions="Center" VerticalOptions="Center"/>
-        </Frame>
-
-        <!-- Бутон 2: Начален екран -->
-        <Frame x:Name="MainWindowButton" BackgroundColor="#007BFF" CornerRadius="25" HeightRequest="60" WidthRequest="60" IsVisible="False" AbsoluteLayout.LayoutBounds="0.95,0.89,50,50" AbsoluteLayout.LayoutFlags="PositionProportional">
-            <ImageButton Source="home.png" Command="{x:Static services:NavigationService.NavigateToHomeCommand}" BackgroundColor="Transparent" WidthRequest="70" HeightRequest="70" HorizontalOptions="Center" VerticalOptions="Center"/>
-        </Frame>
-
-        <!-- Зареждащ overlay -->
-        <Grid x:Name="LoadingOverlay" BackgroundColor="#80000000" IsVisible="False" AbsoluteLayout.LayoutBounds="0,0,1,1" AbsoluteLayout.LayoutFlags="All">
-            <StackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10">
+        <Grid x:Name="LoadingOverlay" Grid.RowSpan="2" BackgroundColor="#80000000" IsVisible="False">
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10">
                 <ActivityIndicator IsRunning="True" IsVisible="True" WidthRequest="60" HeightRequest="60" Color="White" />
-                <Label Text="Записване..." TextColor="White" FontSize="16" HorizontalOptions="Center"/>
-            </StackLayout>
+                <Label Text="Записване..." TextColor="White" FontSize="16" HorizontalOptions="Center" />
+            </VerticalStackLayout>
         </Grid>
-
-    </AbsoluteLayout>
+    </Grid>
 </ContentPage>

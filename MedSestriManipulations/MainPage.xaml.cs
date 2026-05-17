@@ -9,8 +9,7 @@ namespace MedSestriManipulations
 {
     public partial class MainPage : ContentPage
     {
-        private bool _isMenuOpen = false;
-        private CancellationTokenSource _filterCts;
+        private CancellationTokenSource? _filterCts;
 
         public ObservableCollection<BloodTest> BloodTestsList = new();
         public ObservableCollection<BloodTest> BloodTests = new();
@@ -59,8 +58,6 @@ namespace MedSestriManipulations
                     }
 
                     SelectedPatientService.PatientToReuse = null;
-                    _isMenuOpen = true;
-                    OnMainFabClicked(null, null);
                 }
                 else
                 {
@@ -70,18 +67,14 @@ namespace MedSestriManipulations
             catch (Exception ex)
             {
                 await DisplayAlert("Грешка", $"{ex.Message}", "OK");
-#if ANDROID
-                Java.Lang.JavaSystem.Exit(0);
-#endif
-
             }
 
         }
         private async void ShowsPopupDetailsBloodTest(object sender, EventArgs e)
         {
-            if (sender is StackLayout layout && layout.Children.FirstOrDefault() is Label label && label.Text is string text)
+            if (sender is BindableObject { BindingContext: BloodTest test })
             {
-                await DisplayAlert("Пълна информация", text, "Затвори");
+                await DisplayAlert("Пълна информация", test.Name, "Затвори");
             }
         }
         private void AddSumWhenBloodTestChecked(object sender, CheckedChangedEventArgs e)
@@ -160,7 +153,7 @@ namespace MedSestriManipulations
                 };
 
                 var response = await _api.CreateNewPatient(createPatient);
-                _cachedData._isPatientsLoaded = false;
+                _cachedData.InvalidatePatients();
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -184,9 +177,9 @@ namespace MedSestriManipulations
         {
             await LoadMorePaginationProceduresAsync();
         }
-        private async void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
-            _ = FilterBloodTests(); //Dont change
+            _ = FilterBloodTests();
         }
 
         private void ClearAllFeald()
@@ -216,38 +209,47 @@ namespace MedSestriManipulations
             _filterCts = new CancellationTokenSource();
             var token = _filterCts.Token;
 
-            await Task.Delay(300, token);
-            BloodTests.Clear();
-            _paginationState.Reset();
-            await LoadMorePaginationProceduresAsync();
+            try
+            {
+                await Task.Delay(300, token);
+                BloodTests.Clear();
+                _paginationState.Reset();
+                await LoadMorePaginationProceduresAsync(token);
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
-        private async Task LoadMorePaginationProceduresAsync()
+        private Task LoadMorePaginationProceduresAsync()
+        {
+            return LoadMorePaginationProceduresAsync(CancellationToken.None);
+        }
+
+        private async Task LoadMorePaginationProceduresAsync(CancellationToken token)
         {
             if (_paginationState.IsLoading) return;
             _paginationState.IsLoading = true;
 
-            var matching = await Task.Run(() => BloodTestsList
-                    .Where(p => p.Name.ToLower().Contains(SearchBar.Text?.ToLower() ?? ""))
-                    .Skip(_paginationState.CurrentIndex)
-                    .Take(_paginationState.VisibleThreshold)
-                    .ToList());
+            try
+            {
+                var searchText = SearchBar.Text?.Trim() ?? string.Empty;
+                var matching = await Task.Run(() => BloodTestsList
+                        .Where(p => p.Name.Contains(searchText, StringComparison.CurrentCultureIgnoreCase))
+                        .Skip(_paginationState.CurrentIndex)
+                        .Take(_paginationState.VisibleThreshold)
+                        .ToList(), token);
 
 
-            var toAdd = matching.Except(BloodTests).ToList();
-            foreach (var item in toAdd)
-                BloodTests.Add(item);
+                var toAdd = matching.Except(BloodTests).ToList();
+                foreach (var item in toAdd)
+                    BloodTests.Add(item);
 
-            _paginationState.CurrentIndex += matching.Count;
-            _paginationState.IsLoading = false;
-        }
-
-
-        private void OnMainFabClicked(object sender, EventArgs e)
-        {
-            _isMenuOpen = !_isMenuOpen;
-
-            CatheterButton.IsVisible = _isMenuOpen;
-            HistoryButton.IsVisible = _isMenuOpen;
+                _paginationState.CurrentIndex += matching.Count;
+            }
+            finally
+            {
+                _paginationState.IsLoading = false;
+            }
         }
 
     }
