@@ -17,15 +17,10 @@
                 <Grid ColumnDefinitions="*,Auto">
                     <VerticalStackLayout Spacing="0" VerticalOptions="Center">
                         <Label
-                            Text="MedSestri"
+                            Text="Медицински Сестри"
                             FontSize="18"
                             FontAttributes="Bold"
                             TextColor="#172033" />
-
-                        <Label
-                            Text="Навигация"
-                            FontSize="11"
-                            TextColor="#667085" />
                     </VerticalStackLayout>
 
                     <Button
