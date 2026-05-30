@@ -1,67 +1,204 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:MedSestriManipulations"
-             xmlns:controls="clr-namespace:MedSestriManipulations.Controls"
              xmlns:models="clr-namespace:MedSestriManipulations.Models"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             BackgroundColor="#dfe9f5"
-             x:Class="MedSestriManipulations.HistoryPage">
+             xmlns:controls="clr-namespace:MedSestriManipulations.Controls"
+             x:Class="MedSestriManipulations.HistoryPage"
+             BackgroundColor="#F8F9FB">
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,Auto,*">
+
+        <!-- Row 0: Top Navigation -->
         <controls:TopNavigationMenu Grid.Row="0" />
 
-        <CollectionView x:Name="HistoryList" Grid.Row="1" SelectionMode="None" BackgroundColor="#dfe9f5">
-            <CollectionView.Header>
-                <VerticalStackLayout Spacing="10" Padding="0,0,0,6">
-                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8" x:Name="SearchGrid">
-                        <toolkit:Expander x:Name="ExpanderEGN" Grid.Column="1" IsExpanded="True">
-                            <VerticalStackLayout Padding="10">
-                                <Entry x:Name="InputEntry" Placeholder="Търси пациент" FontSize="15" />
-                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="3">
-                                    <Button Grid.Column="0" Text="Търси" FontSize="12" BackgroundColor="#007ACC" TextColor="White" Clicked="SearchText" />
-                                    <Button Grid.Column="1" Text="Зачисти" FontSize="10" BackgroundColor="DarkRed" TextColor="White" Clicked="ClearSearchBar" />
-                                </Grid>
-                            </VerticalStackLayout>
-                        </toolkit:Expander>
-                    </Grid>
+        <!-- Row 1: Header + search (matches MainPage) -->
+        <VerticalStackLayout Grid.Row="1" Padding="16,12,16,8" Spacing="10" BackgroundColor="#F8F9FB">
 
-                    <Border x:Name="SelectedPatientCard" Margin="10" Padding="15" BackgroundColor="#f0f4f8" Stroke="#D0DCEB" StrokeShape="RoundRectangle 15">
-                        <VerticalStackLayout>
-                            <Label x:Name="FullNameLabel" Text="{Binding SelectedPatient.FullName}" FontAttributes="Bold" FontSize="20" TextColor="Black" />
-                            <Label x:Name="DateLabel" Text="{Binding SelectedPatient.Date}" FontAttributes="Bold" FontSize="16" TextColor="Gray" />
-                            <Label x:Name="NoteLabel" Text="{Binding SelectedPatient.Note}" FontSize="14" TextColor="Gray" />
-                            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6" Margin="0,10,0,0">
-                                <Button Grid.Column="0" Text="Изтрий" FontSize="12" BackgroundColor="DarkRed" TextColor="White" Clicked="Delete" />
-                                <Button Grid.Column="1" Text="Копирай" FontSize="10" BackgroundColor="White" TextColor="Black" Clicked="Coppy" />
-                                <Button Grid.Column="2" Text="Използвай" FontSize="10" BackgroundColor="DarkSeaGreen" TextColor="Black" Clicked="ReUsePatient" />
-                            </Grid>
-                        </VerticalStackLayout>
-                    </Border>
-                </VerticalStackLayout>
-            </CollectionView.Header>
+            <Label Text="История на пациенти"
+                   FontSize="16" FontAttributes="Bold"
+                   TextColor="#1A1A1A" />
 
+            <Border Stroke="#D4DDE8" StrokeThickness="1"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="6,0">
+                <SearchBar x:Name="SearchBar"
+                           Placeholder="Търси пациент..."
+                           TextChanged="OnSearchTextChanged"
+                           BackgroundColor="Transparent"
+                           FontSize="14" HeightRequest="48"
+                           CancelButtonColor="#0066CC"
+                           TextColor="#1A1A1A"
+                           PlaceholderColor="#999999" />
+            </Border>
+        </VerticalStackLayout>
+
+        <!-- Row 2: Patients list -->
+        <CollectionView Grid.Row="2"
+                        x:Name="PatientsCollection"
+                        SelectionMode="None"
+                        Margin="16,4,16,0">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Patient">
-                    <Border Stroke="#dfe9f5" StrokeShape="RoundRectangle 20" Padding="7" Margin="5" BackgroundColor="#cbdbeb">
-                        <VerticalStackLayout Margin="5,0">
-                            <Label Text="{Binding FullName}" FontAttributes="Bold" FontSize="16" TextColor="DarkBlue">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HistoryPage}}, Path=BindingContext.UpdateCard}" CommandParameter="{Binding .}" />
-                                </Label.GestureRecognizers>
-                            </Label>
+                    <Border Margin="0,5,0,5"
+                            StrokeShape="RoundRectangle 8"
+                            BackgroundColor="White"
+                            Stroke="#D4DDE8"
+                            StrokeThickness="1">
+                        <Grid ColumnDefinitions="*,Auto" Padding="14,12" ColumnSpacing="12">
 
-                            <Label Text="{Binding Date}" FontSize="14" TextColor="Gray">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:HistoryPage}}, Path=BindingContext.UpdateCard}" CommandParameter="{Binding .}" />
-                                </Label.GestureRecognizers>
-                            </Label>
-                        </VerticalStackLayout>
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnPatientTapped" />
+                            </Grid.GestureRecognizers>
+
+                            <!-- Left: patient info -->
+                            <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
+                                <Label Text="{Binding FullName}"
+                                       FontSize="15" FontAttributes="Bold"
+                                       TextColor="#1A1A1A" LineBreakMode="TailTruncation" />
+
+                                <HorizontalStackLayout Spacing="6">
+                                    <Label Text="{Binding EGN}" FontSize="12" TextColor="#666666" />
+                                    <Label Text="·" FontSize="11" TextColor="#999999" />
+                                    <Label Text="{Binding PhoneNumber}" FontSize="12" TextColor="#666666" />
+                                </HorizontalStackLayout>
+
+                                <Label Text="{Binding DateText}" FontSize="11" TextColor="#999999" />
+                            </VerticalStackLayout>
+
+                            <!-- Right: totals + chevron -->
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center"
+                                                 HorizontalOptions="End" Spacing="2">
+                                <Label Text="{Binding TotalEuro, StringFormat='{0:F2} €'}"
+                                       FontSize="14" FontAttributes="Bold"
+                                       TextColor="#0066CC" HorizontalOptions="End" />
+                                <Label Text="{Binding TestsCountText}"
+                                       FontSize="11" TextColor="#999999" HorizontalOptions="End" />
+                            </VerticalStackLayout>
+                        </Grid>
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+
+            <CollectionView.Footer>
+                <BoxView HeightRequest="20" Color="Transparent" />
+            </CollectionView.Footer>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
+                                     Padding="32,60" Spacing="10">
+                    <Label Text="🗂"
+                           FontSize="44"
+                           HorizontalOptions="Center"
+                           Opacity="0.4" />
+                    <Label Text="Няма намерени пациенти"
+                           FontSize="16" FontAttributes="Bold"
+                           TextColor="#666666"
+                           HorizontalOptions="Center" />
+                    <Label Text="Изпратените пациенти ще се показват тук"
+                           FontSize="13"
+                           TextColor="#AAAAAA"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
         </CollectionView>
 
-        <ActivityIndicator x:Name="LoadingIndicator" Grid.RowSpan="2" IsRunning="False" IsVisible="False" Color="DarkBlue" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="50" HeightRequest="50" />
+        <!-- Bottom sheet dim overlay -->
+        <Grid x:Name="SheetOverlay"
+              Grid.RowSpan="3"
+              IsVisible="False"
+              BackgroundColor="#70000000">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnSheetOverlayTapped" />
+            </Grid.GestureRecognizers>
+        </Grid>
+
+        <!-- Bottom sheet panel: patient details + actions -->
+        <Border x:Name="SheetPanel"
+                Grid.RowSpan="3"
+                VerticalOptions="End"
+                IsVisible="False"
+                BackgroundColor="White"
+                Stroke="Transparent"
+                StrokeShape="RoundRectangle 20,20,0,0">
+            <VerticalStackLayout Spacing="14" Padding="20,12,20,32">
+
+                <!-- Drag handle -->
+                <BoxView WidthRequest="40" HeightRequest="4"
+                         BackgroundColor="#D4DDE8"
+                         HorizontalOptions="Center"
+                         CornerRadius="2" />
+
+                <Label x:Name="SheetNameLabel"
+                       Text=""
+                       FontSize="18" FontAttributes="Bold"
+                       TextColor="#1A1A1A" />
+
+                <HorizontalStackLayout Spacing="6">
+                    <Label x:Name="SheetEgnLabel" Text="" FontSize="13" TextColor="#666666" />
+                    <Label Text="·" FontSize="12" TextColor="#999999" />
+                    <Label x:Name="SheetPhoneLabel" Text="" FontSize="13" TextColor="#666666" />
+                </HorizontalStackLayout>
+
+                <Label x:Name="SheetDateLabel" Text="" FontSize="12" TextColor="#999999" />
+
+                <!-- Note / message -->
+                <Border Stroke="#D4DDE8" StrokeThickness="1"
+                        BackgroundColor="#F8F9FB"
+                        StrokeShape="RoundRectangle 8"
+                        Padding="0">
+                    <ScrollView MaximumHeightRequest="220" Padding="12,10">
+                        <Label x:Name="SheetNoteLabel"
+                               Text=""
+                               FontSize="13"
+                               TextColor="#444444" />
+                    </ScrollView>
+                </Border>
+
+                <!-- Actions -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Button Grid.Column="0"
+                            Text="Копирай"
+                            Clicked="OnCopyClicked"
+                            BackgroundColor="#E8EEF5"
+                            TextColor="#0066CC"
+                            BorderColor="#0066CC"
+                            BorderWidth="1"
+                            CornerRadius="8"
+                            HeightRequest="48"
+                            FontAttributes="Bold"
+                            FontSize="14" />
+                    <Button Grid.Column="1"
+                            Text="Използвай"
+                            Clicked="OnReuseClicked"
+                            BackgroundColor="#0066CC"
+                            TextColor="White"
+                            CornerRadius="8"
+                            HeightRequest="48"
+                            FontAttributes="Bold"
+                            FontSize="14" />
+                </Grid>
+
+                <Button Text="Изтрий пациента"
+                        Clicked="OnDeleteClicked"
+                        BackgroundColor="Transparent"
+                        TextColor="#C62828"
+                        FontSize="14"
+                        FontAttributes="Bold"
+                        HeightRequest="44" />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Loading overlay -->
+        <Grid x:Name="LoadingOverlay"
+              Grid.RowSpan="3"
+              BackgroundColor="#80000000"
+              IsVisible="False">
+            <ActivityIndicator IsRunning="True" IsVisible="True"
+                               WidthRequest="55" HeightRequest="55" Color="White"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+
     </Grid>
 </ContentPage>

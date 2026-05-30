@@ -34,6 +34,20 @@ namespace MedSestriManipulations.Models
         [JsonIgnore]
         public DateTime CreatedAtLocal => Date.ToLocalTime();
 
+        // ── UI-only display helpers ──
+        [JsonIgnore]
+        public decimal TotalEuro => BloodTests?.Sum(b => b.EuroPrice) ?? 0;
+
+        [JsonIgnore]
+        public int TestsCount => BloodTests?.Count ?? 0;
+
+        [JsonIgnore]
+        public string TestsCountText =>
+            TestsCount == 1 ? "1 изследване" : $"{TestsCount} изследвания";
+
+        [JsonIgnore]
+        public string DateText => Date.ToString("dd.MM.yyyy  ·  HH:mm");
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

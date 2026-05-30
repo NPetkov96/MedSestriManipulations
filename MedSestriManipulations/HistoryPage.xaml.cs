@@ -1,149 +1,185 @@
-﻿using MedSestriManipulations.ApiHandler;
+using MedSestriManipulations.ApiHandler;
 using MedSestriManipulations.Models;
 using MedSestriManipulations.Services;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
 
-namespace MedSestriManipulations;
-
-public partial class HistoryPage : ContentPage
+namespace MedSestriManipulations
 {
-    private readonly CachedDataService _cachedData;
-    private readonly API _api;
-    private List<Patient> _patients;
-
-    private int HistoryCountPatients;
-
-    private ObservableCollection<Patient> patients = new();
-
-    public ICommand UpdateCard { get; }
-
-    private Patient? selectedPatient;
-    public Patient? SelectedPatient
+    public partial class HistoryPage : ContentPage
     {
-        get => selectedPatient;
-        set
+        private readonly API _api;
+        private readonly CachedDataService _cachedData;
+
+        private List<Patient> _allPatients = new();
+        private Patient? _selectedPatient;
+
+        public HistoryPage(API api, CachedDataService cachedData)
         {
-            if (selectedPatient != value)
-            {
-                selectedPatient = value;
-                UpdateSelectedPatientInCollection(selectedPatient);
-                OnPropertyChanged();
-            }
+            InitializeComponent();
+            _api = api;
+            _cachedData = cachedData;
         }
-    }
 
-
-    public HistoryPage(API api, CachedDataService cachedData)
-    {
-        InitializeComponent();
-        BindingContext = this;
-        UpdateCard = new Command<Patient>(SendPatientToCard);
-
-        _patients = new List<Patient>();
-        _api = api;
-        _cachedData = cachedData;
-    }
-
-    protected override async void OnAppearing()
-    {
-        try
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
-            LoadingIndicator.IsVisible = true;
-            LoadingIndicator.IsRunning = true;
-
-            _patients = await _cachedData.GetPatientsAsync();
-
-            HistoryCountPatients = _patients.Count(x => x.Date > DateTime.Now.AddMonths(-1));
-
-            patients = new ObservableCollection<Patient>(_patients);
-            HistoryList.ItemsSource = patients.Take(HistoryCountPatients);
-            SelectedPatient = _patients.FirstOrDefault();
-        }
-        catch (Exception ex)
-        {
-            await DisplayAlert("Грешка", $"{ex.Message}", "OK");
-        }
-        finally
-        {
-            LoadingIndicator.IsRunning = false;
-            LoadingIndicator.IsVisible = false;
-        }
-    }
-    private void SearchText(object sender, EventArgs e)
-    {
-        var searchText = InputEntry.Text?.Trim() ?? string.Empty;
-        if (string.IsNullOrWhiteSpace(searchText)) return;
-
-        var user = _patients.FirstOrDefault(p => p.EGN == searchText ||
-                                                 p.PhoneNumber == searchText ||
-                                                 p.FullName.Contains(searchText, StringComparison.CurrentCultureIgnoreCase));
-        SendPatientToCard(user);
-
-        HistoryList.ItemsSource = patients
-            .OrderByDescending(m => m.FullName.Contains(searchText, StringComparison.CurrentCultureIgnoreCase))
-            .Take(HistoryCountPatients);
-        InputEntry.Text = "";
-    }
-
-    private void ClearSearchBar(object sender, EventArgs e)
-    {
-        InputEntry.Text = "";
-
-        HistoryList.ItemsSource = patients.OrderByDescending(p => p.Date).Take(HistoryCountPatients);
-        SelectedPatient = _patients.FirstOrDefault();
-    }
-
-    private async void Coppy(object sender, EventArgs e)
-    {
-        await Clipboard.SetTextAsync(SelectedPatient!.Note);
-    }
-    private async void ReUsePatient(object sender, EventArgs e)
-    {
-        SelectedPatientService.PatientToReuse = SelectedPatient;
-        await Shell.Current.GoToAsync("//MainPage");
-    }
-
-    private async void Delete(object sender, EventArgs e)
-    {
-        if (await DisplayAlert("Потвърждение", $"Сигурни ли сте, че искате да изтриете пациента: {SelectedPatient!.FullName}?", "ДА", "НЕ"))
-        {
-            if (await DisplayAlert("Потвърждение", $"Пациент: {SelectedPatient!.FullName} - ЕГН: {SelectedPatient.EGN} \n ИЗТРИЙ?", "ДА", "НЕ"))
+            try
             {
-                var result = await _api.DeletePatient(SelectedPatient.Date);
+                LoadingOverlay.IsVisible = true;
+
+                var patients = await _cachedData.GetPatientsAsync();
+                _allPatients = patients.OrderByDescending(p => p.Date).ToList();
+                ApplyFilter();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Грешка", $"{ex.Message}", "OK");
+            }
+            finally
+            {
+                LoadingOverlay.IsVisible = false;
+            }
+        }
+
+        // ─── Search ───────────────────────────────────────────────────────────
+
+        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplyFilter(e.NewTextValue);
+        }
+
+        private void ApplyFilter(string? searchText = null)
+        {
+            searchText = (searchText ?? SearchBar.Text)?.Trim() ?? string.Empty;
+
+            IEnumerable<Patient> filtered = _allPatients;
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                filtered = _allPatients.Where(p =>
+                    p.FullName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                    p.EGN.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                    p.PhoneNumber.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+            }
+
+            PatientsCollection.ItemsSource = filtered.ToList();
+        }
+
+        // ─── Bottom sheet ─────────────────────────────────────────────────────
+
+        private async void OnPatientTapped(object sender, TappedEventArgs e)
+        {
+            if (sender is BindableObject { BindingContext: Patient patient })
+            {
+                _selectedPatient = patient;
+
+                SheetNameLabel.Text = patient.FullName;
+                SheetEgnLabel.Text = patient.EGN;
+                SheetPhoneLabel.Text = patient.PhoneNumber;
+                SheetDateLabel.Text = patient.DateText;
+                SheetNoteLabel.Text = string.IsNullOrWhiteSpace(patient.Note)
+                    ? "Няма записани детайли."
+                    : patient.Note;
+
+                await ShowSheet();
+            }
+        }
+
+        private async Task ShowSheet()
+        {
+            SheetPanel.TranslationY = 600;
+            SheetOverlay.Opacity = 0;
+            SheetOverlay.IsVisible = true;
+            SheetPanel.IsVisible = true;
+
+            await Task.WhenAll(
+                SheetOverlay.FadeTo(1, 250),
+                SheetPanel.TranslateTo(0, 0, 300, Easing.CubicOut)
+            );
+        }
+
+        private async Task HideSheet()
+        {
+            await Task.WhenAll(
+                SheetOverlay.FadeTo(0, 220),
+                SheetPanel.TranslateTo(0, 600, 260, Easing.CubicIn)
+            );
+            SheetOverlay.IsVisible = false;
+            SheetPanel.IsVisible = false;
+        }
+
+        private async void OnSheetOverlayTapped(object sender, TappedEventArgs e)
+        {
+            await HideSheet();
+        }
+
+        // ─── Actions ──────────────────────────────────────────────────────────
+
+        private async void OnCopyClicked(object sender, EventArgs e)
+        {
+            if (_selectedPatient == null) return;
+            await Clipboard.SetTextAsync(_selectedPatient.Note);
+            await Toast();
+        }
+
+        private async Task Toast()
+        {
+            try
+            {
+                await CommunityToolkit.Maui.Alerts.Toast
+                    .Make("Копирано", CommunityToolkit.Maui.Core.ToastDuration.Short)
+                    .Show();
+            }
+            catch { /* toast is best-effort */ }
+        }
+
+        private async void OnReuseClicked(object sender, EventArgs e)
+        {
+            if (_selectedPatient == null) return;
+
+            SelectedPatientService.PatientToReuse = _selectedPatient;
+            await HideSheet();
+            await Shell.Current.GoToAsync("//MainPage");
+        }
+
+        private async void OnDeleteClicked(object sender, EventArgs e)
+        {
+            if (_selectedPatient == null) return;
+
+            var patient = _selectedPatient;
+
+            bool confirm = await DisplayAlert(
+                "Потвърждение",
+                $"Сигурни ли сте, че искате да изтриете пациента:\n{patient.FullName} — ЕГН: {patient.EGN}?",
+                "ДА", "НЕ");
+
+            if (!confirm) return;
+
+            try
+            {
+                LoadingOverlay.IsVisible = true;
+
+                var result = await _api.DeletePatient(patient.Date);
 
                 if (result.IsSuccessStatusCode)
                 {
-                    if (SelectedPatient != null && patients.Contains(SelectedPatient))
-                    {
-                        patients.Remove(SelectedPatient);
-                        _cachedData.InvalidatePatients();
-                        HistoryList.ItemsSource = patients.Take(HistoryCountPatients);
-                    }
-
-                    SelectedPatient = patients.FirstOrDefault();
+                    _allPatients.Remove(patient);
+                    _cachedData.InvalidatePatients();
+                    ApplyFilter();
+                    await HideSheet();
+                }
+                else
+                {
+                    await DisplayAlert("Грешка", "Неуспешно изтриване.", "OK");
                 }
             }
-        }
-    }
-
-    private void SendPatientToCard(Patient? patient)
-    {
-        if (patient == null)
-            return;
-
-        patient.IsSelected = !patient.IsSelected;
-
-        SelectedPatient = patient;
-
-    }
-
-    private void UpdateSelectedPatientInCollection(Patient? selected)
-    {
-        foreach (var patient in _patients)
-        {
-            patient.IsSelected = patient == selected;
+            catch (Exception ex)
+            {
+                await DisplayAlert("Грешка", $"{ex.Message}", "OK");
+            }
+            finally
+            {
+                LoadingOverlay.IsVisible = false;
+            }
         }
     }
 }
