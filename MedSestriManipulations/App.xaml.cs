@@ -67,7 +67,8 @@ namespace MedSestriManipulations
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new LaunchPage());
+            //return new Window(new LaunchPage());
+            return new Window(new AppShell());
         }
 
         public async Task ShowMainShellAsync()
