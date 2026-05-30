@@ -1,5 +1,6 @@
 ﻿using MedSestriManipulations.ApiHandler;
 using MedSestriManipulations.Models;
+using System.Text.Json;
 
 namespace MedSestriManipulations.Services
 {
@@ -13,6 +14,9 @@ namespace MedSestriManipulations.Services
         private bool _isPatientsLoaded;
         private bool _isCathetersLoaded;
 
+        private static readonly string _bloodTestsCacheFile =
+            Path.Combine(FileSystem.AppDataDirectory, "bloodtests_cache.json");
+
         public CachedDataService(API api)
         {
             _api = api;
@@ -20,15 +24,49 @@ namespace MedSestriManipulations.Services
 
         public async Task<List<BloodTest>> GetBloodTestsAsync()
         {
-            if (!_isBloodTestsLoaded)
+            if (_isBloodTestsLoaded)
+                return _bloodTests;
+
+            // Load from disk cache instantly if available
+            if (File.Exists(_bloodTestsCacheFile))
             {
-                _bloodTests = await _api.GetAllBloodTest();
-                _isBloodTestsLoaded = true;
+                try
+                {
+                    var json = await File.ReadAllTextAsync(_bloodTestsCacheFile);
+                    var cached = JsonSerializer.Deserialize<List<BloodTest>>(json);
+                    if (cached != null && cached.Count > 0)
+                    {
+                        _bloodTests = cached;
+                        _isBloodTestsLoaded = true;
+
+                        // Refresh from API in background without blocking
+                        _ = RefreshBloodTestsFromApiAsync();
+                        return _bloodTests;
+                    }
+                }
+                catch { /* corrupt cache — fall through to API */ }
             }
 
+            // No cache yet — fetch from API and save
+            await RefreshBloodTestsFromApiAsync();
             return _bloodTests;
         }
 
+        private async Task RefreshBloodTestsFromApiAsync()
+        {
+            try
+            {
+                var fresh = await _api.GetAllBloodTest();
+                if (fresh != null && fresh.Count > 0)
+                {
+                    _bloodTests = fresh;
+                    _isBloodTestsLoaded = true;
+                    var json = JsonSerializer.Serialize(fresh);
+                    await File.WriteAllTextAsync(_bloodTestsCacheFile, json);
+                }
+            }
+            catch { /* network error — keep whatever we had */ }
+        }
 
         public async Task<List<Patient>> GetPatientsAsync()
         {
@@ -40,7 +78,6 @@ namespace MedSestriManipulations.Services
 
             return _patients;
         }
-
 
         public async Task<List<Catheter>> GetCathetersAsync()
         {

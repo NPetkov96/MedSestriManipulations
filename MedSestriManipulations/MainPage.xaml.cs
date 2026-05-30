@@ -1,7 +1,6 @@
 using MedSestriManipulations.ApiHandler;
 using MedSestriManipulations.Models;
 using MedSestriManipulations.Services;
-using System.Collections.ObjectModel;
 using System.Text;
 
 
@@ -10,9 +9,7 @@ namespace MedSestriManipulations
     public partial class MainPage : ContentPage
     {
         private CancellationTokenSource? _filterCts;
-
-        public ObservableCollection<BloodTest> BloodTestsList = new();
-        public ObservableCollection<BloodTest> BloodTests = new();
+        private List<BloodTest> BloodTestsList = new();
 
         private readonly PaginationState _paginationState;
         private readonly API _api;
@@ -33,11 +30,8 @@ namespace MedSestriManipulations
             base.OnAppearing();
             try
             {
-                var bloodTestsListResponse = await _cachedData.GetBloodTestsAsync();
-                BloodTestsList = new ObservableCollection<BloodTest>(bloodTestsListResponse);
-                ProcedureList.ItemsSource = BloodTests;
-
-                await FilterBloodTests();
+                BloodTestsList = await _cachedData.GetBloodTestsAsync();
+                ApplyFilter();
 
                 var reusedPatient = SelectedPatientService.PatientToReuse;
                 if (reusedPatient != null)
@@ -51,8 +45,8 @@ namespace MedSestriManipulations
                     {
                         foreach (var test in reusedPatient.BloodTests)
                         {
-                            BloodTestsList.FirstOrDefault(x => x.Name == test.Name)!.IsSelected = true;
-                            //await LoadMorePaginationProceduresAsync();
+                            var match = BloodTestsList.FirstOrDefault(x => x.Name == test.Name);
+                            if (match != null) match.IsSelected = true;
                             UpdateTotalSum();
                         }
                     }
@@ -68,8 +62,8 @@ namespace MedSestriManipulations
             {
                 await DisplayAlert("Грешка", $"{ex.Message}", "OK");
             }
-
         }
+
         private async void ShowsPopupDetailsBloodTest(object sender, EventArgs e)
         {
             if (sender is BindableObject { BindingContext: BloodTest test })
@@ -77,10 +71,12 @@ namespace MedSestriManipulations
                 await DisplayAlert("Пълна информация", test.Name, "Затвори");
             }
         }
+
         private void AddSumWhenBloodTestChecked(object sender, CheckedChangedEventArgs e)
         {
             UpdateTotalSum();
         }
+
         private async void OnSendClicked(object sender, EventArgs e)
         {
             var selected = BloodTestsList.Where(p => p.IsSelected).ToList();
@@ -112,6 +108,7 @@ namespace MedSestriManipulations
                 await DisplayAlert("Грешка", "УИН номерът трябва да съдържа точно 10 цифри.", "OK");
                 return;
             }
+
             decimal discountTotalBng = totalBng * 0.8m;
             decimal discountTotalEur = totalEur * 0.8m;
 
@@ -156,9 +153,7 @@ namespace MedSestriManipulations
                 _cachedData.InvalidatePatients();
 
                 if (!response.IsSuccessStatusCode)
-                {
                     await DisplayAlert("Грешка", "Неуспешно записване в историята", "ОК");
-                }
 
                 ClearAllFeald();
             }
@@ -166,20 +161,30 @@ namespace MedSestriManipulations
             {
                 await DisplayAlert("Грешка", $"Неуспешно изпращане: {ex.Message}", "OK");
             }
-
         }
+
         private void OnClearClicked(object sender, EventArgs e)
         {
             ClearAllFeald();
         }
 
-        private async void OnLoadMore(object sender, EventArgs e)
+        private void OnLoadMore(object sender, EventArgs e)
         {
-            await LoadMorePaginationProceduresAsync();
+            // No-op: outer ScrollView owns scrolling; this event won't fire.
         }
+
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
-            _ = FilterBloodTests();
+            _filterCts?.Cancel();
+            _filterCts = new CancellationTokenSource();
+            var token = _filterCts.Token;
+            var text = e.NewTextValue;
+
+            Task.Delay(250, token).ContinueWith(_ =>
+            {
+                if (!token.IsCancellationRequested)
+                    MainThread.BeginInvokeOnMainThread(() => ApplyFilter(text));
+            }, token, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
         }
 
         private void ClearAllFeald()
@@ -189,68 +194,27 @@ namespace MedSestriManipulations
             PhoneEntry.Text = "";
             UIN.Text = "";
 
-            foreach (var proc in BloodTestsList.Where(p => p.IsSelected == true))
-                proc.IsSelected = false;
+            foreach (var b in BloodTestsList.Where(p => p.IsSelected))
+                b.IsSelected = false;
 
             UpdateTotalSum();
         }
+
         private void UpdateTotalSum()
         {
-            var totalBNG = BloodTestsList.Where(p => p.IsSelected).Sum(p => p.BngPrice);
-            TotalBGNLabel.Text = $"{totalBNG:F2} лв";
-
             var totalEURO = BloodTestsList.Where(p => p.IsSelected).Sum(p => p.EuroPrice);
             TotalEURLabel.Text = $"{totalEURO:F2} €";
         }
 
-        private async Task FilterBloodTests()
+        private void ApplyFilter(string? searchText = null)
         {
-            _filterCts?.Cancel();
-            _filterCts = new CancellationTokenSource();
-            var token = _filterCts.Token;
+            searchText ??= SearchBar.Text?.Trim() ?? string.Empty;
 
-            try
-            {
-                await Task.Delay(300, token);
-                BloodTests.Clear();
-                _paginationState.Reset();
-                await LoadMorePaginationProceduresAsync(token);
-            }
-            catch (OperationCanceledException)
-            {
-            }
+            var filtered = string.IsNullOrEmpty(searchText)
+                ? (IEnumerable<BloodTest>)BloodTestsList
+                : BloodTestsList.Where(p => p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+
+            ProcedureList.ItemsSource = filtered.ToList();
         }
-        private Task LoadMorePaginationProceduresAsync()
-        {
-            return LoadMorePaginationProceduresAsync(CancellationToken.None);
-        }
-
-        private async Task LoadMorePaginationProceduresAsync(CancellationToken token)
-        {
-            if (_paginationState.IsLoading) return;
-            _paginationState.IsLoading = true;
-
-            try
-            {
-                var searchText = SearchBar.Text?.Trim() ?? string.Empty;
-                var matching = await Task.Run(() => BloodTestsList
-                        .Where(p => p.Name.Contains(searchText, StringComparison.CurrentCultureIgnoreCase))
-                        .Skip(_paginationState.CurrentIndex)
-                        .Take(_paginationState.VisibleThreshold)
-                        .ToList(), token);
-
-
-                var toAdd = matching.Except(BloodTests).ToList();
-                foreach (var item in toAdd)
-                    BloodTests.Add(item);
-
-                _paginationState.CurrentIndex += matching.Count;
-            }
-            finally
-            {
-                _paginationState.IsLoading = false;
-            }
-        }
-
     }
 }
