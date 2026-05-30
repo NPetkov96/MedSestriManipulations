@@ -11,7 +11,6 @@ namespace MedSestriManipulations
         private CancellationTokenSource? _filterCts;
         private List<BloodTest> BloodTestsList = new();
 
-        private readonly PaginationState _paginationState;
         private readonly API _api;
         private readonly CachedDataService _cachedData;
 
@@ -20,7 +19,6 @@ namespace MedSestriManipulations
             InitializeComponent();
             BindingContext = this;
 
-            _paginationState = paginationState;
             _api = api;
             _cachedData = cachedData;
         }
@@ -67,9 +65,7 @@ namespace MedSestriManipulations
         private async void ShowsPopupDetailsBloodTest(object sender, EventArgs e)
         {
             if (sender is BindableObject { BindingContext: BloodTest test })
-            {
                 await DisplayAlert("Пълна информация", test.Name, "Затвори");
-            }
         }
 
         private void AddSumWhenBloodTestChecked(object sender, CheckedChangedEventArgs e)
@@ -86,7 +82,7 @@ namespace MedSestriManipulations
             string name = CurrentName.Text?.Trim()!;
             string egn = EGNEntry.Text?.Trim()!;
             string phone = PhoneEntry.Text?.Trim()!;
-            string uin = UIN?.Text?.Trim() ?? string.Empty;
+            //string uin = UIN?.Text?.Trim() ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(egn) || string.IsNullOrWhiteSpace(phone))
             {
@@ -103,13 +99,13 @@ namespace MedSestriManipulations
                 await DisplayAlert("Грешка", "Телефонният номер трябва да съдържа точно 10 или 13 символа", "OK");
                 return;
             }
-            else if (uin.Length != 10 && uin.Length != 0)
-            {
-                await DisplayAlert("Грешка", "УИН номерът трябва да съдържа точно 10 цифри.", "OK");
-                return;
-            }
+            //else if (uin.Length != 10 && uin.Length != 0)
+            //{
+            //    await DisplayAlert("Грешка", "УИН номерът трябва да съдържа точно 10 цифри.", "OK");
+            //    return;
+            //}
 
-            decimal discountTotalBng = totalBng * 0.8m;
+            //decimal discountTotalBng = totalBng * 0.8m;
             decimal discountTotalEur = totalEur * 0.8m;
 
             var manipulationsList = string.Join("\n", selected.Select((p, index) => $"{index + 1}. {p.Name} - {p.EuroPrice:F2} €"));
@@ -122,12 +118,12 @@ namespace MedSestriManipulations
             messageBuilder.AppendLine($"Избрани манипулации {selected.Count} бр:");
             messageBuilder.AppendLine(manipulationsList);
 
-            if (!string.IsNullOrEmpty(uin)) messageBuilder.AppendLine($"УИН: {uin}");
+            //if (!string.IsNullOrEmpty(uin)) messageBuilder.AppendLine($"УИН: {uin}");
 
             messageBuilder.AppendLine();
-            messageBuilder.AppendLine($"Общо сума: {totalEur} € / {totalBng:F2} лв");
+            messageBuilder.AppendLine($"Общо сума: {totalEur} €");
             messageBuilder.AppendLine("--------------------");
-            messageBuilder.AppendLine($"Сума с отстъпка: {discountTotalEur} € / {discountTotalBng:F2} лв");
+            messageBuilder.AppendLine($"Сума с отстъпка: {discountTotalEur} €");
             messageBuilder.AppendLine("https://medsestri.com/");
             string message = messageBuilder.ToString().Trim();
 
@@ -209,17 +205,13 @@ namespace MedSestriManipulations
             SearchBar.Unfocus();
         }
 
-        private void OnSearchDismissOverlayTapped(object sender, TappedEventArgs e)
-        {
-            SearchBar.Unfocus();
-        }
 
         private void ClearAllFeald()
         {
             CurrentName.Text = "";
             EGNEntry.Text = "";
             PhoneEntry.Text = "";
-            UIN.Text = "";
+            //UIN.Text = "";
 
             foreach (var b in BloodTestsList.Where(p => p.IsSelected))
                 b.IsSelected = false;
@@ -231,7 +223,7 @@ namespace MedSestriManipulations
         {
             var selected = BloodTestsList.Where(p => p.IsSelected).ToList();
             TotalEURLabel.Text = $"{selected.Sum(p => p.EuroPrice):F2} €";
-            TotalBGNLabel.Text = $"{selected.Sum(p => p.BngPrice):F2} лв";
+            //TotalBGNLabel.Text = $"{selected.Sum(p => p.BngPrice):F2} лв";
         }
 
         private void ApplyFilter(string? searchText = null)

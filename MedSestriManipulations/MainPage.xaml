@@ -48,10 +48,10 @@
                                BackgroundColor="Transparent" TextColor="#1A1A1A"
                                PlaceholderColor="#999999" HeightRequest="44" Margin="14,0" />
                         <BoxView Color="#F0F3F7" HeightRequest="1" />
-                        <Entry x:Name="UIN" Placeholder="УИН на лекар"
+                        <!--<Entry x:Name="UIN" Placeholder="УИН на лекар"
                                Keyboard="Numeric" FontSize="14"
                                BackgroundColor="Transparent" TextColor="#1A1A1A"
-                               PlaceholderColor="#999999" HeightRequest="44" Margin="14,0" />
+                               PlaceholderColor="#999999" HeightRequest="44" Margin="14,0" />-->
                     </VerticalStackLayout>
                 </Border>
 
@@ -68,8 +68,6 @@
                             <Label x:Name="TotalEURLabel" Text="0.00 €"
                                    FontSize="15" FontAttributes="Bold" TextColor="#0066CC" />
                             <Label Text="·" FontSize="12" TextColor="#999999" />
-                            <Label x:Name="TotalBGNLabel" Text="0.00 лв"
-                                   FontSize="15" FontAttributes="Bold" TextColor="#0066CC" />
                         </HorizontalStackLayout>
                     </Grid>
                 </Border>
@@ -133,8 +131,6 @@
                                     <Label Text="{Binding EuroPrice, StringFormat='{0:F2} €'}"
                                            FontSize="12" TextColor="#0066CC" FontAttributes="Bold" />
                                     <Label Text="·" FontSize="11" TextColor="#999999" />
-                                    <Label Text="{Binding BngPrice, StringFormat='{0:F2} лв'}"
-                                           FontSize="12" TextColor="#666666" FontAttributes="Bold" />
                                 </HorizontalStackLayout>
                             </VerticalStackLayout>
                             <Label Grid.Column="2" Text="›"
@@ -151,9 +147,6 @@
               Grid.Row="2"
               IsVisible="False"
               BackgroundColor="Transparent">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnSearchDismissOverlayTapped" />
-            </Grid.GestureRecognizers>
         </Grid>
 
         <!-- Loading overlay -->
