@@ -14,21 +14,18 @@
         <!-- Row 1: Header + search (matches MainPage) -->
         <VerticalStackLayout Grid.Row="1" Padding="16,12,16,8" Spacing="10" BackgroundColor="#F8F9FB">
 
-            <Label Text="История на пациенти"
-                   FontSize="16" FontAttributes="Bold"
-                   TextColor="#1A1A1A" />
-
             <Border Stroke="#D4DDE8" StrokeThickness="1"
                     BackgroundColor="White"
                     StrokeShape="RoundRectangle 8"
                     Padding="6,0">
                 <SearchBar x:Name="SearchBar"
-                           Placeholder="Търси пациент..."
+                           Placeholder="Търси история на пациенти..."
                            TextChanged="OnSearchTextChanged"
                            BackgroundColor="Transparent"
-                           FontSize="14" HeightRequest="48"
+                           FontSize="16" HeightRequest="48"
                            CancelButtonColor="#0066CC"
                            TextColor="#1A1A1A"
+                           HorizontalTextAlignment="Center"
                            PlaceholderColor="#999999" />
             </Border>
         </VerticalStackLayout>
@@ -55,8 +52,8 @@
                             <!-- Left: patient info -->
                             <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
                                 <Label Text="{Binding FullName}"
-                                       FontSize="15" FontAttributes="Bold"
-                                       TextColor="#1A1A1A" LineBreakMode="TailTruncation" />
+                                       FontSize="18" FontAttributes="Bold"
+                                       TextColor="#0066CC" LineBreakMode="TailTruncation" />
 
                                 <HorizontalStackLayout Spacing="6">
                                     <Label Text="{Binding EGN}" FontSize="12" TextColor="#666666" />
@@ -135,17 +132,18 @@
                          CornerRadius="2" />
 
                 <Label x:Name="SheetNameLabel"
+                       HorizontalOptions="Center"
                        Text=""
-                       FontSize="18" FontAttributes="Bold"
+                       FontSize="24" FontAttributes="Bold"
                        TextColor="#1A1A1A" />
 
-                <HorizontalStackLayout Spacing="6">
-                    <Label x:Name="SheetEgnLabel" Text="" FontSize="13" TextColor="#666666" />
-                    <Label Text="·" FontSize="12" TextColor="#999999" />
-                    <Label x:Name="SheetPhoneLabel" Text="" FontSize="13" TextColor="#666666" />
+                <HorizontalStackLayout Spacing="6" HorizontalOptions="Center">
+                    <Label x:Name="SheetEgnLabel" Text="" FontSize="18" TextColor="#666666" />
+                    <Label Text="·" FontSize="22" TextColor="#999999" />
+                    <Label x:Name="SheetPhoneLabel" Text="" FontSize="18" TextColor="#666666" />
                 </HorizontalStackLayout>
 
-                <Label x:Name="SheetDateLabel" Text="" FontSize="12" TextColor="#999999" />
+                <Label x:Name="SheetDateLabel" Text="" FontSize="16" TextColor="#999999" HorizontalOptions="Center"/>
 
                 <!-- Note / message -->
                 <Border Stroke="#D4DDE8" StrokeThickness="1"
@@ -155,7 +153,7 @@
                     <ScrollView MaximumHeightRequest="220" Padding="12,10">
                         <Label x:Name="SheetNoteLabel"
                                Text=""
-                               FontSize="13"
+                               FontSize="14"
                                TextColor="#444444" />
                     </ScrollView>
                 </Border>
