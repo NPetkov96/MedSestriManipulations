@@ -17,12 +17,36 @@ namespace MedSestriManipulations.Services
         private static readonly string _bloodTestsCacheFile =
             Path.Combine(FileSystem.AppDataDirectory, "bloodtests_cache.json");
 
+        // Shared in-flight load so the splash preload and MainPage don't race.
+        private Task<List<BloodTest>>? _bloodTestsInFlight;
+
         public CachedDataService(API api)
         {
             _api = api;
         }
 
-        public async Task<List<BloodTest>> GetBloodTestsAsync()
+        public Task<List<BloodTest>> GetBloodTestsAsync()
+        {
+            if (_isBloodTestsLoaded)
+                return Task.FromResult(_bloodTests);
+
+            // If a load is already running (e.g. started by the splash), reuse it.
+            return _bloodTestsInFlight ??= LoadBloodTestsAsync();
+        }
+
+        private async Task<List<BloodTest>> LoadBloodTestsAsync()
+        {
+            try
+            {
+                return await LoadBloodTestsCoreAsync();
+            }
+            finally
+            {
+                _bloodTestsInFlight = null;
+            }
+        }
+
+        private async Task<List<BloodTest>> LoadBloodTestsCoreAsync()
         {
             if (_isBloodTestsLoaded)
                 return _bloodTests;

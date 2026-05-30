@@ -34,7 +34,7 @@
 		<MauiIcon Include="Resources\AppIcon\medsestr_icon.png" ForegroundFile="Resources\AppIcon\medsestr_icon.png" Color="#2196F3" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\medsestri_splashscreen.png" />
+		<MauiSplashScreen Include="Resources\Splash\medsestri_splashscreen.png" Color="#F1F7FD" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
