@@ -23,7 +23,7 @@
               BackgroundColor="#F8F9FB">
 
             <Button Grid.Column="0"
-                    Text="Зачисти"
+                    Text="ЗАЧИСТИ"
                     Clicked="OnClearClicked"
                     BackgroundColor="Transparent"
                     TextColor="#b51010"
@@ -175,8 +175,6 @@
                                     <Label Text="{Binding EuroPrice, StringFormat='{0:F2} €'}"
                                            FontSize="12" TextColor="#0066CC" FontAttributes="Bold" />
                                     <Label Text="·" FontSize="11" TextColor="#999999" />
-                                    <Label Text="{Binding BngPrice, StringFormat='{0:F2} лв'}"
-                                           FontSize="12" TextColor="#666666" FontAttributes="Bold" />
                                 </HorizontalStackLayout>
                             </VerticalStackLayout>
 

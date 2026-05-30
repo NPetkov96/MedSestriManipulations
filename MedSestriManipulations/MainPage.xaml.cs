@@ -23,8 +23,6 @@ namespace MedSestriManipulations
             _cachedData = cachedData;
         }
 
-        // ─── Lifecycle ───────────────────────────────────────────────────────
-
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -127,8 +125,6 @@ namespace MedSestriManipulations
             await HideBottomSheet();
         }
 
-        // ─── Keyboard avoidance for the sheet form ────────────────────────────
-
         private const double SheetKeyboardLift = 260;
         private bool _sheetLifted = false;
 
@@ -141,7 +137,6 @@ namespace MedSestriManipulations
 
         private async void OnSheetEntryUnfocused(object sender, FocusEventArgs e)
         {
-            // Wait briefly — if focus moved to another field, don't drop the sheet
             await Task.Delay(120);
             if (CurrentName.IsFocused || EGNEntry.IsFocused || PhoneEntry.IsFocused)
                 return;
@@ -149,8 +144,6 @@ namespace MedSestriManipulations
             _sheetLifted = false;
             await BottomSheetPanel.TranslateTo(0, 0, 220, Easing.CubicIn);
         }
-
-        // ─── Search ───────────────────────────────────────────────────────────
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
@@ -189,8 +182,6 @@ namespace MedSestriManipulations
             SearchBar.Unfocus();
         }
 
-        // ─── Blood tests ──────────────────────────────────────────────────────
-
         private async void ShowsPopupDetailsBloodTest(object sender, EventArgs e)
         {
             if (sender is BindableObject { BindingContext: BloodTest test })
@@ -204,7 +195,6 @@ namespace MedSestriManipulations
 
         private void OnLoadMore(object sender, EventArgs e) { }
 
-        // ─── Send ─────────────────────────────────────────────────────────────
 
         private async void OnSendClicked(object sender, EventArgs e)
         {
@@ -276,8 +266,6 @@ namespace MedSestriManipulations
             }
         }
 
-        // ─── Clear & Undo (Feature 6) ─────────────────────────────────────────
-
         private async void OnClearClicked(object sender, EventArgs e)
         {
             await ClearAllFeald();
@@ -319,8 +307,6 @@ namespace MedSestriManipulations
             }
         }
 
-        // ─── Totals & Summary ─────────────────────────────────────────────────
-
         private void UpdateTotalSum()
         {
             var selected = BloodTestsList.Where(p => p.IsSelected).ToList();
@@ -340,7 +326,6 @@ namespace MedSestriManipulations
         }
 
         private bool _pillVisible = false;
-
         private async void UpdateSelectionPill(int count, decimal totalEUR)
         {
             PillCountLabel.Text = count == 1 ? "1 избрано" : $"{count} избрани";
@@ -372,8 +357,6 @@ namespace MedSestriManipulations
         {
             await ShowBottomSheet();
         }
-
-        // ─── Feature 4: Filter + highlight ───────────────────────────────────
 
         private void ApplyFilter(string? searchText = null)
         {
