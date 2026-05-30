@@ -32,5 +32,9 @@ namespace MedSestriManipulations.Models
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        // UI-only: current search query, used for text highlighting
+        [System.Text.Json.Serialization.JsonIgnore]
+        public string SearchText { get; set; } = string.Empty;
     }
 }

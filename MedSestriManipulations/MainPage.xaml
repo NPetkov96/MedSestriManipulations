@@ -2,161 +2,302 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:MedSestriManipulations.Controls"
              xmlns:models="clr-namespace:MedSestriManipulations.Models"
+             xmlns:converters="clr-namespace:MedSestriManipulations.Converters"
              BackgroundColor="#F8F9FB"
              x:Class="MedSestriManipulations.MainPage">
 
-    <Grid RowDefinitions="Auto,Auto,*">
+    <ContentPage.Resources>
+        <converters:HighlightConverter x:Key="HighlightConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
+
+        <!-- Row 0: Top Navigation -->
         <controls:TopNavigationMenu Grid.Row="0" />
 
-        <!-- Fixed top section: collapses on search focus -->
-        <VerticalStackLayout Grid.Row="1" Padding="16,16,16,10" Spacing="12" BackgroundColor="#F8F9FB">
+        <!-- Row 1: Compact action bar -->
+        <Grid Grid.Row="1"
+              ColumnDefinitions="Auto,*,Auto"
+              Padding="16,10,16,4"
+              ColumnSpacing="10"
+              BackgroundColor="#F8F9FB">
 
-            <!-- Collapsible form — hidden while searching -->
-            <VerticalStackLayout x:Name="FormSection" Spacing="12">
+            <Button Grid.Column="0"
+                    Text="Зачисти"
+                    Clicked="OnClearClicked"
+                    BackgroundColor="Transparent"
+                    TextColor="#AAAAAA"
+                    FontSize="13"
+                    Padding="0"
+                    BorderWidth="0" />
 
-                <HorizontalStackLayout HorizontalOptions="Center" Spacing="12">
-                    <Button Text="Изпрати" Clicked="OnSendClicked"
-                            BackgroundColor="#0066CC" TextColor="White"
-                            CornerRadius="6" Padding="36,12"
-                            FontAttributes="Bold" FontSize="14" />
-                    <Button Text="Зачисти" Clicked="OnClearClicked"
-                            BackgroundColor="#E8EEF5" TextColor="#0066CC"
-                            CornerRadius="6" Padding="36,12"
-                            FontAttributes="Bold" FontSize="14"
-                            BorderColor="#0066CC" BorderWidth="1" />
-                </HorizontalStackLayout>
+            <Label Grid.Column="1"
+                   x:Name="SummaryLabel"
+                   Text="Избери изследвания"
+                   TextColor="#AAAAAA"
+                   FontSize="13"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
 
-                <Label Text="Информация за пациента"
-                       FontSize="15" FontAttributes="Bold"
-                       TextColor="#1A1A1A" Margin="0,4,0,0" />
+            <Button Grid.Column="2"
+                    Text="Изпрати →"
+                    Clicked="OnOpenSheetClicked"
+                    BackgroundColor="#0066CC"
+                    TextColor="White"
+                    CornerRadius="6"
+                    Padding="14,8"
+                    FontAttributes="Bold"
+                    FontSize="13" />
+        </Grid>
 
-                <Border Stroke="#D4DDE8" StrokeThickness="1"
-                        BackgroundColor="White" StrokeShape="RoundRectangle 8" Padding="0">
-                    <VerticalStackLayout Spacing="0">
-                        <Entry x:Name="CurrentName" Placeholder="Име на пациент"
-                               FontSize="14" BackgroundColor="Transparent"
-                               TextColor="#1A1A1A" PlaceholderColor="#999999"
-                               HeightRequest="44" Margin="14,0" />
-                        <BoxView Color="#F0F3F7" HeightRequest="1" />
-                        <Entry x:Name="EGNEntry" Placeholder="ЕГН"
-                               Keyboard="Numeric" FontSize="14"
-                               BackgroundColor="Transparent" TextColor="#1A1A1A"
-                               PlaceholderColor="#999999" HeightRequest="44" Margin="14,0" />
-                        <BoxView Color="#F0F3F7" HeightRequest="1" />
-                        <Entry x:Name="PhoneEntry" Placeholder="Телефонен номер"
-                               Keyboard="Telephone" FontSize="14"
-                               BackgroundColor="Transparent" TextColor="#1A1A1A"
-                               PlaceholderColor="#999999" HeightRequest="44" Margin="14,0" />
-                        <BoxView Color="#F0F3F7" HeightRequest="1" />
-                        <!--<Entry x:Name="UIN" Placeholder="УИН на лекар"
-                               Keyboard="Numeric" FontSize="14"
-                               BackgroundColor="Transparent" TextColor="#1A1A1A"
-                               PlaceholderColor="#999999" HeightRequest="44" Margin="14,0" />-->
-                    </VerticalStackLayout>
-                </Border>
+        <!-- Row 2: Search bar -->
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,Auto"
+              Padding="16,4,16,10"
+              ColumnSpacing="8"
+              BackgroundColor="#F8F9FB">
 
-                <Border Stroke="#0066CC" StrokeThickness="2"
-                        BackgroundColor="#E8F0FF" StrokeShape="RoundRectangle 8"
-                        Padding="16,12">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <Label Grid.Column="0" Text="Избрани изследвания:"
-                               FontSize="14" FontAttributes="Bold"
-                               TextColor="#1A1A1A" VerticalOptions="Center" />
-                        <HorizontalStackLayout Grid.Column="1"
-                                               HorizontalOptions="End"
-                                               VerticalOptions="Center" Spacing="8">
-                            <Label x:Name="TotalEURLabel" Text="0.00 €"
-                                   FontSize="15" FontAttributes="Bold" TextColor="#0066CC" />
-                            <Label Text="·" FontSize="12" TextColor="#999999" />
-                        </HorizontalStackLayout>
-                    </Grid>
-                </Border>
+            <Border Grid.Column="0"
+                    Stroke="#D4DDE8" StrokeThickness="1"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="6,0">
+                <SearchBar x:Name="SearchBar"
+                           Placeholder="Търси изследване..."
+                           TextChanged="OnSearchTextChanged"
+                           Focused="OnSearchBarFocused"
+                           Unfocused="OnSearchBarUnfocused"
+                           BackgroundColor="Transparent"
+                           FontSize="14" HeightRequest="48"
+                           CancelButtonColor="#0066CC"
+                           TextColor="#1A1A1A"
+                           PlaceholderColor="#999999" />
+            </Border>
 
-            </VerticalStackLayout>
+            <Button x:Name="SearchCloseButton"
+                    Grid.Column="1"
+                    Text="Откажи"
+                    Clicked="OnSearchCloseClicked"
+                    IsVisible="False"
+                    BackgroundColor="Transparent"
+                    TextColor="#0066CC"
+                    FontSize="13"
+                    FontAttributes="Bold"
+                    Padding="0" />
+        </Grid>
 
-            <!-- SearchBar row — always visible, X button appears on focus -->
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                <Border Grid.Column="0"
-                        Stroke="#D4DDE8" StrokeThickness="1"
-                        BackgroundColor="White" StrokeShape="RoundRectangle 8"
-                        Padding="6,0">
-                    <SearchBar x:Name="SearchBar"
-                               Placeholder="Търси изследване..."
-                               TextChanged="OnSearchTextChanged"
-                               Focused="OnSearchBarFocused"
-                               Unfocused="OnSearchBarUnfocused"
-                               BackgroundColor="Transparent"
-                               FontSize="14" HeightRequest="48"
-                               CancelButtonColor="#0066CC"
-                               TextColor="#1A1A1A"
-                               PlaceholderColor="#999999" />
-                </Border>
-
-                <Button x:Name="SearchCloseButton"
-                        Grid.Column="1"
-                        Text="Откажи"
-                        Clicked="OnSearchCloseClicked"
-                        IsVisible="False"
-                        BackgroundColor="Transparent"
-                        TextColor="#0066CC"
-                        FontSize="13"
-                        FontAttributes="Bold"
-                        Padding="0" />
-            </Grid>
-
+        <!-- Row 3: Skeleton loading (visible while data loads) -->
+        <VerticalStackLayout x:Name="SkeletonView"
+                             Grid.Row="3"
+                             Padding="16,8,16,8"
+                             Spacing="10">
+            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
+                <VerticalStackLayout Padding="14,14" Spacing="8">
+                    <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="210" HorizontalOptions="Start" />
+                    <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="110" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </Border>
+            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
+                <VerticalStackLayout Padding="14,14" Spacing="8">
+                    <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="170" HorizontalOptions="Start" />
+                    <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="90" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </Border>
+            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
+                <VerticalStackLayout Padding="14,14" Spacing="8">
+                    <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="240" HorizontalOptions="Start" />
+                    <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="120" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </Border>
+            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
+                <VerticalStackLayout Padding="14,14" Spacing="8">
+                    <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="190" HorizontalOptions="Start" />
+                    <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="100" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </Border>
+            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
+                <VerticalStackLayout Padding="14,14" Spacing="8">
+                    <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="220" HorizontalOptions="Start" />
+                    <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="95" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </Border>
+            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
+                <VerticalStackLayout Padding="14,14" Spacing="8">
+                    <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="160" HorizontalOptions="Start" />
+                    <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="115" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </Border>
         </VerticalStackLayout>
 
-        <!-- CollectionView — owns its scroll, full virtualization -->
+        <!-- Row 3: Blood tests list (hidden until loaded) -->
         <CollectionView x:Name="ProcedureList"
-                        Grid.Row="2"
-                        Margin="16,4,16,0">
+                        Grid.Row="3"
+                        Margin="16,4,16,0"
+                        IsVisible="False">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:BloodTest">
-                    <Border Margin="0,5,0,5" StrokeShape="RoundRectangle 8"
-                            BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
+                    <Border Margin="0,5,0,5"
+                            StrokeShape="RoundRectangle 8"
+                            BackgroundColor="White"
+                            Stroke="#D4DDE8"
+                            StrokeThickness="1">
                         <Grid ColumnDefinitions="Auto,*,Auto" Padding="14,12" ColumnSpacing="12">
+
                             <CheckBox Grid.Column="0"
                                       IsChecked="{Binding IsSelected}"
                                       CheckedChanged="AddSumWhenBloodTestChecked"
                                       Color="#0066CC" Scale="1.2"
                                       VerticalOptions="Center" />
+
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
                                 <VerticalStackLayout.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="ShowsPopupDetailsBloodTest" />
                                 </VerticalStackLayout.GestureRecognizers>
-                                <Label Text="{Binding Name}"
-                                       FontSize="14" FontAttributes="Bold"
-                                       TextColor="#1A1A1A" LineBreakMode="WordWrap" />
+
+                                <!-- Name with search text highlighting -->
+                                <Label LineBreakMode="WordWrap">
+                                    <Label.FormattedText>
+                                        <MultiBinding Converter="{StaticResource HighlightConverter}">
+                                            <Binding Path="Name" />
+                                            <Binding Path="SearchText" />
+                                        </MultiBinding>
+                                    </Label.FormattedText>
+                                </Label>
+
                                 <HorizontalStackLayout Spacing="6">
                                     <Label Text="{Binding EuroPrice, StringFormat='{0:F2} €'}"
                                            FontSize="12" TextColor="#0066CC" FontAttributes="Bold" />
                                     <Label Text="·" FontSize="11" TextColor="#999999" />
+                                    <Label Text="{Binding BngPrice, StringFormat='{0:F2} лв'}"
+                                           FontSize="12" TextColor="#666666" FontAttributes="Bold" />
                                 </HorizontalStackLayout>
                             </VerticalStackLayout>
-                            <Label Grid.Column="2" Text="›"
-                                   FontSize="20" TextColor="#0066CC"
-                                   VerticalOptions="Center" HorizontalOptions="End" />
+
+                            <Label Grid.Column="2"
+                                   Text="›" FontSize="20"
+                                   TextColor="#0066CC"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End" />
                         </Grid>
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- Tap-to-dismiss overlay — covers list while search is focused, no text typed yet -->
+        <!-- Search dismiss overlay (Row 3 only) -->
         <Grid x:Name="SearchDismissOverlay"
-              Grid.Row="2"
+              Grid.Row="3"
               IsVisible="False"
               BackgroundColor="Transparent">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnSearchDismissOverlayTapped" />
+            </Grid.GestureRecognizers>
         </Grid>
 
+        <!-- Bottom sheet dim overlay -->
+        <Grid x:Name="BottomSheetOverlay"
+              Grid.RowSpan="4"
+              IsVisible="False"
+              BackgroundColor="#70000000">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnBottomSheetOverlayTapped" />
+            </Grid.GestureRecognizers>
+        </Grid>
+
+        <!-- Bottom sheet panel -->
+        <Border x:Name="BottomSheetPanel"
+                Grid.RowSpan="4"
+                VerticalOptions="End"
+                IsVisible="False"
+                BackgroundColor="White"
+                Stroke="Transparent"
+                StrokeShape="RoundRectangle 20,20,0,0">
+            <VerticalStackLayout Spacing="16" Padding="20,12,20,32">
+
+                <!-- Drag handle indicator -->
+                <BoxView WidthRequest="40" HeightRequest="4"
+                         BackgroundColor="#D4DDE8"
+                         HorizontalOptions="Center"
+                         CornerRadius="2" />
+
+                <Label Text="Данни за пациента"
+                       FontSize="17" FontAttributes="Bold"
+                       TextColor="#1A1A1A" />
+
+                <!-- Selected tests summary -->
+                <Border BackgroundColor="#E8F0FF"
+                        StrokeShape="RoundRectangle 8"
+                        Stroke="Transparent"
+                        Padding="14,10">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="Избрани изследвания:"
+                               FontSize="13" TextColor="#666666"
+                               VerticalOptions="Center" />
+                        <Label x:Name="TotalEURLabel"
+                               Grid.Column="1"
+                               Text="0.00 €"
+                               FontSize="16" FontAttributes="Bold"
+                               TextColor="#0066CC"
+                               VerticalOptions="Center" />
+                    </Grid>
+                </Border>
+
+                <!-- Patient fields -->
+                <Border Stroke="#D4DDE8" StrokeThickness="1"
+                        BackgroundColor="White"
+                        StrokeShape="RoundRectangle 8"
+                        Padding="0">
+                    <VerticalStackLayout Spacing="0">
+                        <Entry x:Name="CurrentName"
+                               Placeholder="Име на пациент"
+                               FontSize="14" BackgroundColor="Transparent"
+                               TextColor="#1A1A1A" PlaceholderColor="#999999"
+                               HeightRequest="46" Margin="14,0"
+                               Focused="OnSheetEntryFocused"
+                               Unfocused="OnSheetEntryUnfocused" />
+                        <BoxView Color="#F0F3F7" HeightRequest="1" />
+                        <Entry x:Name="EGNEntry"
+                               Placeholder="ЕГН"
+                               Keyboard="Numeric" FontSize="14"
+                               BackgroundColor="Transparent" TextColor="#1A1A1A"
+                               PlaceholderColor="#999999" HeightRequest="46" Margin="14,0"
+                               Focused="OnSheetEntryFocused"
+                               Unfocused="OnSheetEntryUnfocused" />
+                        <BoxView Color="#F0F3F7" HeightRequest="1" />
+                        <Entry x:Name="PhoneEntry"
+                               Placeholder="Телефонен номер"
+                               Keyboard="Telephone" FontSize="14"
+                               BackgroundColor="Transparent" TextColor="#1A1A1A"
+                               PlaceholderColor="#999999" HeightRequest="46" Margin="14,0"
+                               Focused="OnSheetEntryFocused"
+                               Unfocused="OnSheetEntryUnfocused" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Send button -->
+                <Button Text="Изпрати"
+                        Clicked="OnSendClicked"
+                        BackgroundColor="#0066CC"
+                        TextColor="White"
+                        CornerRadius="8"
+                        HeightRequest="52"
+                        FontAttributes="Bold"
+                        FontSize="16" />
+            </VerticalStackLayout>
+        </Border>
+
         <!-- Loading overlay -->
-        <Grid x:Name="LoadingOverlay" Grid.RowSpan="3"
-              BackgroundColor="#80000000" IsVisible="False">
+        <Grid x:Name="LoadingOverlay"
+              Grid.RowSpan="4"
+              BackgroundColor="#80000000"
+              IsVisible="False">
             <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10">
                 <ActivityIndicator IsRunning="True" IsVisible="True"
                                    WidthRequest="60" HeightRequest="60" Color="White" />
-                <Label Text="Зареждане на SMS..." TextColor="White"
-                       FontSize="14" HorizontalOptions="Center" />
+                <Label Text="Зареждане на SMS..."
+                       TextColor="White" FontSize="14"
+                       HorizontalOptions="Center" />
             </VerticalStackLayout>
         </Grid>
 

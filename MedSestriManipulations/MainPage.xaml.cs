@@ -1,8 +1,8 @@
+using CommunityToolkit.Maui.Alerts;
 using MedSestriManipulations.ApiHandler;
 using MedSestriManipulations.Models;
 using MedSestriManipulations.Services;
 using System.Text;
-
 
 namespace MedSestriManipulations
 {
@@ -10,6 +10,7 @@ namespace MedSestriManipulations
     {
         private CancellationTokenSource? _filterCts;
         private List<BloodTest> BloodTestsList = new();
+        private bool _skeletonAnimating = false;
 
         private readonly API _api;
         private readonly CachedDataService _cachedData;
@@ -18,156 +19,138 @@ namespace MedSestriManipulations
         {
             InitializeComponent();
             BindingContext = this;
-
             _api = api;
             _cachedData = cachedData;
         }
+
+        // ─── Lifecycle ───────────────────────────────────────────────────────
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
             try
             {
+                _ = AnimateSkeleton();
+
                 BloodTestsList = await _cachedData.GetBloodTestsAsync();
+
+                _skeletonAnimating = false;
+                SkeletonView.CancelAnimations();
+                SkeletonView.IsVisible = false;
+                SkeletonView.Opacity = 1;
+                ProcedureList.IsVisible = true;
+
                 ApplyFilter();
 
                 var reusedPatient = SelectedPatientService.PatientToReuse;
                 if (reusedPatient != null)
                 {
-                    ClearAllFeald();
+                    await ClearAllFeald(showUndo: false);
                     CurrentName.Text = reusedPatient.FullName;
                     EGNEntry.Text = reusedPatient.EGN;
                     PhoneEntry.Text = reusedPatient.PhoneNumber;
 
-                    if (await DisplayAlert("Потвърждение", $"Искаш ли да се заредят лабораторните изследвания?", "ДА", "НЕ"))
+                    if (await DisplayAlert("Потвърждение", "Искаш ли да се заредят лабораторните изследвания?", "ДА", "НЕ"))
                     {
                         foreach (var test in reusedPatient.BloodTests)
                         {
                             var match = BloodTestsList.FirstOrDefault(x => x.Name == test.Name);
                             if (match != null) match.IsSelected = true;
-                            UpdateTotalSum();
                         }
+                        UpdateTotalSum();
                     }
 
                     SelectedPatientService.PatientToReuse = null;
                 }
                 else
                 {
-                    ClearAllFeald();
+                    await ClearAllFeald(showUndo: false);
                 }
             }
             catch (Exception ex)
             {
+                _skeletonAnimating = false;
                 await DisplayAlert("Грешка", $"{ex.Message}", "OK");
             }
         }
 
-        private async void ShowsPopupDetailsBloodTest(object sender, EventArgs e)
+        // ─── Feature 5: Skeleton animation ───────────────────────────────────
+
+        private async Task AnimateSkeleton()
         {
-            if (sender is BindableObject { BindingContext: BloodTest test })
-                await DisplayAlert("Пълна информация", test.Name, "Затвори");
-        }
-
-        private void AddSumWhenBloodTestChecked(object sender, CheckedChangedEventArgs e)
-        {
-            UpdateTotalSum();
-        }
-
-        private async void OnSendClicked(object sender, EventArgs e)
-        {
-            var selected = BloodTestsList.Where(p => p.IsSelected).ToList();
-            var totalBng = selected.Sum(p => p.BngPrice);
-            var totalEur = selected.Sum(p => p.EuroPrice);
-
-            string name = CurrentName.Text?.Trim()!;
-            string egn = EGNEntry.Text?.Trim()!;
-            string phone = PhoneEntry.Text?.Trim()!;
-            //string uin = UIN?.Text?.Trim() ?? string.Empty;
-
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(egn) || string.IsNullOrWhiteSpace(phone))
+            _skeletonAnimating = true;
+            while (_skeletonAnimating)
             {
-                await DisplayAlert("Грешка", "Моля, попълни Име, ЕГН и телефонен номер.", "OK");
+                await SkeletonView.FadeTo(0.3, 700);
+                if (!_skeletonAnimating) break;
+                await SkeletonView.FadeTo(1.0, 700);
+            }
+        }
+
+        // ─── Feature 2: Bottom sheet ──────────────────────────────────────────
+
+        private async void OnOpenSheetClicked(object sender, EventArgs e)
+        {
+            await ShowBottomSheet();
+        }
+
+        private async Task ShowBottomSheet()
+        {
+            BottomSheetPanel.TranslationY = 600;
+            BottomSheetOverlay.Opacity = 0;
+            BottomSheetOverlay.IsVisible = true;
+            BottomSheetPanel.IsVisible = true;
+
+            await Task.WhenAll(
+                BottomSheetOverlay.FadeTo(1, 250),
+                BottomSheetPanel.TranslateTo(0, 0, 300, Easing.CubicOut)
+            );
+        }
+
+        private async Task HideBottomSheet()
+        {
+            CurrentName.Unfocus();
+            EGNEntry.Unfocus();
+            PhoneEntry.Unfocus();
+            _sheetLifted = false;
+
+            await Task.WhenAll(
+                BottomSheetOverlay.FadeTo(0, 220),
+                BottomSheetPanel.TranslateTo(0, 600, 260, Easing.CubicIn)
+            );
+            BottomSheetOverlay.IsVisible = false;
+            BottomSheetPanel.IsVisible = false;
+        }
+
+        private async void OnBottomSheetOverlayTapped(object sender, TappedEventArgs e)
+        {
+            await HideBottomSheet();
+        }
+
+        // ─── Keyboard avoidance for the sheet form ────────────────────────────
+
+        private const double SheetKeyboardLift = 260;
+        private bool _sheetLifted = false;
+
+        private async void OnSheetEntryFocused(object sender, FocusEventArgs e)
+        {
+            if (_sheetLifted) return;
+            _sheetLifted = true;
+            await BottomSheetPanel.TranslateTo(0, -SheetKeyboardLift, 220, Easing.CubicOut);
+        }
+
+        private async void OnSheetEntryUnfocused(object sender, FocusEventArgs e)
+        {
+            // Wait briefly — if focus moved to another field, don't drop the sheet
+            await Task.Delay(120);
+            if (CurrentName.IsFocused || EGNEntry.IsFocused || PhoneEntry.IsFocused)
                 return;
-            }
-            else if (egn.Length != 10 || !egn.All(char.IsDigit))
-            {
-                await DisplayAlert("Грешка", "ЕГН трябва да съдържа точно 10 цифри.", "OK");
-                return;
-            }
-            else if (phone.Length != 10 && phone.Length != 13)
-            {
-                await DisplayAlert("Грешка", "Телефонният номер трябва да съдържа точно 10 или 13 символа", "OK");
-                return;
-            }
-            //else if (uin.Length != 10 && uin.Length != 0)
-            //{
-            //    await DisplayAlert("Грешка", "УИН номерът трябва да съдържа точно 10 цифри.", "OK");
-            //    return;
-            //}
 
-            //decimal discountTotalBng = totalBng * 0.8m;
-            decimal discountTotalEur = totalEur * 0.8m;
-
-            var manipulationsList = string.Join("\n", selected.Select((p, index) => $"{index + 1}. {p.Name} - {p.EuroPrice:F2} €"));
-
-            var messageBuilder = new StringBuilder();
-            messageBuilder.AppendLine($"Пациент: {name}");
-            messageBuilder.AppendLine($"ЕГН: {egn}");
-            messageBuilder.AppendLine($"Телефон: {phone}");
-            messageBuilder.AppendLine();
-            messageBuilder.AppendLine($"Избрани манипулации {selected.Count} бр:");
-            messageBuilder.AppendLine(manipulationsList);
-
-            //if (!string.IsNullOrEmpty(uin)) messageBuilder.AppendLine($"УИН: {uin}");
-
-            messageBuilder.AppendLine();
-            messageBuilder.AppendLine($"Общо сума: {totalEur} €");
-            messageBuilder.AppendLine("--------------------");
-            messageBuilder.AppendLine($"Сума с отстъпка: {discountTotalEur} €");
-            messageBuilder.AppendLine("https://medsestri.com/");
-            string message = messageBuilder.ToString().Trim();
-
-            try
-            {
-                await Share.RequestAsync(new ShareTextRequest
-                {
-                    Text = message,
-                    Title = "Изпрати чрез Viber"
-                });
-
-                var createPatient = new Patient()
-                {
-                    FullName = name,
-                    Note = message,
-                    EGN = egn,
-                    PhoneNumber = phone,
-                    Date = DateTime.Now,
-                    BloodTests = selected
-                };
-
-                var response = await _api.CreateNewPatient(createPatient);
-                _cachedData.InvalidatePatients();
-
-                if (!response.IsSuccessStatusCode)
-                    await DisplayAlert("Грешка", "Неуспешно записване в историята", "ОК");
-
-                ClearAllFeald();
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Грешка", $"Неуспешно изпращане: {ex.Message}", "OK");
-            }
+            _sheetLifted = false;
+            await BottomSheetPanel.TranslateTo(0, 0, 220, Easing.CubicIn);
         }
 
-        private void OnClearClicked(object sender, EventArgs e)
-        {
-            ClearAllFeald();
-        }
-
-        private void OnLoadMore(object sender, EventArgs e)
-        {
-            // No-op: outer ScrollView owns scrolling; this event won't fire.
-        }
+        // ─── Search ───────────────────────────────────────────────────────────
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
@@ -183,20 +166,16 @@ namespace MedSestriManipulations
             }, token, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
         }
 
-        private async void OnSearchBarFocused(object sender, FocusEventArgs e)
+        private void OnSearchBarFocused(object sender, FocusEventArgs e)
         {
             SearchCloseButton.IsVisible = true;
             SearchDismissOverlay.IsVisible = true;
-            await FormSection.FadeTo(0, 180);
-            FormSection.IsVisible = false;
         }
 
-        private async void OnSearchBarUnfocused(object sender, FocusEventArgs e)
+        private void OnSearchBarUnfocused(object sender, FocusEventArgs e)
         {
             SearchCloseButton.IsVisible = false;
             SearchDismissOverlay.IsVisible = false;
-            FormSection.IsVisible = true;
-            await FormSection.FadeTo(1, 180);
         }
 
         private void OnSearchCloseClicked(object sender, EventArgs e)
@@ -205,26 +184,160 @@ namespace MedSestriManipulations
             SearchBar.Unfocus();
         }
 
-
-        private void ClearAllFeald()
+        private void OnSearchDismissOverlayTapped(object sender, TappedEventArgs e)
         {
+            SearchBar.Unfocus();
+        }
+
+        // ─── Blood tests ──────────────────────────────────────────────────────
+
+        private async void ShowsPopupDetailsBloodTest(object sender, EventArgs e)
+        {
+            if (sender is BindableObject { BindingContext: BloodTest test })
+                await DisplayAlert("Пълна информация", test.Name, "Затвори");
+        }
+
+        private void AddSumWhenBloodTestChecked(object sender, CheckedChangedEventArgs e)
+        {
+            UpdateTotalSum();
+        }
+
+        private void OnLoadMore(object sender, EventArgs e) { }
+
+        // ─── Send ─────────────────────────────────────────────────────────────
+
+        private async void OnSendClicked(object sender, EventArgs e)
+        {
+            var selected = BloodTestsList.Where(p => p.IsSelected).ToList();
+            var totalEur = selected.Sum(p => p.EuroPrice);
+
+            string name = CurrentName.Text?.Trim()!;
+            string egn = EGNEntry.Text?.Trim()!;
+            string phone = PhoneEntry.Text?.Trim()!;
+
+            if (selected.Count == 0)
+            {
+                await DisplayAlert("Грешка", "Моля, избери поне едно изследване.", "OK");
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(egn) || string.IsNullOrWhiteSpace(phone))
+            {
+                await DisplayAlert("Грешка", "Моля, попълни Им, ЕГН и телефонен номер.", "OK");
+                return;
+            }
+            else if (egn.Length != 10 || !egn.All(char.IsDigit))
+            {
+                await DisplayAlert("Грешка", "ЕГН трябва да съдържа точно 10 цифри.", "OK");
+                return;
+            }
+            else if (phone.Length != 10 && phone.Length != 13)
+            {
+                await DisplayAlert("Грешка", "Телефонният номер трябва да съдържа точно 10 или 13 символа", "OK");
+                return;
+            }
+
+            decimal discountTotalEur = totalEur * 0.8m;
+            var manipulationsList = string.Join("\n", selected.Select((p, i) => $"{i + 1}. {p.Name} - {p.EuroPrice:F2} €"));
+
+            var messageBuilder = new StringBuilder();
+            messageBuilder.AppendLine($"Пациент: {name}");
+            messageBuilder.AppendLine($"ЕГН: {egn}");
+            messageBuilder.AppendLine($"Телефон: {phone}");
+            messageBuilder.AppendLine();
+            messageBuilder.AppendLine($"Избрани манипулации {selected.Count} бр:");
+            messageBuilder.AppendLine(manipulationsList);
+            messageBuilder.AppendLine();
+            messageBuilder.AppendLine($"Общо сума: {totalEur} €");
+            messageBuilder.AppendLine("--------------------");
+            messageBuilder.AppendLine($"Сума с отстъпка: {discountTotalEur} €");
+            messageBuilder.AppendLine("https://medsestri.com/");
+            string message = messageBuilder.ToString().Trim();
+
+            try
+            {
+                await Share.RequestAsync(new ShareTextRequest { Text = message, Title = "Изпрати чрез Viber" });
+
+                var response = await _api.CreateNewPatient(new Patient
+                {
+                    FullName = name, Note = message, EGN = egn,
+                    PhoneNumber = phone, Date = DateTime.Now, BloodTests = selected
+                });
+                _cachedData.InvalidatePatients();
+
+                if (!response.IsSuccessStatusCode)
+                    await DisplayAlert("Грешка", "Неуспешно записване в историята", "ОК");
+
+                await HideBottomSheet();
+                await ClearAllFeald(showUndo: false);
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Грешка", $"Неуспешно изпращане: {ex.Message}", "OK");
+            }
+        }
+
+        // ─── Clear & Undo (Feature 6) ─────────────────────────────────────────
+
+        private async void OnClearClicked(object sender, EventArgs e)
+        {
+            await ClearAllFeald();
+        }
+
+        private async Task ClearAllFeald(bool showUndo = true)
+        {
+            var savedName = CurrentName.Text ?? string.Empty;
+            var savedEGN = EGNEntry.Text ?? string.Empty;
+            var savedPhone = PhoneEntry.Text ?? string.Empty;
+            var savedSelected = BloodTestsList.Where(p => p.IsSelected).ToList();
+            bool hadAnything = savedSelected.Count > 0 || !string.IsNullOrEmpty(savedName);
+
             CurrentName.Text = "";
             EGNEntry.Text = "";
             PhoneEntry.Text = "";
-            //UIN.Text = "";
 
             foreach (var b in BloodTestsList.Where(p => p.IsSelected))
                 b.IsSelected = false;
 
             UpdateTotalSum();
+
+            if (showUndo && hadAnything)
+            {
+                var snackbar = Snackbar.Make(
+                    "Изчистено",
+                    () =>
+                    {
+                        CurrentName.Text = savedName;
+                        EGNEntry.Text = savedEGN;
+                        PhoneEntry.Text = savedPhone;
+                        foreach (var item in savedSelected) item.IsSelected = true;
+                        UpdateTotalSum();
+                    },
+                    "ВЪРНИ",
+                    TimeSpan.FromSeconds(4));
+
+                await snackbar.Show();
+            }
         }
+
+        // ─── Totals & Summary ─────────────────────────────────────────────────
 
         private void UpdateTotalSum()
         {
             var selected = BloodTestsList.Where(p => p.IsSelected).ToList();
-            TotalEURLabel.Text = $"{selected.Sum(p => p.EuroPrice):F2} €";
-            //TotalBGNLabel.Text = $"{selected.Sum(p => p.BngPrice):F2} лв";
+            var totalEUR = selected.Sum(p => p.EuroPrice);
+            int count = selected.Count;
+
+            TotalEURLabel.Text = $"{totalEUR:F2} €";
+
+            SummaryLabel.Text = count > 0
+                ? $"{count} {(count == 1 ? "изследване" : "изследвания")} · {totalEUR:F2} €"
+                : "Избери изследвания";
+            SummaryLabel.TextColor = count > 0
+                ? Color.FromArgb("#0066CC")
+                : Color.FromArgb("#AAAAAA");
         }
+
+        // ─── Feature 4: Filter + highlight ───────────────────────────────────
 
         private void ApplyFilter(string? searchText = null)
         {
@@ -234,7 +347,13 @@ namespace MedSestriManipulations
                 ? (IEnumerable<BloodTest>)BloodTestsList
                 : BloodTestsList.Where(p => p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase));
 
-            ProcedureList.ItemsSource = filtered.ToList();
+            var filteredList = filtered.ToList();
+
+            // Set search text on each item so the HighlightConverter can use it
+            foreach (var item in filteredList)
+                item.SearchText = searchText;
+
+            ProcedureList.ItemsSource = filteredList;
         }
     }
 }
