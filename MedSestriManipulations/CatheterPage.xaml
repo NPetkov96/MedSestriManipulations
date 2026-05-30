@@ -53,7 +53,8 @@
         <CollectionView Grid.Row="3"
                         x:Name="CathetersListView"
                         SelectionMode="None"
-                        Margin="16,4,16,0">
+                        Margin="16,4,16,0"
+                        IsVisible="False">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Catheter">
                     <Border Margin="0,5,0,5"
@@ -118,6 +119,9 @@
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
+
+        <controls:SkeletonListView x:Name="CathetersSkeleton"
+                                   Grid.Row="3" />
 
         <!-- Add/edit bottom sheet dim overlay -->
         <Grid x:Name="SheetOverlay"

@@ -24,7 +24,8 @@ namespace MedSestriManipulations
             base.OnAppearing();
             try
             {
-                LoadingOverlay.IsVisible = true;
+                PatientsSkeleton.IsLoading = true;
+                PatientsCollection.IsVisible = false;
 
                 var patients = await _cachedData.GetPatientsAsync();
                 _allPatients = patients.OrderByDescending(p => p.Date).ToList();
@@ -36,7 +37,8 @@ namespace MedSestriManipulations
             }
             finally
             {
-                LoadingOverlay.IsVisible = false;
+                PatientsSkeleton.IsLoading = false;
+                PatientsCollection.IsVisible = true;
             }
         }
 

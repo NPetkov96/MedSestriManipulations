@@ -37,7 +37,8 @@
         <CollectionView Grid.Row="2"
                         x:Name="PatientsCollection"
                         SelectionMode="None"
-                        Margin="16,4,16,0">
+                        Margin="16,4,16,0"
+                        IsVisible="False">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Patient">
                     <Border Margin="0,5,0,5"
@@ -103,6 +104,9 @@
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
+
+        <controls:SkeletonListView x:Name="PatientsSkeleton"
+                                   Grid.Row="2" />
 
         <!-- Bottom sheet dim overlay -->
         <Grid x:Name="SheetOverlay"

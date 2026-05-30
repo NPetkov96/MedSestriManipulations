@@ -31,7 +31,9 @@ namespace MedSestriManipulations
             base.OnAppearing();
             try
             {
-                LoadingOverlay.IsVisible = true;
+                CathetersSkeleton.IsLoading = true;
+                CathetersListView.IsVisible = false;
+
                 _allCatheters = await _cacheData.GetCathetersAsync();
                 ApplyFilter();
 
@@ -44,7 +46,8 @@ namespace MedSestriManipulations
             }
             finally
             {
-                LoadingOverlay.IsVisible = false;
+                CathetersSkeleton.IsLoading = false;
+                CathetersListView.IsVisible = true;
             }
         }
 

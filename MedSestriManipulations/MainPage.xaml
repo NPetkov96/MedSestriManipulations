@@ -87,47 +87,9 @@
         </Grid>
 
         <!-- Row 3: Skeleton loading (visible while data loads) -->
-        <VerticalStackLayout x:Name="SkeletonView"
-                             Grid.Row="3"
-                             Padding="16,8,16,8"
-                             Spacing="10">
-            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
-                <VerticalStackLayout Padding="14,14" Spacing="8">
-                    <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="210" HorizontalOptions="Start" />
-                    <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="110" HorizontalOptions="Start" />
-                </VerticalStackLayout>
-            </Border>
-            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
-                <VerticalStackLayout Padding="14,14" Spacing="8">
-                    <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="170" HorizontalOptions="Start" />
-                    <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="90" HorizontalOptions="Start" />
-                </VerticalStackLayout>
-            </Border>
-            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
-                <VerticalStackLayout Padding="14,14" Spacing="8">
-                    <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="240" HorizontalOptions="Start" />
-                    <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="120" HorizontalOptions="Start" />
-                </VerticalStackLayout>
-            </Border>
-            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
-                <VerticalStackLayout Padding="14,14" Spacing="8">
-                    <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="190" HorizontalOptions="Start" />
-                    <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="100" HorizontalOptions="Start" />
-                </VerticalStackLayout>
-            </Border>
-            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
-                <VerticalStackLayout Padding="14,14" Spacing="8">
-                    <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="220" HorizontalOptions="Start" />
-                    <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="95" HorizontalOptions="Start" />
-                </VerticalStackLayout>
-            </Border>
-            <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
-                <VerticalStackLayout Padding="14,14" Spacing="8">
-                    <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="160" HorizontalOptions="Start" />
-                    <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="115" HorizontalOptions="Start" />
-                </VerticalStackLayout>
-            </Border>
-        </VerticalStackLayout>
+        <controls:SkeletonListView x:Name="SkeletonView"
+                                   Grid.Row="3"
+                                   IsLoading="True" />
 
         <!-- Row 3: Blood tests list (hidden until loaded) -->
         <CollectionView x:Name="ProcedureList"

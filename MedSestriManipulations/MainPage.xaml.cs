@@ -10,7 +10,6 @@ namespace MedSestriManipulations
     {
         private CancellationTokenSource? _filterCts;
         private List<BloodTest> BloodTestsList = new();
-        private bool _skeletonAnimating = false;
 
         private readonly API _api;
         private readonly CachedDataService _cachedData;
@@ -28,14 +27,12 @@ namespace MedSestriManipulations
             base.OnAppearing();
             try
             {
-                _ = AnimateSkeleton();
+                SkeletonView.IsLoading = true;
+                ProcedureList.IsVisible = false;
 
                 BloodTestsList = await _cachedData.GetBloodTestsAsync();
 
-                _skeletonAnimating = false;
-                SkeletonView.CancelAnimations();
-                SkeletonView.IsVisible = false;
-                SkeletonView.Opacity = 1;
+                SkeletonView.IsLoading = false;
                 ProcedureList.IsVisible = true;
 
                 ApplyFilter();
@@ -67,21 +64,8 @@ namespace MedSestriManipulations
             }
             catch (Exception ex)
             {
-                _skeletonAnimating = false;
+                SkeletonView.IsLoading = false;
                 await DisplayAlert("Грешка", $"{ex.Message}", "OK");
-            }
-        }
-
-        // ─── Feature 5: Skeleton animation ───────────────────────────────────
-
-        private async Task AnimateSkeleton()
-        {
-            _skeletonAnimating = true;
-            while (_skeletonAnimating)
-            {
-                await SkeletonView.FadeTo(0.3, 700);
-                if (!_skeletonAnimating) break;
-                await SkeletonView.FadeTo(1.0, 700);
             }
         }
 
