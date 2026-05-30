@@ -187,6 +187,33 @@ namespace MedSestriManipulations
             }, token, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
         }
 
+        private async void OnSearchBarFocused(object sender, FocusEventArgs e)
+        {
+            SearchCloseButton.IsVisible = true;
+            SearchDismissOverlay.IsVisible = true;
+            await FormSection.FadeTo(0, 180);
+            FormSection.IsVisible = false;
+        }
+
+        private async void OnSearchBarUnfocused(object sender, FocusEventArgs e)
+        {
+            SearchCloseButton.IsVisible = false;
+            SearchDismissOverlay.IsVisible = false;
+            FormSection.IsVisible = true;
+            await FormSection.FadeTo(1, 180);
+        }
+
+        private void OnSearchCloseClicked(object sender, EventArgs e)
+        {
+            SearchBar.Text = string.Empty;
+            SearchBar.Unfocus();
+        }
+
+        private void OnSearchDismissOverlayTapped(object sender, TappedEventArgs e)
+        {
+            SearchBar.Unfocus();
+        }
+
         private void ClearAllFeald()
         {
             CurrentName.Text = "";
@@ -202,8 +229,9 @@ namespace MedSestriManipulations
 
         private void UpdateTotalSum()
         {
-            var totalEURO = BloodTestsList.Where(p => p.IsSelected).Sum(p => p.EuroPrice);
-            TotalEURLabel.Text = $"{totalEURO:F2} €";
+            var selected = BloodTestsList.Where(p => p.IsSelected).ToList();
+            TotalEURLabel.Text = $"{selected.Sum(p => p.EuroPrice):F2} €";
+            TotalBGNLabel.Text = $"{selected.Sum(p => p.BngPrice):F2} лв";
         }
 
         private void ApplyFilter(string? searchText = null)
