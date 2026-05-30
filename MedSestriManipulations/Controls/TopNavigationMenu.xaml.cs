@@ -54,8 +54,8 @@ public partial class TopNavigationMenu : ContentView
 
     private static void SetButtonState(Button button, bool isActive)
     {
-        button.BackgroundColor = isActive ? Color.FromArgb("#007BFF") : Colors.Transparent;
-        button.TextColor = isActive ? Colors.White : Color.FromArgb("#172033");
+        button.BackgroundColor = isActive ? Color.FromArgb("#0066CC") : Colors.Transparent;
+        button.TextColor = isActive ? Colors.White : Color.FromArgb("#1A1A1A");
         button.FontAttributes = isActive ? FontAttributes.Bold : FontAttributes.None;
     }
 }

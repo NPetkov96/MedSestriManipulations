@@ -1,139 +1,251 @@
-﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Views;
 using MedSestriManipulations.ApiHandler;
 using MedSestriManipulations.Models;
 using MedSestriManipulations.Services;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace MedSestriManipulations;
-
-public partial class CatheterPage : ContentPage
+namespace MedSestriManipulations
 {
-    private readonly API _api;
-    private readonly CachedDataService _cacheData;
-
-    private List<Catheter> _cathers;
-    private ObservableCollection<Catheter> cathers = new();
-
-    public ICommand ShowPopupCommand => new Command<object>(item =>
+    public partial class CatheterPage : ContentPage
     {
-        if (item == null) return;
+        private readonly API _api;
+        private readonly CachedDataService _cacheData;
+        private List<Catheter> _allCatheters = new();
 
-        ManipulateCatheter((Catheter)item);
-    });
-
-    public CatheterPage(API api, CachedDataService cacheData)
-    {
-        InitializeComponent();
-        BindingContext = this;
-
-        _api = api;
-        _cacheData = cacheData;
-        _cathers = new List<Catheter>();
-    }
-
-    protected override async void OnAppearing()
-    {
-        base.OnAppearing();
-
-        _cathers = await _cacheData.GetCathetersAsync();
-        cathers = new ObservableCollection<Catheter>(_cathers);
-        CathetersListView.ItemsSource = cathers;
-
-        var overdueCatheter = _cathers.FirstOrDefault(c=>c.IsOverdue == true);
-
-        if(overdueCatheter != null) ManipulateCatheter(overdueCatheter!);
-    }
-
-    private async void ManipulateCatheter(Catheter catheter)
-    {
-        var popup = new CatheterPopup(catheter);
-
-        popup.Check += (s, catheterObj) =>
+        public ICommand ShowPopupCommand => new Command<object>(item =>
         {
-            if (catheterObj is Catheter catheter)
+            if (item is Catheter catheter) ManipulateCatheter(catheter);
+        });
+
+        public CatheterPage(API api, CachedDataService cacheData)
+        {
+            InitializeComponent();
+            BindingContext = this;
+
+            _api = api;
+            _cacheData = cacheData;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            try
             {
-                CheckCatheterAppointment(catheter);
+                LoadingOverlay.IsVisible = true;
+                _allCatheters = await _cacheData.GetCathetersAsync();
+                ApplyFilter();
+
+                var overdue = _allCatheters.FirstOrDefault(c => c.IsOverdue);
+                if (overdue != null) ManipulateCatheter(overdue);
             }
-        };
-
-        popup.Update += (s, catheterObj) =>
-        {
-            if (catheterObj is Catheter catheter)
+            catch (Exception ex)
             {
-                UpdateCatheterAppointment(catheter);
+                await DisplayAlert("Грешка", $"{ex.Message}", "OK");
             }
-        };
-
-        await this.ShowPopupAsync(popup);
-    }
-
-    private async void OnSaveClicked(object sender, EventArgs e)
-    {
-        try
-        {
-            var phone = PhoneEntry.Text?.Trim() ?? string.Empty;
-            if (phone.Length != 10 && phone.Length != 13)
+            finally
             {
-                await DisplayAlert("Грешка", "Телефонният номер трябва да съдържа точно 10 или 13 символа", "OK");
+                LoadingOverlay.IsVisible = false;
+            }
+        }
+
+        // ─── Search ───────────────────────────────────────────────────────────
+
+        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplyFilter(e.NewTextValue);
+        }
+
+        private void ApplyFilter(string? searchText = null)
+        {
+            searchText = (searchText ?? SearchBar.Text)?.Trim() ?? string.Empty;
+
+            IEnumerable<Catheter> filtered = _allCatheters;
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                filtered = _allCatheters.Where(c =>
+                    c.ClientName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                    c.PhoneNumber.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+            }
+
+            CathetersListView.ItemsSource = filtered.ToList();
+        }
+
+        // ─── Bottom sheet (add / edit) ────────────────────────────────────────
+
+        private async void OnOpenAddSheetClicked(object sender, EventArgs e)
+        {
+            SheetTitleLabel.Text = "Нов катетър";
+            ClearFields(null!, null!);
+            await ShowSheet();
+        }
+
+        private async Task ShowSheet()
+        {
+            SheetPanel.TranslationY = 600;
+            SheetOverlay.Opacity = 0;
+            SheetOverlay.IsVisible = true;
+            SheetPanel.IsVisible = true;
+
+            await Task.WhenAll(
+                SheetOverlay.FadeTo(1, 250),
+                SheetPanel.TranslateTo(0, 0, 300, Easing.CubicOut)
+            );
+        }
+
+        private async Task HideSheet()
+        {
+            PatientNameEntry.Unfocus();
+            PhoneEntry.Unfocus();
+            AddressEntry.Unfocus();
+            _sheetLifted = false;
+
+            await Task.WhenAll(
+                SheetOverlay.FadeTo(0, 220),
+                SheetPanel.TranslateTo(0, 600, 260, Easing.CubicIn)
+            );
+            SheetOverlay.IsVisible = false;
+            SheetPanel.IsVisible = false;
+        }
+
+        private async void OnSheetOverlayTapped(object sender, TappedEventArgs e)
+        {
+            await HideSheet();
+        }
+
+        // ─── Keyboard avoidance ───────────────────────────────────────────────
+
+        private const double SheetKeyboardLift = 240;
+        private bool _sheetLifted = false;
+
+        private async void OnSheetEntryFocused(object sender, FocusEventArgs e)
+        {
+            if (_sheetLifted) return;
+            _sheetLifted = true;
+            await SheetPanel.TranslateTo(0, -SheetKeyboardLift, 220, Easing.CubicOut);
+        }
+
+        private async void OnSheetEntryUnfocused(object sender, FocusEventArgs e)
+        {
+            await Task.Delay(120);
+            if (PatientNameEntry.IsFocused || PhoneEntry.IsFocused || AddressEntry.IsFocused)
                 return;
-            }
 
-            var model = new Catheter()
+            _sheetLifted = false;
+            await SheetPanel.TranslateTo(0, 0, 220, Easing.CubicIn);
+        }
+
+        // ─── Catheter detail popup ────────────────────────────────────────────
+
+        private async void ManipulateCatheter(Catheter catheter)
+        {
+            var popup = new CatheterPopup(catheter);
+
+            popup.Check += (s, obj) =>
             {
-                ClientName = PatientNameEntry.Text?.Trim() ?? string.Empty,
-                PhoneNumber = phone,
-                Date = CatheterDatePicker.Date,
-                Address = AddressEntry.Text?.Trim() ?? string.Empty,
-                IsChecked = false
+                if (obj is Catheter c) CheckCatheterAppointment(c);
             };
 
-            var existingCatheter = _cathers.FirstOrDefault(c => c.ClientName == model.ClientName ||
-                               c.Address == model.Address ||
-                               c.PhoneNumber == model.PhoneNumber);
-
-            if (existingCatheter != null)
+            popup.Update += (s, obj) =>
             {
-                model.Id = existingCatheter.Id;
-                await _api.UpdateCatheterAppointment(model);
-                cathers.Remove(existingCatheter);
-            }
-            else
-            {
-                await _api.CreateCatheterappointment(model);
-            }
+                if (obj is Catheter c) UpdateCatheterAppointment(c);
+            };
 
-            cathers.Add(model);
-            _cacheData.InvalidateCatheters();
-            ClearFields(null!, null!);
-
+            await this.ShowPopupAsync(popup);
         }
-        catch (Exception ex)
+
+        // ─── Save / Edit / Remove ─────────────────────────────────────────────
+
+        private async void OnSaveClicked(object sender, EventArgs e)
         {
-            await DisplayAlert("Грешка", $"Неуспешно записване: {ex.Message}", "OK");
+            try
+            {
+                var phone = PhoneEntry.Text?.Trim() ?? string.Empty;
+                if (phone.Length != 10 && phone.Length != 13)
+                {
+                    await DisplayAlert("Грешка", "Телефонният номер трябва да съдържа точно 10 или 13 символа", "OK");
+                    return;
+                }
+
+                LoadingOverlay.IsVisible = true;
+
+                var model = new Catheter
+                {
+                    ClientName = PatientNameEntry.Text?.Trim() ?? string.Empty,
+                    PhoneNumber = phone,
+                    Date = CatheterDatePicker.Date,
+                    Address = AddressEntry.Text?.Trim() ?? string.Empty,
+                    IsChecked = false
+                };
+
+                var existing = _allCatheters.FirstOrDefault(c =>
+                    c.ClientName == model.ClientName ||
+                    c.Address == model.Address ||
+                    c.PhoneNumber == model.PhoneNumber);
+
+                if (existing != null)
+                {
+                    model.Id = existing.Id;
+                    await _api.UpdateCatheterAppointment(model);
+                }
+                else
+                {
+                    await _api.CreateCatheterappointment(model);
+                }
+
+                _cacheData.InvalidateCatheters();
+                _allCatheters = await _cacheData.GetCathetersAsync();
+                ApplyFilter();
+
+                ClearFields(null!, null!);
+                await HideSheet();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Грешка", $"Неуспешно записване: {ex.Message}", "OK");
+            }
+            finally
+            {
+                LoadingOverlay.IsVisible = false;
+            }
         }
-    }
 
-    private void ClearFields(object sender, EventArgs e)
-    {
-        PatientNameEntry.Text = string.Empty;
-        PhoneEntry.Text = string.Empty;
-        CatheterDatePicker.Date = DateTime.Today;
-        AddressEntry.Text = string.Empty;
-    }
+        private void ClearFields(object sender, EventArgs e)
+        {
+            PatientNameEntry.Text = string.Empty;
+            PhoneEntry.Text = string.Empty;
+            CatheterDatePicker.Date = DateTime.Today;
+            AddressEntry.Text = string.Empty;
+        }
 
-    private async void CheckCatheterAppointment(Catheter catheter)
-    {
-        await _api.CheckCatheterAppointment(catheter);
-        cathers.Remove(catheter);
-        _cacheData.InvalidateCatheters();
-    }
+        private async void CheckCatheterAppointment(Catheter catheter)
+        {
+            try
+            {
+                LoadingOverlay.IsVisible = true;
+                await _api.CheckCatheterAppointment(catheter);
+                _cacheData.InvalidateCatheters();
+                _allCatheters = await _cacheData.GetCathetersAsync();
+                ApplyFilter();
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Грешка", $"{ex.Message}", "OK");
+            }
+            finally
+            {
+                LoadingOverlay.IsVisible = false;
+            }
+        }
 
-    private void UpdateCatheterAppointment(Catheter catheter)
-    {
-        PatientNameEntry.Text = catheter.ClientName;
-        PhoneEntry.Text = catheter.PhoneNumber;
-        CatheterDatePicker.Date = catheter.Date;
-        AddressEntry.Text = catheter.Address;
+        private async void UpdateCatheterAppointment(Catheter catheter)
+        {
+            SheetTitleLabel.Text = "Редактирай катетър";
+            PatientNameEntry.Text = catheter.ClientName;
+            PhoneEntry.Text = catheter.PhoneNumber;
+            CatheterDatePicker.Date = catheter.Date;
+            AddressEntry.Text = catheter.Address;
+            await ShowSheet();
+        }
     }
 }

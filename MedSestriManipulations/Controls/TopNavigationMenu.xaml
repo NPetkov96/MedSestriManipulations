@@ -5,33 +5,32 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Loaded="OnLoaded">
 
-    <Grid BackgroundColor="#dfe9f5" Padding="10,8,10,6">
+    <Grid BackgroundColor="#F8F9FB" Padding="10,8,10,6">
         <Border
             BackgroundColor="White"
-            Stroke="#C9D8EA"
+            Stroke="#D4DDE8"
             StrokeThickness="1"
-            StrokeShape="RoundRectangle 18"
+            StrokeShape="RoundRectangle 12"
             Padding="12,8">
 
             <Grid RowDefinitions="Auto,Auto" RowSpacing="8">
                 <Grid ColumnDefinitions="*,Auto">
-                    <VerticalStackLayout Spacing="0" VerticalOptions="Center">
-                        <Label
-                            Text="Медицински Сестри"
-                            FontSize="18"
-                            FontAttributes="Bold"
-                            TextColor="#172033" />
-                    </VerticalStackLayout>
+                    <Label
+                        Text="Медицински Сестри"
+                        FontSize="18"
+                        FontAttributes="Bold"
+                        TextColor="#1A1A1A"
+                        VerticalOptions="Center" />
 
                     <Button
                         x:Name="MenuButton"
                         Grid.Column="1"
                         Text="Меню"
                         Clicked="ToggleMenu"
-                        BackgroundColor="#EAF3FF"
-                        TextColor="#007BFF"
+                        BackgroundColor="#E8EEF5"
+                        TextColor="#0066CC"
                         FontAttributes="Bold"
-                        CornerRadius="16"
+                        CornerRadius="8"
                         Padding="18,8"
                         MinimumHeightRequest="38" />
                 </Grid>
@@ -40,10 +39,10 @@
                     x:Name="NavigationPanel"
                     Grid.Row="1"
                     IsVisible="False"
-                    BackgroundColor="#F7FAFE"
-                    Stroke="#E2ECF7"
+                    BackgroundColor="#F8F9FB"
+                    Stroke="#D4DDE8"
                     StrokeThickness="1"
-                    StrokeShape="RoundRectangle 16"
+                    StrokeShape="RoundRectangle 8"
                     Padding="4">
 
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="4">
@@ -52,8 +51,8 @@
                             Text="Начало"
                             Clicked="GoHome"
                             BackgroundColor="Transparent"
-                            TextColor="#172033"
-                            CornerRadius="12"
+                            TextColor="#1A1A1A"
+                            CornerRadius="6"
                             Padding="8,8"
                             FontSize="14"
                             MinimumHeightRequest="36" />
@@ -64,8 +63,8 @@
                             Text="История"
                             Clicked="GoHistory"
                             BackgroundColor="Transparent"
-                            TextColor="#172033"
-                            CornerRadius="12"
+                            TextColor="#1A1A1A"
+                            CornerRadius="6"
                             Padding="8,8"
                             FontSize="14"
                             MinimumHeightRequest="36" />
@@ -76,8 +75,8 @@
                             Text="Катетри"
                             Clicked="GoCatheters"
                             BackgroundColor="Transparent"
-                            TextColor="#172033"
-                            CornerRadius="12"
+                            TextColor="#1A1A1A"
+                            CornerRadius="6"
                             Padding="8,8"
                             FontSize="14"
                             MinimumHeightRequest="36" />
