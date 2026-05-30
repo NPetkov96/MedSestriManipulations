@@ -26,20 +26,20 @@
                     Text="Зачисти"
                     Clicked="OnClearClicked"
                     BackgroundColor="Transparent"
-                    TextColor="#AAAAAA"
-                    FontSize="13"
+                    TextColor="#b51010"
+                    FontSize="16"
                     Padding="0"
                     BorderWidth="0" />
 
-            <Label Grid.Column="1"
+            <Label Grid.Column="2"
                    x:Name="SummaryLabel"
                    Text="Избери изследвания"
                    TextColor="#AAAAAA"
-                   FontSize="13"
+                   FontSize="16"
                    HorizontalOptions="Center"
                    VerticalOptions="Center" />
 
-            <Button Grid.Column="2"
+            <!--<Button Grid.Column="2"
                     Text="Изпрати →"
                     Clicked="OnOpenSheetClicked"
                     BackgroundColor="#0066CC"
@@ -47,7 +47,7 @@
                     CornerRadius="6"
                     Padding="14,8"
                     FontAttributes="Bold"
-                    FontSize="13" />
+                    FontSize="13" />-->
         </Grid>
 
         <!-- Row 2: Search bar -->
@@ -68,7 +68,7 @@
                            Focused="OnSearchBarFocused"
                            Unfocused="OnSearchBarUnfocused"
                            BackgroundColor="Transparent"
-                           FontSize="14" HeightRequest="48"
+                           FontSize="16" HeightRequest="48"
                            CancelButtonColor="#0066CC"
                            TextColor="#1A1A1A"
                            PlaceholderColor="#999999" />
@@ -141,6 +141,13 @@
                             BackgroundColor="White"
                             Stroke="#D4DDE8"
                             StrokeThickness="1">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                <Setter Property="BackgroundColor" Value="#F0F6FF" />
+                                <Setter Property="Stroke" Value="#0066CC" />
+                                <Setter Property="StrokeThickness" Value="1.5" />
+                            </DataTrigger>
+                        </Border.Triggers>
                         <Grid ColumnDefinitions="Auto,*,Auto" Padding="14,12" ColumnSpacing="12">
 
                             <CheckBox Grid.Column="0"
@@ -182,6 +189,29 @@
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
+
+            <CollectionView.Footer>
+                <BoxView HeightRequest="80" Color="Transparent" />
+            </CollectionView.Footer>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
+                                     Padding="32,60" Spacing="10">
+                    <Label Text="🔍"
+                           FontSize="44"
+                           HorizontalOptions="Center"
+                           Opacity="0.4" />
+                    <Label Text="Няма намерени изследвания"
+                           FontSize="16" FontAttributes="Bold"
+                           TextColor="#666666"
+                           HorizontalOptions="Center" />
+                    <Label Text="Опитай с друга дума за търсене"
+                           FontSize="13"
+                           TextColor="#AAAAAA"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
         </CollectionView>
 
         <!-- Search dismiss overlay (Row 3 only) -->
@@ -193,6 +223,39 @@
                 <TapGestureRecognizer Tapped="OnSearchDismissOverlayTapped" />
             </Grid.GestureRecognizers>
         </Grid>
+
+        <!-- Floating selection pill — appears when tests are selected -->
+        <Border x:Name="SelectionPill"
+                Grid.Row="3"
+                IsVisible="False"
+                VerticalOptions="End"
+                HorizontalOptions="Center"
+                Margin="0,0,0,20"
+                BackgroundColor="#0066CC"
+                StrokeShape="RoundRectangle 26"
+                Stroke="Transparent"
+                Padding="20,12">
+            <Border.Shadow>
+                <Shadow Brush="#0066CC" Offset="0,4" Radius="12" Opacity="0.4" />
+            </Border.Shadow>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnSelectionPillTapped" />
+            </Border.GestureRecognizers>
+            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                <Label x:Name="PillCountLabel"
+                       Text="0 избрани"
+                       TextColor="White"
+                       FontSize="14" FontAttributes="Bold"
+                       VerticalOptions="Center" />
+                <Label Text="·" TextColor="#CCDFF7" FontSize="14" VerticalOptions="Center" />
+                <Label x:Name="PillTotalLabel"
+                       Text="0.00 €"
+                       TextColor="White"
+                       FontSize="14" FontAttributes="Bold"
+                       VerticalOptions="Center" />
+                <Label Text="→" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+        </Border>
 
         <!-- Bottom sheet dim overlay -->
         <Grid x:Name="BottomSheetOverlay"

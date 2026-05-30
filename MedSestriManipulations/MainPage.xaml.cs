@@ -335,6 +335,42 @@ namespace MedSestriManipulations
             SummaryLabel.TextColor = count > 0
                 ? Color.FromArgb("#0066CC")
                 : Color.FromArgb("#AAAAAA");
+
+            UpdateSelectionPill(count, totalEUR);
+        }
+
+        private bool _pillVisible = false;
+
+        private async void UpdateSelectionPill(int count, decimal totalEUR)
+        {
+            PillCountLabel.Text = count == 1 ? "1 избрано" : $"{count} избрани";
+            PillTotalLabel.Text = $"{totalEUR:F2} €";
+
+            if (count > 0 && !_pillVisible)
+            {
+                _pillVisible = true;
+                SelectionPill.IsVisible = true;
+                SelectionPill.Opacity = 0;
+                SelectionPill.TranslationY = 60;
+                await Task.WhenAll(
+                    SelectionPill.FadeTo(1, 220),
+                    SelectionPill.TranslateTo(0, 0, 260, Easing.CubicOut)
+                );
+            }
+            else if (count == 0 && _pillVisible)
+            {
+                _pillVisible = false;
+                await Task.WhenAll(
+                    SelectionPill.FadeTo(0, 180),
+                    SelectionPill.TranslateTo(0, 60, 200, Easing.CubicIn)
+                );
+                SelectionPill.IsVisible = false;
+            }
+        }
+
+        private async void OnSelectionPillTapped(object sender, TappedEventArgs e)
+        {
+            await ShowBottomSheet();
         }
 
         // ─── Feature 4: Filter + highlight ───────────────────────────────────
