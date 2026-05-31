@@ -10,28 +10,27 @@
     <ContentPage.Resources>
         <DataTemplate x:Key="HistoryWeekHeaderTemplate" x:DataType="models:HistoryListItem">
             <Grid BackgroundColor="#F9FAFB"
-                  Padding="16,12,4,4">
+                  Padding="14,10,4,4">
                 <Label Text="{Binding HeaderText}"
                        TextColor="#9CA3AF"
-                       FontSize="18"
+                       FontSize="13"
+                       FontAttributes="Bold"
                        VerticalOptions="Center" />
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="HistoryPatientTemplate" x:DataType="models:HistoryListItem">
-            <Border Margin="0,0,0,6"
-                    StrokeShape="RoundRectangle 12"
+            <Border Margin="0,0,0,5"
+                    StrokeShape="RoundRectangle 8"
                     BackgroundColor="White"
                     Stroke="#F3F4F6"
                     StrokeThickness="1">
-                <!-- shadow removed to improve scroll performance -->
                 <Grid ColumnDefinitions="*,Auto" Padding="14,12" ColumnSpacing="12">
 
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnPatientTapped" />
                     </Grid.GestureRecognizers>
 
-                    <!-- Left: patient info -->
                     <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
                         <Label Text="{Binding Patient.FullName}"
                                FontSize="14" FontAttributes="Bold"
@@ -44,35 +43,18 @@
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
 
-                    <!-- Right: price badge + test count badge -->
                     <VerticalStackLayout Grid.Column="1" VerticalOptions="Center"
-                                         HorizontalOptions="End" Spacing="4">
-
-                        <!-- Price badge: amber when zero, teal otherwise -->
-                        <Border StrokeShape="RoundRectangle 8" Stroke="Transparent"
-                                Padding="8,3" HorizontalOptions="End"
-                                BackgroundColor="#F0FDF9">
-                            <Border.Triggers>
-                                <DataTrigger TargetType="Border" Binding="{Binding Patient.IsZeroPrice}" Value="True">
-                                    <Setter Property="BackgroundColor" Value="#FEF3C7" />
-                                </DataTrigger>
-                            </Border.Triggers>
-                            <Label Text="{Binding Patient.TotalEuro, StringFormat='{0:F2} €'}"
-                                   FontSize="12" FontAttributes="Bold" TextColor="#0F766E">
-                                <Label.Triggers>
-                                    <DataTrigger TargetType="Label" Binding="{Binding Patient.IsZeroPrice}" Value="True">
-                                        <Setter Property="TextColor" Value="#92400E" />
-                                    </DataTrigger>
-                                </Label.Triggers>
-                            </Label>
-                        </Border>
-
-                        <!-- Test count badge -->
-                        <Border BackgroundColor="#EFF6FF" StrokeShape="RoundRectangle 6"
-                                Stroke="Transparent" Padding="8,2" HorizontalOptions="End">
-                            <Label Text="{Binding Patient.TestsCountText}"
-                                   FontSize="10" FontAttributes="Bold" TextColor="#3B82F6" />
-                        </Border>
+                                         HorizontalOptions="End" Spacing="2">
+                        <Label Text="{Binding Patient.TotalEuro, StringFormat='{0:F2} €'}"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               TextColor="#0F766E"
+                               HorizontalOptions="End" />
+                        <Label Text="{Binding Patient.TestsCountText}"
+                               FontSize="10"
+                               FontAttributes="Bold"
+                               TextColor="#3B82F6"
+                               HorizontalOptions="End" />
                     </VerticalStackLayout>
                 </Grid>
             </Border>

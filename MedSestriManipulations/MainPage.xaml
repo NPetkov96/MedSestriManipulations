@@ -104,12 +104,38 @@
                             </DataTrigger>
                         </Border.Triggers>
                         <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,10" ColumnSpacing="10">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnBloodTestRowTapped" />
+                            </Grid.GestureRecognizers>
 
-                            <CheckBox Grid.Column="0"
-                                      IsChecked="{Binding IsSelected}"
-                                      CheckedChanged="AddSumWhenBloodTestChecked"
-                                      Color="#0F766E" Scale="1.2"
-                                      VerticalOptions="Center" />
+                            <Border Grid.Column="0"
+                                    WidthRequest="24"
+                                    HeightRequest="24"
+                                    StrokeShape="RoundRectangle 12"
+                                    Stroke="#D1D5DB"
+                                    StrokeThickness="1.5"
+                                    BackgroundColor="White"
+                                    VerticalOptions="Center">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="#0F766E" />
+                                        <Setter Property="Stroke" Value="#0F766E" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Label Text="✓"
+                                       Opacity="0"
+                                       TextColor="White"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Opacity" Value="1" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
 
                             <Label Grid.Column="1"
                                    Text="{Binding Name}"

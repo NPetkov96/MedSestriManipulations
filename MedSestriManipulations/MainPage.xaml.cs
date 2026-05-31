@@ -22,8 +22,7 @@ namespace MedSestriManipulations
         private List<BloodTest> _allFilteredCache = new();
         private int _displayCount = 0;
         private bool _isAppendingPage;
-        private double _lastLoggedVerticalOffset = -1;
-        private const int PageSize = 50;
+        private const int PageSize = 40;
 
         private readonly API _api;
         private readonly CachedDataService _cachedData;
@@ -34,15 +33,6 @@ namespace MedSestriManipulations
             BindingContext = this;
             _api = api;
             _cachedData = cachedData;
-        }
-
-        private void ProcedureList_Scrolled(object? sender, Microsoft.Maui.Controls.ItemsViewScrolledEventArgs e)
-        {
-            if (Math.Abs(e.VerticalOffset - _lastLoggedVerticalOffset) < 1000)
-                return;
-
-            _lastLoggedVerticalOffset = e.VerticalOffset;
-            Debug.WriteLine($"ProcedureList.Scrolled: Horizontal={e.HorizontalOffset:F1}, Vertical={e.VerticalOffset:F1}");
         }
 
         protected override async void OnAppearing()
@@ -64,9 +54,6 @@ namespace MedSestriManipulations
                 // which is expensive on large lists.
                 ProcedureList.ItemsSource = _filteredProcedures;
                 ApplyFilter();
-
-                // Instrumentation: log scroll events for diagnostics
-                ProcedureList.Scrolled += ProcedureList_Scrolled;
 
                 var reusedPatient = SelectedPatientService.PatientToReuse;
                 if (reusedPatient != null)
@@ -103,11 +90,6 @@ namespace MedSestriManipulations
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            try
-            {
-                ProcedureList.Scrolled -= ProcedureList_Scrolled;
-            }
-            catch { }
         }
 
         private void ProcedureList_RemainingItemsThresholdReached(object sender, EventArgs e)
@@ -240,8 +222,11 @@ namespace MedSestriManipulations
                 await DisplayAlert("Пълна информация", test.Name, "Затвори");
         }
 
-        private void AddSumWhenBloodTestChecked(object sender, CheckedChangedEventArgs e)
+        private void OnBloodTestRowTapped(object sender, TappedEventArgs e)
         {
+            if (sender is BindableObject { BindingContext: BloodTest test })
+                test.IsSelected = !test.IsSelected;
+
             UpdateTotalSum();
         }
 

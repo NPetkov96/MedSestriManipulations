@@ -23,7 +23,7 @@ namespace MedSestriManipulations
         private bool _isLoadingPatients;
         private bool _isAppendingPage;
         private int _displayCount;
-        private const int PageSize = 80;
+        private const int PageSize = 50;
 
         public HistoryPage(API api, CachedDataService cachedData)
         {
