@@ -16,6 +16,11 @@ namespace MedSestriManipulations.Models
         public List<BloodTest> BloodTests { get; set; } = new();
 
         private bool isSelected;
+        private decimal? _totalEuro;
+        private string? _testsCountText;
+        private string? _dateText;
+        private string? _shortDateText;
+        private string? _phoneFormatted;
 
         [JsonIgnore]
         public bool IsSelected
@@ -33,21 +38,21 @@ namespace MedSestriManipulations.Models
 
         // ── UI-only display helpers ──
         [JsonIgnore]
-        public decimal TotalEuro => BloodTests?.Sum(b => b.EuroPrice) ?? 0;
+        public decimal TotalEuro => _totalEuro ??= BloodTests?.Sum(b => b.EuroPrice) ?? 0;
 
         [JsonIgnore]
         public int TestsCount => BloodTests?.Count ?? 0;
 
         [JsonIgnore]
-        public string TestsCountText =>
+        public string TestsCountText => _testsCountText ??=
             TestsCount == 1 ? "1 изследване" : $"{TestsCount} изследвания";
 
         [JsonIgnore]
-        public string DateText => Date.ToString("dd.MM.yyyy  ·  HH:mm");
+        public string DateText => _dateText ??= Date.ToString("dd.MM.yyyy  ·  HH:mm");
 
         // Short date for compact rows: "29.05 · 12:44"
         [JsonIgnore]
-        public string ShortDateText => Date.ToString("dd.MM · HH:mm");
+        public string ShortDateText => _shortDateText ??= Date.ToString("dd.MM · HH:mm");
 
         // Phone grouped as "0878 559 095"
         [JsonIgnore]
@@ -55,10 +60,16 @@ namespace MedSestriManipulations.Models
         {
             get
             {
+                if (_phoneFormatted != null)
+                    return _phoneFormatted;
+
                 var p = PhoneNumber?.Trim() ?? string.Empty;
                 if (p.Length == 10)
-                    return $"{p.Substring(0, 4)} {p.Substring(4, 3)} {p.Substring(7, 3)}";
-                return p;
+                    _phoneFormatted = $"{p.Substring(0, 4)} {p.Substring(4, 3)} {p.Substring(7, 3)}";
+                else
+                    _phoneFormatted = p;
+
+                return _phoneFormatted;
             }
         }
 

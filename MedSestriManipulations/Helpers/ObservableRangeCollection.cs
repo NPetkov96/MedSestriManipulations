@@ -30,7 +30,11 @@ namespace MedSestriManipulations.Helpers
             }
 
             if (added)
+            {
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Count)));
+                OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
                 OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            }
         }
 
         public void ReplaceRange(IEnumerable<T> items)

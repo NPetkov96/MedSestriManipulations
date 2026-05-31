@@ -90,7 +90,9 @@
                         Margin="16,4,16,0"
                         IsVisible="False"
                         ItemsLayout="VerticalList"
-                        ItemSizingStrategy="MeasureFirstItem">
+                        ItemSizingStrategy="MeasureFirstItem"
+                        RemainingItemsThreshold="8"
+                        RemainingItemsThresholdReached="ProcedureList_RemainingItemsThresholdReached">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:BloodTest">
                     <Border Margin="0,0,0,5"

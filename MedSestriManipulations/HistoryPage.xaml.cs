@@ -1,9 +1,10 @@
 using MedSestriManipulations.ApiHandler;
+using MedSestriManipulations.Helpers;
 using MedSestriManipulations.Models;
 using MedSestriManipulations.Services;
-using System.Collections.ObjectModel;
 using System.Threading;
 using Microsoft.Maui.ApplicationModel;
+using System.Diagnostics;
 
 namespace MedSestriManipulations
 {
@@ -14,8 +15,15 @@ namespace MedSestriManipulations
 
         private List<Patient> _allPatients = new();
         private Patient? _selectedPatient;
-        private readonly ObservableCollection<PatientGroup> _groupCollection = new();
+        private readonly ObservableRangeCollection<HistoryListItem> _historyItems = new();
+        private List<HistoryListItem> _allHistoryItemsCache = new();
         private CancellationTokenSource? _searchCts;
+        private int _loadedPatientsVersion = -1;
+        private int _filterVersion;
+        private bool _isLoadingPatients;
+        private bool _isAppendingPage;
+        private int _displayCount;
+        private const int PageSize = 80;
 
         public HistoryPage(API api, CachedDataService cachedData)
         {
@@ -23,13 +31,22 @@ namespace MedSestriManipulations
             _api = api;
             _cachedData = cachedData;
             // keep the same collection instance to avoid reassigning ItemsSource frequently
-            PatientsCollection.ItemsSource = _groupCollection;
+            PatientsCollection.ItemsSource = _historyItems;
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            // Start loading in background so the UI appears quickly
+            if (_isLoadingPatients)
+                return;
+
+            if (_allPatients.Count > 0 && _loadedPatientsVersion == _cachedData.PatientsVersion)
+            {
+                PatientsSkeleton.IsLoading = false;
+                PatientsCollection.IsVisible = true;
+                return;
+            }
+
             _ = LoadPatientsAndApplyFilterAsync();
         }
 
@@ -37,12 +54,20 @@ namespace MedSestriManipulations
         {
             try
             {
-                PatientsSkeleton.IsLoading = true;
-                PatientsCollection.IsVisible = false;
+                _isLoadingPatients = true;
 
+                if (_allPatients.Count == 0)
+                {
+                    PatientsSkeleton.IsLoading = true;
+                    PatientsCollection.IsVisible = false;
+                }
+
+                var sw = Stopwatch.StartNew();
                 var patients = await _cachedData.GetPatientsAsync();
                 _allPatients = patients.OrderByDescending(p => p.Date).ToList();
+                _loadedPatientsVersion = _cachedData.PatientsVersion;
                 await ApplyFilter();
+                Debug.WriteLine($"History load/filter completed in {sw.ElapsedMilliseconds} ms (patients={_allPatients.Count})");
             }
             catch (Exception ex)
             {
@@ -54,6 +79,7 @@ namespace MedSestriManipulations
             }
             finally
             {
+                _isLoadingPatients = false;
                 PatientsSkeleton.IsLoading = false;
                 PatientsCollection.IsVisible = true;
             }
@@ -76,15 +102,26 @@ namespace MedSestriManipulations
                 return;
             }
 
-            await ApplyFilter(e.NewTextValue);
+            try
+            {
+                await ApplyFilter(e.NewTextValue, token);
+            }
+            catch (OperationCanceledException)
+            {
+                // expected when a newer search supersedes this one
+            }
         }
 
-        private async Task ApplyFilter(string? searchText = null)
+        private async Task ApplyFilter(string? searchText = null, CancellationToken cancellationToken = default)
         {
             searchText = (searchText ?? SearchBar.Text)?.Trim() ?? string.Empty;
+            var filterVersion = Interlocked.Increment(ref _filterVersion);
+            var sw = Stopwatch.StartNew();
+
             // perform filtering & grouping off the UI thread
-            var groupedData = await Task.Run(() =>
+            var filterResult = await Task.Run(() =>
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 IEnumerable<Patient> filtered = _allPatients;
 
                 if (!string.IsNullOrEmpty(searchText))
@@ -95,48 +132,91 @@ namespace MedSestriManipulations
                         p.PhoneNumber.Contains(searchText, StringComparison.OrdinalIgnoreCase));
                 }
 
-                // Group by month/year (Bulgarian month names) and order groups by year/month descending
-                var bulgarianMonths = new[]
-                {
-                    "Януари","Февруари","Март","Април","Май","Юни",
-                    "Юли","Август","Септември","Октомври","Ноември","Декември"
-                };
+                var filteredList = filtered.ToList();
 
-                var groups = filtered
-                    .GroupBy(p => new { p.Date.Year, p.Date.Month })
-                    .OrderByDescending(g => g.Key.Year)
-                    .ThenByDescending(g => g.Key.Month)
+                var weeks = filteredList
+                    .GroupBy(p => GetWeekStart(p.Date))
+                    .OrderByDescending(g => g.Key)
                     .Select(g =>
                     {
-                        var monthName = bulgarianMonths[g.Key.Month - 1];
-                        var key = $"{monthName} {g.Key.Year}";
+                        var key = FormatWeekRange(g.Key);
                         var patientsInGroup = g.OrderByDescending(p => p.Date).ToList();
                         return (Key: key, Patients: patientsInGroup);
                     })
                     .ToList();
 
-                return groups;
-            });
+                var displayItems = new List<HistoryListItem>(filteredList.Count + weeks.Count);
+                foreach (var week in weeks)
+                {
+                    displayItems.Add(new HistoryListItem { HeaderText = week.Key });
+                    displayItems.AddRange(week.Patients.Select(patient => new HistoryListItem { Patient = patient }));
+                }
+
+                return (Items: displayItems, TotalCount: filteredList.Count, WeekCount: weeks.Count);
+            }, cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
+                return;
 
             // update UI collection on main thread
-            bool expand = !string.IsNullOrEmpty(searchText);
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                _groupCollection.Clear();
-                foreach (var g in groupedData)
-                {
-                    var pg = new PatientGroup(g.Key, g.Patients);
-                    pg.IsExpanded = expand;
-                    _groupCollection.Add(pg);
-                }
+                if (cancellationToken.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
+                    return;
+
+                _allHistoryItemsCache = filterResult.Items;
+                _displayCount = Math.Min(PageSize, _allHistoryItemsCache.Count);
+                _historyItems.ReplaceRange(_allHistoryItemsCache.Take(_displayCount));
+
+                sw.Stop();
+                Debug.WriteLine($"History filter completed in {sw.ElapsedMilliseconds} ms (search='{searchText}', patients={filterResult.TotalCount}, weeks={filterResult.WeekCount}, displayed={_displayCount})");
             });
+        }
+
+        private void PatientsCollection_RemainingItemsThresholdReached(object sender, EventArgs e)
+        {
+            if (_isAppendingPage || _displayCount >= _allHistoryItemsCache.Count)
+                return;
+
+            _isAppendingPage = true;
+            Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(50), AppendNextPage);
+        }
+
+        private void AppendNextPage()
+        {
+            try
+            {
+                var nextCount = Math.Min(_displayCount + PageSize, _allHistoryItemsCache.Count);
+                if (nextCount <= _displayCount)
+                    return;
+
+                _historyItems.AddRange(_allHistoryItemsCache.Skip(_displayCount).Take(nextCount - _displayCount));
+                _displayCount = nextCount;
+                Debug.WriteLine($"History appended page: displayed={_displayCount}, totalItems={_allHistoryItemsCache.Count}");
+            }
+            finally
+            {
+                _isAppendingPage = false;
+            }
+        }
+
+        private static DateTime GetWeekStart(DateTime date)
+        {
+            var dayOffset = ((int)date.DayOfWeek - (int)DayOfWeek.Monday + 7) % 7;
+            return date.Date.AddDays(-dayOffset);
+        }
+
+        private static string FormatWeekRange(DateTime weekStart)
+        {
+            var weekEnd = weekStart.AddDays(6);
+            return $"{weekStart:dd.MM.yyyy} - {weekEnd:dd.MM.yyyy}";
         }
 
         // ─── Bottom sheet ─────────────────────────────────────────────────────
 
         private async void OnPatientTapped(object sender, TappedEventArgs e)
         {
-            if (sender is BindableObject { BindingContext: Patient patient })
+            if (sender is BindableObject { BindingContext: HistoryListItem { Patient: Patient patient } })
             {
                 _selectedPatient = patient;
 

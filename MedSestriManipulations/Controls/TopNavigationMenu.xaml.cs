@@ -2,6 +2,8 @@ namespace MedSestriManipulations.Controls;
 
 public partial class TopNavigationMenu : ContentView
 {
+    private bool _isNavigating;
+
     public TopNavigationMenu()
     {
         InitializeComponent();
@@ -14,17 +16,38 @@ public partial class TopNavigationMenu : ContentView
 
     private async void GoHome(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("//MainPage");
+        await NavigateToAsync("//MainPage", "MainPage");
     }
 
     private async void GoHistory(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("//HistoryPage");
+        await NavigateToAsync("//HistoryPage", "HistoryPage");
     }
 
     private async void GoCatheters(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("//CatheterPage");
+        await NavigateToAsync("//CatheterPage", "CatheterPage");
+    }
+
+    private async Task NavigateToAsync(string route, string routeName)
+    {
+        var shell = Shell.Current;
+        if (_isNavigating || shell == null)
+            return;
+
+        var currentRoute = shell.CurrentState?.Location.ToString() ?? string.Empty;
+        if (currentRoute.Contains(routeName, StringComparison.OrdinalIgnoreCase))
+            return;
+
+        try
+        {
+            _isNavigating = true;
+            await shell.GoToAsync(route);
+        }
+        finally
+        {
+            _isNavigating = false;
+        }
     }
 
     private void UpdateActivePage()

@@ -68,7 +68,7 @@ namespace MedSestriManipulations.Models
             RefreshItems();
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public new event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {

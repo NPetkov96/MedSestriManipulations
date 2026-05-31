@@ -3,18 +3,27 @@ using MedSestriManipulations.ApiHandler;
 using MedSestriManipulations.Models;
 using MedSestriManipulations.Services;
 using System.Text;
+using System.Diagnostics;
 
 namespace MedSestriManipulations
 {
     public partial class MainPage : ContentPage
     {
         private CancellationTokenSource? _filterCts;
+        private int _filterVersion;
         private List<BloodTest> BloodTestsList = new();
         // single ObservableRangeCollection instance bound to the CollectionView
         // ReplaceRange triggers a single Reset notification which is much cheaper
         // than clearing/adding one-by-one for large lists.
         private readonly Helpers.ObservableRangeCollection<BloodTest> _filteredProcedures
             = new Helpers.ObservableRangeCollection<BloodTest>();
+
+        // paging to avoid rendering all items at once
+        private List<BloodTest> _allFilteredCache = new();
+        private int _displayCount = 0;
+        private bool _isAppendingPage;
+        private double _lastLoggedVerticalOffset = -1;
+        private const int PageSize = 80;
 
         private readonly API _api;
         private readonly CachedDataService _cachedData;
@@ -25,6 +34,15 @@ namespace MedSestriManipulations
             BindingContext = this;
             _api = api;
             _cachedData = cachedData;
+        }
+
+        private void ProcedureList_Scrolled(object? sender, Microsoft.Maui.Controls.ItemsViewScrolledEventArgs e)
+        {
+            if (Math.Abs(e.VerticalOffset - _lastLoggedVerticalOffset) < 1000)
+                return;
+
+            _lastLoggedVerticalOffset = e.VerticalOffset;
+            Debug.WriteLine($"ProcedureList.Scrolled: Horizontal={e.HorizontalOffset:F1}, Vertical={e.VerticalOffset:F1}");
         }
 
         protected override async void OnAppearing()
@@ -46,6 +64,9 @@ namespace MedSestriManipulations
                 // which is expensive on large lists.
                 ProcedureList.ItemsSource = _filteredProcedures;
                 ApplyFilter();
+
+                // Instrumentation: log scroll events for diagnostics
+                ProcedureList.Scrolled += ProcedureList_Scrolled;
 
                 var reusedPatient = SelectedPatientService.PatientToReuse;
                 if (reusedPatient != null)
@@ -76,6 +97,43 @@ namespace MedSestriManipulations
             {
                 SkeletonView.IsLoading = false;
                 await DisplayAlert("Грешка", $"{ex.Message}", "OK");
+            }
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            try
+            {
+                ProcedureList.Scrolled -= ProcedureList_Scrolled;
+            }
+            catch { }
+        }
+
+        private void ProcedureList_RemainingItemsThresholdReached(object sender, EventArgs e)
+        {
+            if (_isAppendingPage || _displayCount >= _allFilteredCache.Count) return;
+
+            _isAppendingPage = true;
+            Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(50), AppendNextPage);
+        }
+
+        private void AppendNextPage()
+        {
+            try
+            {
+                if (_displayCount >= _allFilteredCache.Count) return;
+
+                int remaining = _allFilteredCache.Count - _displayCount;
+                int take = Math.Min(PageSize, remaining);
+                var page = _allFilteredCache.Skip(_displayCount).Take(take).ToList();
+                _displayCount += take;
+                _filteredProcedures.AddRange(page);
+                Debug.WriteLine($"Appended page: new display count {_displayCount}");
+            }
+            finally
+            {
+                _isAppendingPage = false;
             }
         }
 
@@ -355,11 +413,14 @@ namespace MedSestriManipulations
 
             // Capture the current cancellation token if any (set by the debounced search)
             var token = _filterCts?.Token ?? CancellationToken.None;
+            var filterVersion = Interlocked.Increment(ref _filterVersion);
 
             try
             {
+                var sw = Stopwatch.StartNew();
                 // Run the filtering and ordering on a background thread to avoid UI jank
-                var filteredList = await Task.Run(() =>
+                // Compute a lightweight match flag for each item while off the UI thread
+                var pairedList = await Task.Run(() =>
                 {
                     token.ThrowIfCancellationRequested();
 
@@ -372,24 +433,43 @@ namespace MedSestriManipulations
                         .OrderByDescending(p => p.Name.Contains("НЗОК", StringComparison.OrdinalIgnoreCase))
                         .ToList();
 
-                    // Set search text on each item so the HighlightConverter can use it
-                    foreach (var item in list)
-                        item.SearchText = searchText;
+                    // Build pair of (item, isMatch) cheaply
+                    var result = new List<(BloodTest item, bool isMatch)>(list.Count);
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        var it = list[i];
+                        var isMatch = !string.IsNullOrEmpty(searchText) && it.Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
+                        // still record the search text for converters if needed
+                        it.SearchText = searchText;
+                        result.Add((it, isMatch));
+                    }
 
-                    return list;
+                    return result;
                 }, token).ConfigureAwait(false);
-
-                if (token.IsCancellationRequested)
+                if (token.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
                     return;
-
                 // Update the single bound collection on the UI thread using a minimal diff
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    // Precompute cached FormattedString for each item to avoid doing work during layout
-                    foreach (var bt in filteredList)
-                        bt.UpdateFormattedName(searchText);
+                    if (token.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
+                        return;
 
-                    UpdateCollectionWithMinimalDiff(_filteredProcedures, filteredList);
+                    // Apply lightweight match flags on UI thread (raise PropertyChanged there)
+                    // apply match flags
+                    var filteredList = pairedList.Select(p => p.item).ToList();
+                    for (int i = 0; i < pairedList.Count; i++)
+                        pairedList[i].item.IsMatch = pairedList[i].isMatch;
+
+                    // update paging cache and populate first page only to reduce initial render cost
+                    _allFilteredCache = filteredList;
+                    _displayCount = Math.Min(PageSize, _allFilteredCache.Count);
+                    var firstPage = _allFilteredCache.Take(_displayCount).ToList();
+
+                    // Replace bound collection with first page (single reset)
+                    _filteredProcedures.ReplaceRange(firstPage);
+
+                    sw.Stop();
+                    Debug.WriteLine($"ApplyFilter completed in {sw.ElapsedMilliseconds} ms (search='{searchText}', totalItems={_allFilteredCache.Count}, displayed={_displayCount})");
                 });
             }
             catch (OperationCanceledException)

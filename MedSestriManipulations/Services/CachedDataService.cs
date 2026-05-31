@@ -28,6 +28,8 @@ namespace MedSestriManipulations.Services
         private Task<List<Patient>>? _patientsInFlight;
         private Task<List<Catheter>>? _cathetersInFlight;
 
+        public int PatientsVersion { get; private set; }
+
         public CachedDataService(API api)
         {
             _api = api;
@@ -123,6 +125,7 @@ namespace MedSestriManipulations.Services
                         {
                             _patients = cached;
                             _isPatientsLoaded = true;
+                            PatientsVersion++;
 
                             // Refresh from API in background without blocking
                             _ = RefreshPatientsFromApiAsync();
@@ -151,6 +154,7 @@ namespace MedSestriManipulations.Services
                 {
                     _patients = fresh;
                     _isPatientsLoaded = true;
+                    PatientsVersion++;
                     var json = JsonSerializer.Serialize(fresh);
                     await File.WriteAllTextAsync(_patientsCacheFile, json);
                 }
@@ -219,6 +223,7 @@ namespace MedSestriManipulations.Services
         public void InvalidatePatients()
         {
             _isPatientsLoaded = false;
+            PatientsVersion++;
             TryDeleteCacheFile(_patientsCacheFile);
         }
 
