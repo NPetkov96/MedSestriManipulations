@@ -151,10 +151,6 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
 
-            <CollectionView.Footer>
-                <BoxView HeightRequest="80" Color="Transparent" />
-            </CollectionView.Footer>
-
             <CollectionView.EmptyView>
                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
                                      Padding="32,60" Spacing="10">

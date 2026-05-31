@@ -63,7 +63,35 @@ namespace MedSestriManipulations
                     p.PhoneNumber.Contains(searchText, StringComparison.OrdinalIgnoreCase));
             }
 
-            PatientsCollection.ItemsSource = filtered.ToList();
+            // Group by month/year (Bulgarian month names) and order groups by year/month descending
+            var bulgarianMonths = new[]
+            {
+                "Януари","Февруари","Март","Април","Май","Юни",
+                "Юли","Август","Септември","Октомври","Ноември","Декември"
+            };
+
+            var groups = filtered
+                .GroupBy(p => new { p.Date.Year, p.Date.Month })
+                .OrderByDescending(g => g.Key.Year)
+                .ThenByDescending(g => g.Key.Month)
+                .Select(g =>
+                {
+                    var monthName = bulgarianMonths[g.Key.Month - 1];
+                    var key = $"{monthName} {g.Key.Year}";
+                    var patientsInGroup = g.OrderByDescending(p => p.Date).ToList();
+                    return new PatientGroup(key, patientsInGroup);
+                })
+                .ToList();
+
+            // If user is searching, expand groups so matching patients are visible.
+            // Otherwise keep groups collapsed by default.
+            bool expand = !string.IsNullOrEmpty(searchText);
+            foreach (var grp in groups)
+            {
+                grp.IsExpanded = expand;
+            }
+
+            PatientsCollection.ItemsSource = groups;
         }
 
         // ─── Bottom sheet ─────────────────────────────────────────────────────

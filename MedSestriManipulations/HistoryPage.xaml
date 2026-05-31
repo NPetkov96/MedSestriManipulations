@@ -34,7 +34,42 @@
                         x:Name="PatientsCollection"
                         SelectionMode="None"
                         Margin="16,4,16,0"
-                        IsVisible="False">
+                        IsVisible="False"
+                        IsGrouped="True">
+
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate>
+                    <Grid BackgroundColor="#F9FAFB" ColumnDefinitions="*,Auto">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ToggleCommand}" />
+                        </Grid.GestureRecognizers>
+
+                        <Label Text="{Binding Key}"
+                               TextColor="#9CA3AF"
+                               FontSize="12"
+                               Padding="16,12,4,4"
+                               VerticalOptions="Center" />
+
+                        <!-- Chevron indicating expanded/collapsed state -->
+                        <Label Grid.Column="1"
+                               x:Name="Chevron"
+                               Text="▾"
+                               TextColor="#9CA3AF"
+                               FontSize="12"
+                               Padding="8,12,12,4"
+                               VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding IsExpanded}" Value="False">
+                                    <Setter Property="Text" Value="▸" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding IsExpanded}" Value="True">
+                                    <Setter Property="Text" Value="▾" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Patient">
                     <Border Margin="0,0,0,6"
@@ -98,10 +133,6 @@
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-
-            <CollectionView.Footer>
-                <BoxView HeightRequest="20" Color="Transparent" />
-            </CollectionView.Footer>
 
             <CollectionView.EmptyView>
                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
