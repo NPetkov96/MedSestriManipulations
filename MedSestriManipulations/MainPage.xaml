@@ -85,12 +85,12 @@
                         Margin="16,4,16,0"
                         IsVisible="False"
                         ItemsLayout="VerticalList"
-                        ItemSizingStrategy="MeasureFirstItem"
+                        ItemSizingStrategy="MeasureAllItems"
                         RemainingItemsThreshold="8"
                         RemainingItemsThresholdReached="ProcedureList_RemainingItemsThresholdReached">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:BloodTest">
-                    <Border Margin="0"
+                    <Border Margin="0,0,0,5"
                             StrokeShape="RoundRectangle 10"
                             BackgroundColor="{Binding RowBackgroundColor}"
                             Stroke="#F3F4F6"
@@ -103,7 +103,7 @@
                                 <Setter Property="StrokeThickness" Value="1.5" />
                             </DataTrigger>
                         </Border.Triggers>
-                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,0" ColumnSpacing="10">
+                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,10" ColumnSpacing="10">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnBloodTestRowTapped" />
                             </Grid.GestureRecognizers>
@@ -141,6 +141,7 @@
                                    Text="{Binding Name}"
                                    LineBreakMode="WordWrap"
                                    FontSize="14"
+                                   LineHeight="1.15"
                                    FontAttributes="Bold"
                                    TextColor="#111827"
                                    VerticalOptions="Center">
