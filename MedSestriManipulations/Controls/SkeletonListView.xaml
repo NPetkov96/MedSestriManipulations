@@ -9,6 +9,6 @@
         x:Name="SkeletonRoot"
         Padding="16,8,16,8"
         Spacing="10">
-        <!-- children are generated in code-behind based on SkeletonType -->
+        
     </VerticalStackLayout>
 </ContentView>

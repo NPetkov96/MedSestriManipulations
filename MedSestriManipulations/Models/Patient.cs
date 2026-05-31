@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
@@ -36,7 +36,6 @@ namespace MedSestriManipulations.Models
             }
         }
 
-        // ── UI-only display helpers ──
         [JsonIgnore]
         public decimal TotalEuro => _totalEuro ??= BloodTests?.Sum(b => b.EuroPrice) ?? 0;
 
@@ -50,11 +49,9 @@ namespace MedSestriManipulations.Models
         [JsonIgnore]
         public string DateText => _dateText ??= Date.ToString("dd.MM.yyyy  ·  HH:mm");
 
-        // Short date for compact rows: "29.05 · 12:44"
         [JsonIgnore]
         public string ShortDateText => _shortDateText ??= Date.ToString("dd.MM · HH:mm");
 
-        // Phone grouped as "0878 559 095"
         [JsonIgnore]
         public string PhoneFormatted
         {

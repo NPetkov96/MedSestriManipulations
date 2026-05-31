@@ -2,7 +2,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!-- ═══════════════ COLOR TOKENS ═══════════════ -->
+    
     <Color x:Key="Primary">#0F766E</Color>
     <Color x:Key="PrimaryLight">#F0FDF9</Color>
     <Color x:Key="PageBackground">#F9FAFB</Color>
@@ -17,13 +17,13 @@
     <Color x:Key="DangerAmber">#92400E</Color>
     <Color x:Key="DangerAmberLight">#FEF3C7</Color>
 
-    <!-- SolidColorBrush equivalents (for Shadow / Brush consumers) -->
+    
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}" />
     <SolidColorBrush x:Key="ShadowBrush" Color="#111827" />
 
-    <!-- ═══════════════ STYLES ═══════════════ -->
+    
 
-    <!-- Card container -->
+    
     <Style x:Key="CardFrame" TargetType="Frame">
         <Setter Property="CornerRadius" Value="12" />
         <Setter Property="BorderColor" Value="{StaticResource BorderColor}" />
@@ -40,20 +40,20 @@
         </Setter>
     </Style>
 
-    <!-- Primary page / section label -->
+    
     <Style x:Key="PageLabel" TargetType="Label">
         <Setter Property="FontSize" Value="16" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="{StaticResource TextPrimary}" />
     </Style>
 
-    <!-- Secondary / supporting label -->
+    
     <Style x:Key="SecondaryLabel" TargetType="Label">
         <Setter Property="FontSize" Value="13" />
         <Setter Property="TextColor" Value="{StaticResource TextSecondary}" />
     </Style>
 
-    <!-- Teal price pill -->
+    
     <Style x:Key="PriceChip" TargetType="Label">
         <Setter Property="FontSize" Value="13" />
         <Setter Property="FontAttributes" Value="Bold" />

@@ -1,4 +1,4 @@
-﻿using MedSestriManipulations.Models;
+using MedSestriManipulations.Models;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -16,9 +16,6 @@ namespace MedSestriManipulations.ApiHandler
             _httpClient.BaseAddress = new Uri("https://homeserver.ngrok.pro/");
         }
 
-        //
-        //
-        //                                      BLOOD TEST
         public async Task<List<BloodTest>> GetAllBloodTest()
         {
             var response = await _httpClient.GetAsync("api/Bodimed/allBloodTests");
@@ -34,9 +31,6 @@ namespace MedSestriManipulations.ApiHandler
             return result!;
         }
 
-        //
-        //
-        //                                      PATIENTS
         public async Task<HttpResponseMessage> CreateNewPatient(Patient model)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Bodimed/createPatient", model);
@@ -66,9 +60,6 @@ namespace MedSestriManipulations.ApiHandler
             return await _httpClient.PostAsync("api/Bodimed/deletePatient", content);
         }
 
-        //
-        //
-        //                                      CATHETERS
         public async Task<HttpResponseMessage> CreateCatheterappointment(Catheter model)
         {
             var resposne = await _httpClient.PostAsJsonAsync("api/Bodimed/createCatheterAppointment", model);

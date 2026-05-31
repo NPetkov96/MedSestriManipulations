@@ -8,10 +8,10 @@
 
     <Grid RowDefinitions="Auto,Auto,Auto,*">
 
-        <!-- Row 0: Top Navigation -->
+        
         <controls:TopNavigationMenu Grid.Row="0" />
 
-        <!-- Row 1: Action bar -->
+        
         <Grid Grid.Row="1"
               ColumnDefinitions="*,Auto"
               Padding="16,12,16,4"
@@ -32,7 +32,7 @@
                     FontSize="14" />
         </Grid>
 
-        <!-- Row 2: Search bar -->
+        
         <Grid Grid.Row="2" Padding="16,4,16,10" BackgroundColor="#F8F9FB">
             <Border Stroke="#D4DDE8" StrokeThickness="1"
                     BackgroundColor="White"
@@ -49,7 +49,7 @@
             </Border>
         </Grid>
 
-        <!-- Row 3: Catheters list -->
+        
         <CollectionView Grid.Row="3"
                         x:Name="CathetersListView"
                         SelectionMode="None"
@@ -119,7 +119,7 @@
         <controls:SkeletonListView x:Name="CathetersSkeleton"
                                    Grid.Row="3" />
 
-        <!-- Add/edit bottom sheet dim overlay -->
+        
         <Grid x:Name="SheetOverlay"
               Grid.RowSpan="4"
               IsVisible="False"
@@ -129,7 +129,7 @@
             </Grid.GestureRecognizers>
         </Grid>
 
-        <!-- Add/edit bottom sheet -->
+        
         <Border x:Name="SheetPanel"
                 Grid.RowSpan="4"
                 VerticalOptions="End"
@@ -214,7 +214,7 @@
             </VerticalStackLayout>
         </Border>
 
-        <!-- Loading overlay -->
+        
         <Grid x:Name="LoadingOverlay"
               Grid.RowSpan="4"
               BackgroundColor="#80000000"

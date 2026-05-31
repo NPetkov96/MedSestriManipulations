@@ -30,7 +30,6 @@ namespace MedSestriManipulations
             InitializeComponent();
             _api = api;
             _cachedData = cachedData;
-            // keep the same collection instance to avoid reassigning ItemsSource frequently
             PatientsCollection.ItemsSource = _historyItems;
         }
 
@@ -71,7 +70,6 @@ namespace MedSestriManipulations
             }
             catch (Exception ex)
             {
-                // Ensure alert runs on main thread
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
                     await DisplayAlert("Грешка", $"{ex.Message}", "OK");
@@ -85,11 +83,9 @@ namespace MedSestriManipulations
             }
         }
 
-        // ─── Search ───────────────────────────────────────────────────────────
 
         private async void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
-            // debounce input to avoid heavy work on every keystroke
             _searchCts?.Cancel();
             _searchCts = new CancellationTokenSource();
             var token = _searchCts.Token;
@@ -108,7 +104,6 @@ namespace MedSestriManipulations
             }
             catch (OperationCanceledException)
             {
-                // expected when a newer search supersedes this one
             }
         }
 
@@ -118,7 +113,6 @@ namespace MedSestriManipulations
             var filterVersion = Interlocked.Increment(ref _filterVersion);
             var sw = Stopwatch.StartNew();
 
-            // perform filtering & grouping off the UI thread
             var filterResult = await Task.Run(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -158,7 +152,6 @@ namespace MedSestriManipulations
             if (cancellationToken.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
                 return;
 
-            // update UI collection on main thread
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
                 if (cancellationToken.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
@@ -212,7 +205,6 @@ namespace MedSestriManipulations
             return $"{weekStart:dd.MM.yyyy} - {weekEnd:dd.MM.yyyy}";
         }
 
-        // ─── Bottom sheet ─────────────────────────────────────────────────────
 
         private async void OnPatientTapped(object sender, TappedEventArgs e)
         {
@@ -260,7 +252,6 @@ namespace MedSestriManipulations
             await HideSheet();
         }
 
-        // ─── Actions ──────────────────────────────────────────────────────────
 
         private async void OnCopyClicked(object sender, EventArgs e)
         {
@@ -277,7 +268,7 @@ namespace MedSestriManipulations
                     .Make("Копирано", CommunityToolkit.Maui.Core.ToastDuration.Short)
                     .Show();
             }
-            catch { /* toast is best-effort */ }
+            catch {  }
         }
 
         private async void OnReuseClicked(object sender, EventArgs e)

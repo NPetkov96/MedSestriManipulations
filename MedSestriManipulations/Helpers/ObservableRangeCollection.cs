@@ -5,8 +5,6 @@ using System.ComponentModel;
 
 namespace MedSestriManipulations.Helpers
 {
-    // Minimal ObservableRangeCollection with batch ReplaceRange/AddRange support.
-    // Uses a single Reset notification to avoid many CollectionChanged events.
     public class ObservableRangeCollection<T> : ObservableCollection<T>
     {
         public ObservableRangeCollection()

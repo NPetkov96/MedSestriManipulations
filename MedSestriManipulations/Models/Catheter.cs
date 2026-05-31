@@ -1,4 +1,4 @@
-﻿namespace MedSestriManipulations.Models
+namespace MedSestriManipulations.Models
 {
     public class Catheter
     {

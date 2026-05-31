@@ -1,4 +1,3 @@
-﻿using System;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 
@@ -24,11 +23,27 @@ namespace MedSestriManipulations.Models
             get => _isSelected;
             set
             {
-                if (_isSelected != value)
-                {
-                    _isSelected = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected)));
-                }
+                if (_isSelected == value)
+                    return;
+
+                _isSelected = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsSelected)));
+            }
+        }
+
+        private string _rowBackgroundColor = "Transparent";
+
+        [JsonIgnore]
+        public string RowBackgroundColor
+        {
+            get => _rowBackgroundColor;
+            set
+            {
+                if (_rowBackgroundColor == value)
+                    return;
+
+                _rowBackgroundColor = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RowBackgroundColor)));
             }
         }
 

@@ -53,7 +53,6 @@ namespace MedSestriManipulations
             }
         }
 
-        // ─── Search ───────────────────────────────────────────────────────────
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
@@ -76,7 +75,6 @@ namespace MedSestriManipulations
             CathetersListView.ItemsSource = filtered.ToList();
         }
 
-        // ─── Bottom sheet (add / edit) ────────────────────────────────────────
 
         private async void OnOpenAddSheetClicked(object sender, EventArgs e)
         {
@@ -118,7 +116,6 @@ namespace MedSestriManipulations
             await HideSheet();
         }
 
-        // ─── Keyboard avoidance ───────────────────────────────────────────────
 
         private const double SheetKeyboardLift = 240;
         private bool _sheetLifted = false;
@@ -140,7 +137,6 @@ namespace MedSestriManipulations
             await SheetPanel.TranslateTo(0, 0, 220, Easing.CubicIn);
         }
 
-        // ─── Catheter detail popup ────────────────────────────────────────────
 
         private async void ManipulateCatheter(Catheter catheter)
         {
@@ -159,7 +155,6 @@ namespace MedSestriManipulations
             await this.ShowPopupAsync(popup);
         }
 
-        // ─── Save / Edit / Remove ─────────────────────────────────────────────
 
         private async void OnSaveClicked(object sender, EventArgs e)
         {

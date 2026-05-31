@@ -7,10 +7,10 @@
 
     <Grid RowDefinitions="Auto,Auto,Auto,*">
 
-        <!-- Row 0: Top Navigation -->
+        
         <controls:TopNavigationMenu Grid.Row="0" />
 
-        <!-- Row 1: Compact action bar -->
+        
         <Grid Grid.Row="1"
               ColumnDefinitions="Auto,*,Auto"
               Padding="16,0,16,0"
@@ -38,7 +38,7 @@
 
         </Grid>
 
-        <!-- Row 2: Search bar -->
+        
         <Grid Grid.Row="2"
               ColumnDefinitions="*,Auto"
               Padding="16,4,16,10"
@@ -74,12 +74,12 @@
                     Padding="0" />
         </Grid>
 
-        <!-- Row 3: Skeleton loading (visible while data loads) -->
+        
         <controls:SkeletonListView x:Name="SkeletonView"
                                    Grid.Row="3"
                                    IsLoading="True" />
 
-        <!-- Row 3: Blood tests list (hidden until loaded) -->
+        
         <CollectionView x:Name="ProcedureList"
                         Grid.Row="3"
                         Margin="16,4,16,0"
@@ -90,12 +90,12 @@
                         RemainingItemsThresholdReached="ProcedureList_RemainingItemsThresholdReached">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:BloodTest">
-                    <Border Margin="0,0,0,5"
+                    <Border Margin="0"
                             StrokeShape="RoundRectangle 10"
-                            BackgroundColor="White"
+                            BackgroundColor="{Binding RowBackgroundColor}"
                             Stroke="#F3F4F6"
                             StrokeThickness="1">
-                        <!-- shadow removed to improve scroll performance -->
+                        
                         <Border.Triggers>
                             <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
                                 <Setter Property="BackgroundColor" Value="#F0FDF9" />
@@ -181,7 +181,7 @@
             </CollectionView.EmptyView>
         </CollectionView>
 
-        <!-- Search dismiss overlay (Row 3 only) -->
+        
         <Grid x:Name="SearchDismissOverlay"
               Grid.Row="3"
               IsVisible="False"
@@ -191,7 +191,7 @@
             </Grid.GestureRecognizers>
         </Grid>
 
-        <!-- Floating selection pill — appears when tests are selected -->
+        
         <Border x:Name="SelectionPill"
                 Grid.Row="3"
                 IsVisible="False"
@@ -224,7 +224,7 @@
             </HorizontalStackLayout>
         </Border>
 
-        <!-- Bottom sheet dim overlay -->
+        
         <Grid x:Name="BottomSheetOverlay"
               Grid.RowSpan="4"
               IsVisible="False"
@@ -234,7 +234,7 @@
             </Grid.GestureRecognizers>
         </Grid>
 
-        <!-- Bottom sheet panel -->
+        
         <Border x:Name="BottomSheetPanel"
                 Grid.RowSpan="4"
                 VerticalOptions="End"
@@ -244,7 +244,7 @@
                 StrokeShape="RoundRectangle 20,20,0,0">
             <VerticalStackLayout Spacing="16" Padding="20,12,20,32">
 
-                <!-- Drag handle indicator -->
+                
                 <BoxView WidthRequest="40" HeightRequest="4"
                          BackgroundColor="#D4DDE8"
                          HorizontalOptions="Center"
@@ -254,7 +254,7 @@
                        FontSize="17" FontAttributes="Bold"
                        TextColor="#1A1A1A" />
 
-                <!-- Selected tests summary -->
+                
                 <Border BackgroundColor="#E8F0FF"
                         StrokeShape="RoundRectangle 8"
                         Stroke="Transparent"
@@ -273,7 +273,7 @@
                     </Grid>
                 </Border>
 
-                <!-- Patient fields -->
+                
                 <Border Stroke="#D4DDE8" StrokeThickness="1"
                         BackgroundColor="White"
                         StrokeShape="RoundRectangle 8"
@@ -305,7 +305,7 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Send button -->
+                
                 <Button Text="Изпрати"
                         Clicked="OnSendClicked"
                         BackgroundColor="#0066CC"

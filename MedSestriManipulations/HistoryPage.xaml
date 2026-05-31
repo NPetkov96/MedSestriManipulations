@@ -67,10 +67,10 @@
 
     <Grid RowDefinitions="Auto,Auto,*">
 
-        <!-- Row 0: Top Navigation -->
+        
         <controls:TopNavigationMenu Grid.Row="0" />
 
-        <!-- Row 1: Header + search (matches MainPage) -->
+        
         <VerticalStackLayout Grid.Row="1" Padding="16,12,16,8" Spacing="10" BackgroundColor="#F8F9FB">
 
             <Border Stroke="#D4DDE8" StrokeThickness="1"
@@ -88,7 +88,7 @@
             </Border>
         </VerticalStackLayout>
 
-        <!-- Row 2: Patients list -->
+        
         <CollectionView Grid.Row="2"
                         x:Name="PatientsCollection"
                         SelectionMode="None"
@@ -121,7 +121,7 @@
         <controls:SkeletonListView x:Name="PatientsSkeleton"
                                    Grid.Row="2" />
 
-        <!-- Bottom sheet dim overlay -->
+        
         <Grid x:Name="SheetOverlay"
               Grid.RowSpan="3"
               IsVisible="False"
@@ -131,7 +131,7 @@
             </Grid.GestureRecognizers>
         </Grid>
 
-        <!-- Bottom sheet panel: patient details + actions -->
+        
         <Border x:Name="SheetPanel"
                 Grid.RowSpan="3"
                 VerticalOptions="End"
@@ -141,7 +141,7 @@
                 StrokeShape="RoundRectangle 20,20,0,0">
             <VerticalStackLayout Spacing="14" Padding="20,12,20,32">
 
-                <!-- Drag handle -->
+                
                 <BoxView WidthRequest="40" HeightRequest="4"
                          BackgroundColor="#D4DDE8"
                          HorizontalOptions="Center"
@@ -161,7 +161,7 @@
 
                 <Label x:Name="SheetDateLabel" Text="" FontSize="16" TextColor="#999999" HorizontalOptions="Center"/>
 
-                <!-- Note / message -->
+                
                 <Border Stroke="#D4DDE8" StrokeThickness="1"
                         BackgroundColor="#F8F9FB"
                         StrokeShape="RoundRectangle 8"
@@ -174,7 +174,7 @@
                     </ScrollView>
                 </Border>
 
-                <!-- Actions -->
+                
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                     <Button Grid.Column="0"
                             Text="Копирай"
@@ -208,7 +208,7 @@
             </VerticalStackLayout>
         </Border>
 
-        <!-- Loading overlay -->
+        
         <Grid x:Name="LoadingOverlay"
               Grid.RowSpan="3"
               BackgroundColor="#80000000"

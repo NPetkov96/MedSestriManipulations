@@ -1,4 +1,4 @@
-﻿namespace MedSestriManipulations
+namespace MedSestriManipulations
 {
     public partial class AppShell : Shell
     {

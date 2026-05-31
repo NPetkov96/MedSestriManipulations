@@ -12,17 +12,15 @@ namespace MedSestriManipulations
         private CancellationTokenSource? _filterCts;
         private int _filterVersion;
         private List<BloodTest> BloodTestsList = new();
-        // single ObservableRangeCollection instance bound to the CollectionView
-        // ReplaceRange triggers a single Reset notification which is much cheaper
-        // than clearing/adding one-by-one for large lists.
         private readonly Helpers.ObservableRangeCollection<BloodTest> _filteredProcedures
             = new Helpers.ObservableRangeCollection<BloodTest>();
 
-        // paging to avoid rendering all items at once
         private List<BloodTest> _allFilteredCache = new();
         private int _displayCount = 0;
         private bool _isAppendingPage;
         private const int PageSize = 40;
+        private const string OddRowBackground = "Transparent";
+        private const string EvenRowBackground = "#f0f5f5";
 
         private readonly API _api;
         private readonly CachedDataService _cachedData;
@@ -48,10 +46,6 @@ namespace MedSestriManipulations
                 SkeletonView.IsLoading = false;
                 ProcedureList.IsVisible = true;
 
-                // Bind the CollectionView once to the observable collection
-                // and populate it via ApplyFilter. This keeps the same
-                // collection instance so the CollectionView doesn't rebind
-                // which is expensive on large lists.
                 ProcedureList.ItemsSource = _filteredProcedures;
                 ApplyFilter();
 
@@ -108,7 +102,9 @@ namespace MedSestriManipulations
 
                 int remaining = _allFilteredCache.Count - _displayCount;
                 int take = Math.Min(PageSize, remaining);
+                int startIndex = _displayCount;
                 var page = _allFilteredCache.Skip(_displayCount).Take(take).ToList();
+                ApplyRowBackgrounds(page, startIndex);
                 _displayCount += take;
                 _filteredProcedures.AddRange(page);
                 Debug.WriteLine($"Appended page: new display count {_displayCount}");
@@ -119,12 +115,6 @@ namespace MedSestriManipulations
             }
         }
 
-        // ─── Feature 2: Bottom sheet ──────────────────────────────────────────
-
-        private async void OnOpenSheetClicked(object sender, EventArgs e)
-        {
-            await ShowBottomSheet();
-        }
 
         private async Task ShowBottomSheet()
         {
@@ -396,15 +386,12 @@ namespace MedSestriManipulations
         {
             searchText ??= SearchBar.Text?.Trim() ?? string.Empty;
 
-            // Capture the current cancellation token if any (set by the debounced search)
             var token = _filterCts?.Token ?? CancellationToken.None;
             var filterVersion = Interlocked.Increment(ref _filterVersion);
 
             try
             {
                 var sw = Stopwatch.StartNew();
-                // Run the filtering and ordering on a background thread to avoid UI jank
-                // Compute a lightweight match flag for each item while off the UI thread
                 var pairedList = await Task.Run(() =>
                 {
                     token.ThrowIfCancellationRequested();
@@ -413,7 +400,6 @@ namespace MedSestriManipulations
                         ? (IEnumerable<BloodTest>)BloodTestsList
                         : BloodTestsList.Where(p => p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase));
 
-                    // Always pin НЗОК to the top of the results
                     var list = filtered
                         .OrderByDescending(p => p.Name.Contains("НЗОК", StringComparison.OrdinalIgnoreCase))
                         .ToList();
@@ -422,18 +408,16 @@ namespace MedSestriManipulations
                 }, token).ConfigureAwait(false);
                 if (token.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
                     return;
-                // Update the single bound collection on the UI thread using a minimal diff
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
                     if (token.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
                         return;
 
-                    // update paging cache and populate first page only to reduce initial render cost
                     _allFilteredCache = pairedList;
                     _displayCount = Math.Min(PageSize, _allFilteredCache.Count);
                     var firstPage = _allFilteredCache.Take(_displayCount).ToList();
+                    ApplyRowBackgrounds(firstPage);
 
-                    // Replace bound collection with first page (single reset)
                     _filteredProcedures.ReplaceRange(firstPage);
 
                     sw.Stop();
@@ -442,79 +426,21 @@ namespace MedSestriManipulations
             }
             catch (OperationCanceledException)
             {
-                // expected when a newer filter cancels the previous work
             }
             catch (Exception ex)
             {
-                // don't crash the UI on unexpected errors
                 System.Diagnostics.Debug.WriteLine($"ApplyFilter error: {ex}");
             }
         }
 
-        // Update target collection to match newItems with minimal removes/inserts/moves.
-        // Uses BloodTest.Name as the key (assumes names are unique identifiers).
-        private void UpdateCollectionWithMinimalDiff(Helpers.ObservableRangeCollection<BloodTest> target, List<BloodTest> newItems)
+        private static void ApplyRowBackgrounds(IReadOnlyList<BloodTest> items, int startIndex = 0)
         {
-            if (target == null) return;
-            if (newItems == null) newItems = new List<BloodTest>();
-
-            // Fast path: empty target -> add all
-            if (target.Count == 0)
+            for (int i = 0; i < items.Count; i++)
             {
-                target.AddRange(newItems);
-                return;
+                int rowIndex = startIndex + i;
+                items[i].RowBackgroundColor = rowIndex % 2 == 0 ? OddRowBackground : EvenRowBackground;
             }
-
-            // Build quick lookup for new items by key
-            var newIndex = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < newItems.Count; i++)
-                newIndex[newItems[i].Name] = i;
-
-            // Remove items that are not present in newItems (iterate backwards)
-            for (int i = target.Count - 1; i >= 0; i--)
-            {
-                var name = target[i].Name;
-                if (!newIndex.ContainsKey(name))
-                    target.RemoveAt(i);
-            }
-
-            // Now ensure order and insert missing items
-            for (int destIndex = 0; destIndex < newItems.Count; destIndex++)
-            {
-                var desired = newItems[destIndex];
-
-                if (destIndex < target.Count && string.Equals(target[destIndex].Name, desired.Name, StringComparison.OrdinalIgnoreCase))
-                {
-                    // already in correct place
-                    continue;
-                }
-
-                // Try to find the desired item later in the target
-                int currentIndex = -1;
-                for (int j = destIndex + 1; j < target.Count; j++)
-                {
-                    if (string.Equals(target[j].Name, desired.Name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        currentIndex = j;
-                        break;
-                    }
-                }
-
-                if (currentIndex >= 0)
-                {
-                    // Move existing item into the desired position
-                    target.Move(currentIndex, destIndex);
-                }
-                else
-                {
-                    // Insert missing item at the desired position
-                    target.Insert(destIndex, desired);
-                }
-            }
-
-            // If target is longer than newItems after operations, remove the tail
-            while (target.Count > newItems.Count)
-                target.RemoveAt(target.Count - 1);
         }
+
     }
 }

@@ -5,10 +5,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Loaded="OnLoaded">
 
-    <!-- Flat white header -->
+    
     <Grid BackgroundColor="White" RowDefinitions="Auto,Auto,Auto">
 
-        <!-- Top bar: brand title -->
+        
         <Grid Grid.Row="0" Padding="16,12,16,8">
             <Label
                 Text="Медицински Сестри"
@@ -19,10 +19,10 @@
                 VerticalOptions="Center" />
         </Grid>
 
-        <!-- Always-visible segmented tab row -->
+        
         <Grid Grid.Row="1" ColumnDefinitions="*,*,*" BackgroundColor="White">
 
-            <!-- Начало tab -->
+            
             <Grid Grid.Column="0">
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="GoHome" />
@@ -42,7 +42,7 @@
                          HorizontalOptions="Center" />
             </Grid>
 
-            <!-- История tab -->
+            
             <Grid Grid.Column="1">
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="GoHistory" />
@@ -62,7 +62,7 @@
                          HorizontalOptions="Center" />
             </Grid>
 
-            <!-- Катетри tab -->
+            
             <Grid Grid.Column="2">
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="GoCatheters" />
@@ -83,7 +83,7 @@
             </Grid>
         </Grid>
 
-        <!-- 1px bottom separator under the entire header -->
+        
         <BoxView Grid.Row="2" HeightRequest="1" Color="#F0F0F0" />
     </Grid>
 </ContentView>

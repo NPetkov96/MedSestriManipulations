@@ -42,7 +42,6 @@ public partial class SkeletonListView : ContentView
     private static void OnSkeletonTypeChanged(BindableObject bindable, object oldValue, object newValue)
     {
         var view = (SkeletonListView)bindable;
-        // regenerate skeleton children when type changes
         view.GenerateSkeletonChildren();
     }
 
@@ -69,7 +68,6 @@ public partial class SkeletonListView : ContentView
             return;
         }
 
-        // ensure children reflect the current type when starting
         GenerateSkeletonChildren();
 
         _isAnimating = true;

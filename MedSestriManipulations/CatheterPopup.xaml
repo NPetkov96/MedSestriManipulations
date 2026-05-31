@@ -13,7 +13,7 @@
             StrokeShape="RoundRectangle 20" Padding="20" WidthRequest="320">
         <VerticalStackLayout Spacing="18">
 
-            <!-- Details card -->
+            
             <Border BackgroundColor="#E8F0FF" Stroke="Transparent" StrokeShape="RoundRectangle 12" Padding="16">
                 <VerticalStackLayout Spacing="6">
                     <Label Text="{Binding ClientName}" FontSize="20" FontAttributes="Bold"

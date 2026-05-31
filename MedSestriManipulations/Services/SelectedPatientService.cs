@@ -1,4 +1,4 @@
-﻿using MedSestriManipulations.Models;
+using MedSestriManipulations.Models;
 
 namespace MedSestriManipulations.Services
 {

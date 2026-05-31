@@ -1,4 +1,4 @@
-﻿using MedSestriManipulations.ApiHandler;
+using MedSestriManipulations.ApiHandler;
 using MedSestriManipulations.Models;
 using System.Text.Json;
 
@@ -23,7 +23,6 @@ namespace MedSestriManipulations.Services
         private static readonly string _cathetersCacheFile =
             Path.Combine(FileSystem.AppDataDirectory, "catheters_cache.json");
 
-        // Shared in-flight load so the splash preload and pages don't race.
         private Task<List<BloodTest>>? _bloodTestsInFlight;
         private Task<List<Patient>>? _patientsInFlight;
         private Task<List<Catheter>>? _cathetersInFlight;
@@ -40,7 +39,6 @@ namespace MedSestriManipulations.Services
             if (_isBloodTestsLoaded)
                 return Task.FromResult(_bloodTests);
 
-            // If a load is already running (e.g. started by the splash), reuse it.
             return _bloodTestsInFlight ??= LoadBloodTestsAsync();
         }
 
@@ -61,7 +59,6 @@ namespace MedSestriManipulations.Services
             if (_isBloodTestsLoaded)
                 return _bloodTests;
 
-            // Load from disk cache instantly if available
             if (File.Exists(_bloodTestsCacheFile))
             {
                 try
@@ -73,15 +70,13 @@ namespace MedSestriManipulations.Services
                         _bloodTests = cached;
                         _isBloodTestsLoaded = true;
 
-                        // Refresh from API in background without blocking
                         _ = RefreshBloodTestsFromApiAsync();
                         return _bloodTests;
                     }
                 }
-                catch { /* corrupt cache — fall through to API */ }
+                catch {  }
             }
 
-            // No cache yet — fetch from API and save
             await RefreshBloodTestsFromApiAsync();
             return _bloodTests;
         }
@@ -99,7 +94,7 @@ namespace MedSestriManipulations.Services
                     await File.WriteAllTextAsync(_bloodTestsCacheFile, json);
                 }
             }
-            catch { /* network error — keep whatever we had */ }
+            catch {  }
         }
 
         public Task<List<Patient>> GetPatientsAsync()
@@ -114,7 +109,6 @@ namespace MedSestriManipulations.Services
         {
             try
             {
-                // Load from disk cache instantly if available
                 if (File.Exists(_patientsCacheFile))
                 {
                     try
@@ -127,15 +121,13 @@ namespace MedSestriManipulations.Services
                             _isPatientsLoaded = true;
                             PatientsVersion++;
 
-                            // Refresh from API in background without blocking
                             _ = RefreshPatientsFromApiAsync();
                             return _patients;
                         }
                     }
-                    catch { /* corrupt cache — fall through to API */ }
+                    catch {  }
                 }
 
-                // No cache yet — fetch from API and save
                 await RefreshPatientsFromApiAsync();
                 return _patients;
             }
@@ -159,7 +151,7 @@ namespace MedSestriManipulations.Services
                     await File.WriteAllTextAsync(_patientsCacheFile, json);
                 }
             }
-            catch { /* network error — keep whatever we had */ }
+            catch {  }
         }
 
         public Task<List<Catheter>> GetCathetersAsync()
@@ -174,7 +166,6 @@ namespace MedSestriManipulations.Services
         {
             try
             {
-                // Load from disk cache instantly if available
                 if (File.Exists(_cathetersCacheFile))
                 {
                     try
@@ -186,15 +177,13 @@ namespace MedSestriManipulations.Services
                             _catheters = cached;
                             _isCathetersLoaded = true;
 
-                            // Refresh from API in background
                             _ = RefreshCathetersFromApiAsync();
                             return _catheters;
                         }
                     }
-                    catch { /* corrupt cache — fall through to API */ }
+                    catch {  }
                 }
 
-                // No cache yet — fetch from API and save
                 await RefreshCathetersFromApiAsync();
                 return _catheters;
             }
@@ -217,7 +206,7 @@ namespace MedSestriManipulations.Services
                     await File.WriteAllTextAsync(_cathetersCacheFile, json);
                 }
             }
-            catch { /* network error — keep whatever we had */ }
+            catch {  }
         }
 
         public void InvalidatePatients()
@@ -234,7 +223,7 @@ namespace MedSestriManipulations.Services
                 if (File.Exists(path))
                     File.Delete(path);
             }
-            catch { /* best effort — stale file will be overwritten on next refresh */ }
+            catch {  }
         }
 
         public void InvalidateCatheters()
