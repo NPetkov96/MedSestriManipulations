@@ -64,6 +64,36 @@
         <helpers:HistoryListItemTemplateSelector x:Key="HistoryListItemTemplateSelector"
                                                  HeaderTemplate="{StaticResource HistoryWeekHeaderTemplate}"
                                                  PatientTemplate="{StaticResource HistoryPatientTemplate}" />
+
+        <DataTemplate x:Key="SheetProcedureTemplate" x:DataType="models:PatientProcedureRow">
+            <VerticalStackLayout Spacing="0">
+                <Grid ColumnDefinitions="28,*,Auto" Padding="0,10" ColumnSpacing="8">
+                    <Label Grid.Column="0"
+                           Text="{Binding Number, StringFormat='{0}.'}"
+                           FontSize="13"
+                           FontAttributes="Bold"
+                           TextColor="#3B82F6"
+                           VerticalOptions="Start"
+                           HorizontalTextAlignment="Center" />
+                    <Label Grid.Column="1"
+                           Text="{Binding Name}"
+                           FontSize="14"
+                           TextColor="#111827"
+                           LineBreakMode="WordWrap"
+                           LineHeight="1.12" />
+                    <Label Grid.Column="2"
+                           Text="{Binding EuroPrice, StringFormat='{0:F2} €'}"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="#0F766E"
+                           VerticalOptions="Start"
+                           HorizontalOptions="End" />
+                </Grid>
+                <BoxView HeightRequest="1"
+                         Color="#EEF2F7"
+                         IsVisible="{Binding HasDivider}" />
+            </VerticalStackLayout>
+        </DataTemplate>
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,Auto,*">
@@ -137,76 +167,217 @@
                 Grid.RowSpan="3"
                 VerticalOptions="End"
                 IsVisible="False"
-                BackgroundColor="White"
+                BackgroundColor="#F8FAFC"
                 Stroke="Transparent"
                 StrokeShape="RoundRectangle 20,20,0,0">
-            <VerticalStackLayout Spacing="14" Padding="20,12,20,32">
+            <Border.Shadow>
+                <Shadow Brush="#334155" Offset="0,-6" Radius="18" Opacity="0.14" />
+            </Border.Shadow>
+            <ScrollView x:Name="SheetScrollView"
+                        MaximumHeightRequest="760">
+                <VerticalStackLayout Spacing="16" Padding="20,12,20,30">
+                    <Grid ColumnDefinitions="44,*,44" HeightRequest="40">
+                        <Grid.GestureRecognizers>
+                            <PanGestureRecognizer PanUpdated="OnSheetPanUpdated" />
+                            <SwipeGestureRecognizer Direction="Down" Swiped="OnSheetSwipeDown" />
+                        </Grid.GestureRecognizers>
+                        <BoxView Grid.Column="1"
+                                 WidthRequest="70"
+                                 HeightRequest="4"
+                                 BackgroundColor="#CBD5E1"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center"
+                                 CornerRadius="2" />
+                        <Button Grid.Column="2"
+                                Text="×"
+                                Clicked="OnSheetCloseClicked"
+                                BackgroundColor="#EEF2F7"
+                                TextColor="#64748B"
+                                FontSize="22"
+                                FontAttributes="Bold"
+                                Padding="0"
+                                CornerRadius="18"
+                                WidthRequest="36"
+                                HeightRequest="36"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center" />
+                    </Grid>
 
-                
-                <BoxView WidthRequest="40" HeightRequest="4"
-                         BackgroundColor="#D4DDE8"
-                         HorizontalOptions="Center"
-                         CornerRadius="2" />
+                    <VerticalStackLayout Spacing="10" HorizontalOptions="Fill">
+                        <Border WidthRequest="64"
+                                HeightRequest="64"
+                                BackgroundColor="#E8F3FF"
+                                Stroke="#C7E0FF"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 32"
+                                HorizontalOptions="Center">
+                            <Border.Shadow>
+                                <Shadow Brush="#3B82F6" Offset="0,4" Radius="12" Opacity="0.12" />
+                            </Border.Shadow>
+                            <Label Text="☤"
+                                   FontSize="30"
+                                   TextColor="#0F766E"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
 
-                <Label x:Name="SheetNameLabel"
-                       HorizontalOptions="Center"
-                       Text=""
-                       FontSize="24" FontAttributes="Bold"
-                       TextColor="#1A1A1A" />
-
-                <HorizontalStackLayout Spacing="6" HorizontalOptions="Center">
-                    <Label x:Name="SheetEgnLabel" Text="" FontSize="18" TextColor="#666666" />
-                    <Label Text="·" FontSize="22" TextColor="#999999" />
-                    <Label x:Name="SheetPhoneLabel" Text="" FontSize="18" TextColor="#666666" />
-                </HorizontalStackLayout>
-
-                <Label x:Name="SheetDateLabel" Text="" FontSize="16" TextColor="#999999" HorizontalOptions="Center"/>
-
-                
-                <Border Stroke="#D4DDE8" StrokeThickness="1"
-                        BackgroundColor="#F8F9FB"
-                        StrokeShape="RoundRectangle 8"
-                        Padding="0">
-                    <ScrollView MaximumHeightRequest="220" Padding="12,10">
-                        <Label x:Name="SheetNoteLabel"
+                        <Label x:Name="SheetNameLabel"
+                               HorizontalOptions="Center"
                                Text=""
-                               FontSize="14"
-                               TextColor="#444444" />
-                    </ScrollView>
-                </Border>
+                               FontSize="23"
+                               FontAttributes="Bold"
+                               TextColor="#111827"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap" />
 
-                
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                    <Button Grid.Column="0"
-                            Text="Копирай"
-                            Clicked="OnCopyClicked"
-                            BackgroundColor="#E8EEF5"
-                            TextColor="#0066CC"
-                            BorderColor="#0066CC"
-                            BorderWidth="1"
-                            CornerRadius="8"
-                            HeightRequest="48"
-                            FontAttributes="Bold"
-                            FontSize="14" />
-                    <Button Grid.Column="1"
-                            Text="Използвай"
-                            Clicked="OnReuseClicked"
-                            BackgroundColor="#0066CC"
-                            TextColor="White"
-                            CornerRadius="8"
-                            HeightRequest="48"
-                            FontAttributes="Bold"
-                            FontSize="14" />
-                </Grid>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="White"
+                                    Stroke="#E2E8F0"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 14"
+                                    Padding="10,8">
+                                <HorizontalStackLayout Spacing="6" HorizontalOptions="Center">
+                                    <Label Text="№" FontSize="13" FontAttributes="Bold" TextColor="#3B82F6" VerticalOptions="Center" />
+                                    <Label x:Name="SheetEgnLabel" Text="" FontSize="14" FontAttributes="Bold" TextColor="#475569" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    BackgroundColor="White"
+                                    Stroke="#E2E8F0"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 14"
+                                    Padding="10,8">
+                                <HorizontalStackLayout Spacing="6" HorizontalOptions="Center">
+                                    <Label Text="☎" FontSize="13" TextColor="#0F766E" VerticalOptions="Center" />
+                                    <Label x:Name="SheetPhoneLabel" Text="" FontSize="14" FontAttributes="Bold" TextColor="#475569" VerticalOptions="Center" />
+                                </HorizontalStackLayout>
+                            </Border>
+                        </Grid>
 
-                <Button Text="Изтрий пациента"
-                        Clicked="OnDeleteClicked"
-                        BackgroundColor="Transparent"
-                        TextColor="#C62828"
-                        FontSize="14"
-                        FontAttributes="Bold"
-                        HeightRequest="44" />
-            </VerticalStackLayout>
+                        <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
+                            <Border BackgroundColor="#EEF6FF" Stroke="Transparent" StrokeShape="RoundRectangle 12" Padding="10,7">
+                                <HorizontalStackLayout Spacing="6">
+                                    <Label Text="□" FontSize="13" TextColor="#3B82F6" VerticalOptions="Center" />
+                                    <Label x:Name="SheetDateOnlyLabel" Text="" FontSize="13" FontAttributes="Bold" TextColor="#64748B" />
+                                </HorizontalStackLayout>
+                            </Border>
+                            <Border BackgroundColor="#F0FDFA" Stroke="Transparent" StrokeShape="RoundRectangle 12" Padding="10,7">
+                                <HorizontalStackLayout Spacing="6">
+                                    <Label Text="◷" FontSize="14" TextColor="#0F766E" VerticalOptions="Center" />
+                                    <Label x:Name="SheetTimeLabel" Text="" FontSize="13" FontAttributes="Bold" TextColor="#64748B" />
+                                </HorizontalStackLayout>
+                            </Border>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <Border BackgroundColor="White"
+                            Stroke="#E2E8F0"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 18"
+                            Padding="16">
+                        <Border.Shadow>
+                            <Shadow Brush="#94A3B8" Offset="0,6" Radius="16" Opacity="0.10" />
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="12">
+                            <Label Text="Информация за пациента"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="#111827" />
+                            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,*" RowSpacing="8" ColumnSpacing="14">
+                                <Label Grid.Row="0" Grid.Column="0" Text="Пациент" FontSize="12" TextColor="#94A3B8" />
+                                <Label Grid.Row="0" Grid.Column="1" x:Name="SheetInfoNameLabel" Text="" FontSize="13" FontAttributes="Bold" TextColor="#334155" HorizontalTextAlignment="End" />
+                                <Label Grid.Row="1" Grid.Column="0" Text="ЕГН" FontSize="12" TextColor="#94A3B8" />
+                                <Label Grid.Row="1" Grid.Column="1" x:Name="SheetInfoEgnLabel" Text="" FontSize="13" FontAttributes="Bold" TextColor="#334155" HorizontalTextAlignment="End" />
+                                <Label Grid.Row="2" Grid.Column="0" Text="Телефон" FontSize="12" TextColor="#94A3B8" />
+                                <Label Grid.Row="2" Grid.Column="1" x:Name="SheetInfoPhoneLabel" Text="" FontSize="13" FontAttributes="Bold" TextColor="#334155" HorizontalTextAlignment="End" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border BackgroundColor="White"
+                            Stroke="#E2E8F0"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 18"
+                            Padding="16">
+                        <Border.Shadow>
+                            <Shadow Brush="#94A3B8" Offset="0,6" Radius="16" Opacity="0.10" />
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="10">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Grid.Column="0"
+                                       Text="Избрани манипулации"
+                                       FontSize="15"
+                                       FontAttributes="Bold"
+                                       TextColor="#111827" />
+                                <Label Grid.Column="1"
+                                       x:Name="SheetTestsCountLabel"
+                                       Text=""
+                                       FontSize="12"
+                                       FontAttributes="Bold"
+                                       TextColor="#3B82F6"
+                                       VerticalOptions="Center" />
+                            </Grid>
+
+                            <VerticalStackLayout x:Name="SheetTestsLayout"
+                                                 Spacing="0"
+                                                 BindableLayout.ItemTemplate="{StaticResource SheetProcedureTemplate}" />
+
+                            <Border BackgroundColor="#EAF4FF"
+                                    Stroke="#C7E0FF"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 14"
+                                    Padding="14,12"
+                                    Margin="0,4,0,0">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Grid.Column="0"
+                                           Text="Общо"
+                                           FontSize="15"
+                                           FontAttributes="Bold"
+                                           TextColor="#0F172A" />
+                                    <Label Grid.Column="1"
+                                           x:Name="SheetTotalLabel"
+                                           Text=""
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="#0F766E" />
+                                </Grid>
+                            </Border>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0"
+                                Text="Копирай"
+                                Clicked="OnCopyClicked"
+                                BackgroundColor="White"
+                                TextColor="#0066CC"
+                                BorderColor="#0066CC"
+                                BorderWidth="1"
+                                CornerRadius="12"
+                                HeightRequest="50"
+                                FontAttributes="Bold"
+                                FontSize="14" />
+                        <Button Grid.Column="1"
+                                Text="Използвай"
+                                Clicked="OnReuseClicked"
+                                BackgroundColor="#0066CC"
+                                TextColor="White"
+                                CornerRadius="12"
+                                HeightRequest="50"
+                                FontAttributes="Bold"
+                                FontSize="14" />
+                    </Grid>
+
+                    <Button Text="🗑 Изтрий пациента"
+                            Clicked="OnDeleteClicked"
+                            BackgroundColor="Transparent"
+                            TextColor="#DC2626"
+                            FontSize="14"
+                            FontAttributes="Bold"
+                            HeightRequest="44" />
+                </VerticalStackLayout>
+            </ScrollView>
         </Border>
 
         

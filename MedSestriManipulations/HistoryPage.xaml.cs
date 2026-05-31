@@ -22,6 +22,7 @@ namespace MedSestriManipulations
         private int _filterVersion;
         private bool _isLoadingPatients;
         private bool _isAppendingPage;
+        private bool _isSheetClosing;
         private int _displayCount;
         private const int PageSize = 50;
 
@@ -215,17 +216,34 @@ namespace MedSestriManipulations
                 SheetNameLabel.Text = patient.FullName;
                 SheetEgnLabel.Text = patient.EGN;
                 SheetPhoneLabel.Text = patient.PhoneNumber;
-                SheetDateLabel.Text = patient.DateText;
-                SheetNoteLabel.Text = string.IsNullOrWhiteSpace(patient.Note)
-                    ? "Няма записани детайли."
-                    : patient.Note;
+                SheetDateOnlyLabel.Text = patient.Date.ToString("dd.MM.yyyy");
+                SheetTimeLabel.Text = patient.Date.ToString("HH:mm");
+                SheetInfoNameLabel.Text = patient.FullName;
+                SheetInfoEgnLabel.Text = patient.EGN;
+                SheetInfoPhoneLabel.Text = patient.PhoneNumber;
+                SheetTestsCountLabel.Text = $"{patient.TestsCount} бр.";
+                SheetTotalLabel.Text = $"{patient.TotalEuro:F2} €";
+                BindableLayout.SetItemsSource(SheetTestsLayout, CreateProcedureRows(patient));
 
                 await ShowSheet();
             }
         }
 
+        private static List<PatientProcedureRow> CreateProcedureRows(Patient patient)
+        {
+            var tests = patient.BloodTests ?? new List<BloodTest>();
+            return tests.Select((test, index) => new PatientProcedureRow
+            {
+                Number = index + 1,
+                Name = test.Name,
+                EuroPrice = test.EuroPrice,
+                HasDivider = index < tests.Count - 1
+            }).ToList();
+        }
+
         private async Task ShowSheet()
         {
+            _isSheetClosing = false;
             SheetPanel.TranslationY = 600;
             SheetOverlay.Opacity = 0;
             SheetOverlay.IsVisible = true;
@@ -235,21 +253,70 @@ namespace MedSestriManipulations
                 SheetOverlay.FadeTo(1, 250),
                 SheetPanel.TranslateTo(0, 0, 300, Easing.CubicOut)
             );
+            await SheetScrollView.ScrollToAsync(0, 0, false);
         }
 
         private async Task HideSheet()
         {
+            if (_isSheetClosing)
+                return;
+
+            _isSheetClosing = true;
             await Task.WhenAll(
                 SheetOverlay.FadeTo(0, 220),
                 SheetPanel.TranslateTo(0, 600, 260, Easing.CubicIn)
             );
             SheetOverlay.IsVisible = false;
             SheetPanel.IsVisible = false;
+            SheetPanel.TranslationY = 0;
+            _isSheetClosing = false;
         }
 
         private async void OnSheetOverlayTapped(object sender, TappedEventArgs e)
         {
             await HideSheet();
+        }
+
+        private async void OnSheetCloseClicked(object sender, EventArgs e)
+        {
+            await HideSheet();
+        }
+
+        private async void OnSheetSwipeDown(object sender, SwipedEventArgs e)
+        {
+            await HideSheet();
+        }
+
+        private async void OnSheetPanUpdated(object sender, PanUpdatedEventArgs e)
+        {
+            if (_isSheetClosing || !SheetPanel.IsVisible)
+                return;
+
+            switch (e.StatusType)
+            {
+                case GestureStatus.Running:
+                    if (e.TotalY > 0)
+                    {
+                        SheetPanel.TranslationY = e.TotalY;
+                        SheetOverlay.Opacity = Math.Max(0.25, 1 - (e.TotalY / 420));
+                    }
+                    break;
+
+                case GestureStatus.Completed:
+                case GestureStatus.Canceled:
+                    if (SheetPanel.TranslationY > 110)
+                    {
+                        await HideSheet();
+                    }
+                    else
+                    {
+                        await Task.WhenAll(
+                            SheetPanel.TranslateTo(0, 0, 160, Easing.CubicOut),
+                            SheetOverlay.FadeTo(1, 160)
+                        );
+                    }
+                    break;
+            }
         }
 
 
