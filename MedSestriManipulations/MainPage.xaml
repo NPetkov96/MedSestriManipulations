@@ -103,7 +103,7 @@
                                 <Setter Property="StrokeThickness" Value="1.5" />
                             </DataTrigger>
                         </Border.Triggers>
-                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,10" ColumnSpacing="10">
+                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,0" ColumnSpacing="10">
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnBloodTestRowTapped" />
                             </Grid.GestureRecognizers>
