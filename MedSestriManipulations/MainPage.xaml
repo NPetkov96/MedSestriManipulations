@@ -3,7 +3,7 @@
              xmlns:controls="clr-namespace:MedSestriManipulations.Controls"
              xmlns:models="clr-namespace:MedSestriManipulations.Models"
              xmlns:converters="clr-namespace:MedSestriManipulations.Converters"
-             BackgroundColor="#F8F9FB"
+             BackgroundColor="#F9FAFB"
              x:Class="MedSestriManipulations.MainPage">
 
     <ContentPage.Resources>
@@ -18,15 +18,16 @@
         <!-- Row 1: Compact action bar -->
         <Grid Grid.Row="1"
               ColumnDefinitions="Auto,*,Auto"
-              Padding="16,10,16,4"
+              Padding="16,0,16,0"
+              Margin="0,4,0,8"
               ColumnSpacing="10"
-              BackgroundColor="#F8F9FB">
+              BackgroundColor="#F9FAFB">
 
             <Button Grid.Column="0"
-                    Text="ЗАЧИСТИ"
+                    Text="↺ Изчисти"
                     Clicked="OnClearClicked"
                     BackgroundColor="Transparent"
-                    TextColor="#b51010"
+                    TextColor="#760f0f"
                     FontSize="16"
                     Padding="0"
                     BorderWidth="0" />
@@ -34,8 +35,9 @@
             <Label Grid.Column="2"
                    x:Name="SummaryLabel"
                    Text="Избери изследвания"
-                   TextColor="#AAAAAA"
-                   FontSize="16"
+                   TextColor="#0F766E"
+                   FontSize="12"
+                   FontAttributes="Bold"
                    HorizontalOptions="Center"
                    VerticalOptions="Center" />
 
@@ -55,7 +57,7 @@
               ColumnDefinitions="*,Auto"
               Padding="16,4,16,10"
               ColumnSpacing="8"
-              BackgroundColor="#F8F9FB">
+              BackgroundColor="#F9FAFB">
 
             <Border Grid.Column="0"
                     Stroke="#D4DDE8" StrokeThickness="1"
@@ -98,24 +100,27 @@
                         IsVisible="False">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:BloodTest">
-                    <Border Margin="0,5,0,5"
-                            StrokeShape="RoundRectangle 8"
+                    <Border Margin="0,0,0,5"
+                            StrokeShape="RoundRectangle 10"
                             BackgroundColor="White"
-                            Stroke="#D4DDE8"
+                            Stroke="#F3F4F6"
                             StrokeThickness="1">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Offset="0,1" Radius="3" Opacity="0.04" />
+                        </Border.Shadow>
                         <Border.Triggers>
                             <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
-                                <Setter Property="BackgroundColor" Value="#F0F6FF" />
-                                <Setter Property="Stroke" Value="#0066CC" />
+                                <Setter Property="BackgroundColor" Value="#F0FDF9" />
+                                <Setter Property="Stroke" Value="#0F766E" />
                                 <Setter Property="StrokeThickness" Value="1.5" />
                             </DataTrigger>
                         </Border.Triggers>
-                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="14,12" ColumnSpacing="12">
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" Padding="14,12" ColumnSpacing="12">
 
                             <CheckBox Grid.Column="0"
                                       IsChecked="{Binding IsSelected}"
                                       CheckedChanged="AddSumWhenBloodTestChecked"
-                                      Color="#0066CC" Scale="1.2"
+                                      Color="#0F766E" Scale="1.2"
                                       VerticalOptions="Center" />
 
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
@@ -124,7 +129,7 @@
                                 </VerticalStackLayout.GestureRecognizers>
 
                                 <!-- Name with search text highlighting -->
-                                <Label LineBreakMode="WordWrap">
+                                <Label LineBreakMode="WordWrap" FontSize="14" FontAttributes="Bold" TextColor="#111827">
                                     <Label.FormattedText>
                                         <MultiBinding Converter="{StaticResource HighlightConverter}">
                                             <Binding Path="Name" />
@@ -132,17 +137,22 @@
                                         </MultiBinding>
                                     </Label.FormattedText>
                                 </Label>
-
-                                <HorizontalStackLayout Spacing="6">
-                                    <Label Text="{Binding EuroPrice, StringFormat='{0:F2} €'}"
-                                           FontSize="12" TextColor="#0066CC" FontAttributes="Bold" />
-                                    <Label Text="·" FontSize="11" TextColor="#999999" />
-                                </HorizontalStackLayout>
                             </VerticalStackLayout>
 
-                            <Label Grid.Column="2"
+                            <!-- Price pill -->
+                            <Border Grid.Column="2"
+                                    BackgroundColor="#F0FDF9"
+                                    StrokeShape="RoundRectangle 10"
+                                    Stroke="Transparent"
+                                    Padding="6,2"
+                                    VerticalOptions="Center">
+                                <Label Text="{Binding EuroPrice, StringFormat='{0:F2} €'}"
+                                       FontSize="11" FontAttributes="Bold" TextColor="#0F766E" />
+                            </Border>
+
+                            <Label Grid.Column="3"
                                    Text="›" FontSize="20"
-                                   TextColor="#0066CC"
+                                   TextColor="#D1D5DB"
                                    VerticalOptions="Center"
                                    HorizontalOptions="End" />
                         </Grid>

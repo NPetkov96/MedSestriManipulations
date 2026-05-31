@@ -303,8 +303,8 @@ namespace MedSestriManipulations
                 ? $"{count} {(count == 1 ? "изследване" : "изследвания")} · {totalEUR:F2} €"
                 : "Избери изследвания";
             SummaryLabel.TextColor = count > 0
-                ? Color.FromArgb("#0066CC")
-                : Color.FromArgb("#AAAAAA");
+                ? Color.FromArgb("#0F766E")
+                : Color.FromArgb("#6B7280");
 
             UpdateSelectionPill(count, totalEUR);
         }
@@ -350,7 +350,10 @@ namespace MedSestriManipulations
                 ? (IEnumerable<BloodTest>)BloodTestsList
                 : BloodTestsList.Where(p => p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase));
 
-            var filteredList = filtered.ToList();
+            // Always pin НЗОК to the top of the results
+            var filteredList = filtered
+                .OrderByDescending(p => p.Name.Contains("НЗОК", StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
             // Set search text on each item so the HighlightConverter can use it
             foreach (var item in filteredList)

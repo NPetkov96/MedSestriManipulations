@@ -17,8 +17,12 @@ namespace MedSestriManipulations.Services
         private static readonly string _bloodTestsCacheFile =
             Path.Combine(FileSystem.AppDataDirectory, "bloodtests_cache.json");
 
+        private static readonly string _patientsCacheFile =
+            Path.Combine(FileSystem.AppDataDirectory, "patients_cache.json");
+
         // Shared in-flight load so the splash preload and MainPage don't race.
         private Task<List<BloodTest>>? _bloodTestsInFlight;
+        private Task<List<Patient>>? _patientsInFlight;
 
         public CachedDataService(API api)
         {
@@ -92,15 +96,62 @@ namespace MedSestriManipulations.Services
             catch { /* network error — keep whatever we had */ }
         }
 
-        public async Task<List<Patient>> GetPatientsAsync()
+        public Task<List<Patient>> GetPatientsAsync()
         {
-            if (!_isPatientsLoaded)
-            {
-                _patients = await _api.GetAllPatientsHistory();
-                _isPatientsLoaded = true;
-            }
+            if (_isPatientsLoaded)
+                return Task.FromResult(_patients);
 
-            return _patients;
+            return _patientsInFlight ??= LoadPatientsAsync();
+        }
+
+        private async Task<List<Patient>> LoadPatientsAsync()
+        {
+            try
+            {
+                // Load from disk cache instantly if available
+                if (File.Exists(_patientsCacheFile))
+                {
+                    try
+                    {
+                        var json = await File.ReadAllTextAsync(_patientsCacheFile);
+                        var cached = JsonSerializer.Deserialize<List<Patient>>(json);
+                        if (cached != null && cached.Count > 0)
+                        {
+                            _patients = cached;
+                            _isPatientsLoaded = true;
+
+                            // Refresh from API in background without blocking
+                            _ = RefreshPatientsFromApiAsync();
+                            return _patients;
+                        }
+                    }
+                    catch { /* corrupt cache — fall through to API */ }
+                }
+
+                // No cache yet — fetch from API and save
+                await RefreshPatientsFromApiAsync();
+                return _patients;
+            }
+            finally
+            {
+                _patientsInFlight = null;
+            }
+        }
+
+        private async Task RefreshPatientsFromApiAsync()
+        {
+            try
+            {
+                var fresh = await _api.GetAllPatientsHistory();
+                if (fresh != null)
+                {
+                    _patients = fresh;
+                    _isPatientsLoaded = true;
+                    var json = JsonSerializer.Serialize(fresh);
+                    await File.WriteAllTextAsync(_patientsCacheFile, json);
+                }
+            }
+            catch { /* network error — keep whatever we had */ }
         }
 
         public async Task<List<Catheter>> GetCathetersAsync()
@@ -117,6 +168,17 @@ namespace MedSestriManipulations.Services
         public void InvalidatePatients()
         {
             _isPatientsLoaded = false;
+            TryDeleteCacheFile(_patientsCacheFile);
+        }
+
+        private static void TryDeleteCacheFile(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+            catch { /* best effort — stale file will be overwritten on next refresh */ }
         }
 
         public void InvalidateCatheters()

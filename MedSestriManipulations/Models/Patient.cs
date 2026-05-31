@@ -48,6 +48,26 @@ namespace MedSestriManipulations.Models
         [JsonIgnore]
         public string DateText => Date.ToString("dd.MM.yyyy  ·  HH:mm");
 
+        // Short date for compact rows: "29.05 · 12:44"
+        [JsonIgnore]
+        public string ShortDateText => Date.ToString("dd.MM · HH:mm");
+
+        // Phone grouped as "0878 559 095"
+        [JsonIgnore]
+        public string PhoneFormatted
+        {
+            get
+            {
+                var p = PhoneNumber?.Trim() ?? string.Empty;
+                if (p.Length == 10)
+                    return $"{p.Substring(0, 4)} {p.Substring(4, 3)} {p.Substring(7, 3)}";
+                return p;
+            }
+        }
+
+        [JsonIgnore]
+        public bool IsZeroPrice => TotalEuro == 0;
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)

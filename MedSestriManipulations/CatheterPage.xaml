@@ -29,7 +29,7 @@
                     CornerRadius="6"
                     Padding="16,8"
                     FontAttributes="Bold"
-                    FontSize="13" />
+                    FontSize="14" />
         </Grid>
 
         <!-- Row 2: Search bar -->
@@ -213,7 +213,7 @@
                             HeightRequest="50"
                             Padding="20,0"
                             FontAttributes="Bold"
-                            FontSize="14" />
+                            FontSize="16" />
                 </Grid>
             </VerticalStackLayout>
         </Border>
