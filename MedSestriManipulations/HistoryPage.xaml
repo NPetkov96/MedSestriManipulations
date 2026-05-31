@@ -10,7 +10,8 @@
     <ContentPage.Resources>
         <DataTemplate x:Key="HistoryWeekHeaderTemplate" x:DataType="models:HistoryListItem">
             <Grid BackgroundColor="#F9FAFB"
-                  Padding="14,10,4,4">
+                  HorizontalOptions="Center"
+                  Padding="0,16,0,5">
                 <Label Text="{Binding HeaderText}"
                        TextColor="#9CA3AF"
                        FontSize="13"
@@ -33,11 +34,11 @@
 
                     <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
                         <Label Text="{Binding Patient.FullName}"
-                               FontSize="14" FontAttributes="Bold"
+                               FontSize="15" FontAttributes="Bold"
                                TextColor="#111827" LineBreakMode="WordWrap" />
 
                         <HorizontalStackLayout Spacing="6">
-                            <Label Text="{Binding Patient.PhoneFormatted}" FontSize="11" TextColor="#6B7280" />
+                            <Label Text="{Binding Patient.EGN}" FontSize="12" TextColor="#3B82F6" />
                             <Label Text="·" FontSize="10" TextColor="#9CA3AF" />
                             <Label Text="{Binding Patient.ShortDateText}" FontSize="10" TextColor="#9CA3AF" VerticalOptions="Center" />
                         </HorizontalStackLayout>
@@ -46,7 +47,7 @@
                     <VerticalStackLayout Grid.Column="1" VerticalOptions="Center"
                                          HorizontalOptions="End" Spacing="2">
                         <Label Text="{Binding Patient.TotalEuro, StringFormat='{0:F2} €'}"
-                               FontSize="12"
+                               FontSize="14"
                                FontAttributes="Bold"
                                TextColor="#0F766E"
                                HorizontalOptions="End" />
