@@ -48,11 +48,19 @@ public partial class LaunchPage : ContentPage
     {
         try
         {
-            await cachedData.GetBloodTestsAsync();
+            // Load all three data types in parallel during the splash animation.
+            // Blood tests  → MainPage is instant.
+            // Patients     → HistoryPage is instant.
+            // Catheters    → CatheterPage is instant.
+            await Task.WhenAll(
+                cachedData.GetBloodTestsAsync(),
+                cachedData.GetPatientsAsync(),
+                cachedData.GetCathetersAsync()
+            );
         }
         catch
         {
-            // Network/cache errors are handled on MainPage; never block the splash.
+            // Network / cache errors are handled per-page; never block the splash.
         }
     }
 
