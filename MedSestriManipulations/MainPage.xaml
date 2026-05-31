@@ -88,7 +88,9 @@
         <CollectionView x:Name="ProcedureList"
                         Grid.Row="3"
                         Margin="16,4,16,0"
-                        IsVisible="False">
+                        IsVisible="False"
+                        ItemsLayout="VerticalList"
+                        ItemSizingStrategy="MeasureFirstItem">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:BloodTest">
                     <Border Margin="0,0,0,5"
@@ -96,9 +98,7 @@
                             BackgroundColor="White"
                             Stroke="#F3F4F6"
                             StrokeThickness="1">
-                        <Border.Shadow>
-                            <Shadow Brush="#000000" Offset="0,1" Radius="3" Opacity="0.04" />
-                        </Border.Shadow>
+                        <!-- shadow removed to improve scroll performance -->
                         <Border.Triggers>
                             <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
                                 <Setter Property="BackgroundColor" Value="#F0FDF9" />
@@ -119,14 +119,15 @@
                                     <TapGestureRecognizer Tapped="ShowsPopupDetailsBloodTest" />
                                 </VerticalStackLayout.GestureRecognizers>
 
-                                <!-- Name with search text highlighting -->
-                                <Label LineBreakMode="WordWrap" FontSize="14" FontAttributes="Bold" TextColor="#111827">
-                                    <Label.FormattedText>
-                                        <MultiBinding Converter="{StaticResource HighlightConverter}">
-                                            <Binding Path="Name" />
-                                            <Binding Path="SearchText" />
-                                        </MultiBinding>
-                                    </Label.FormattedText>
+                                <!-- Name with lightweight highlight using DataTrigger -->
+                                <Label LineBreakMode="WordWrap" FontSize="14" FontAttributes="Bold"
+                                       Text="{Binding Name}" TextColor="#111827">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsMatch}" Value="True">
+                                            <Setter Property="TextColor" Value="#0066CC" />
+                                            <Setter Property="BackgroundColor" Value="#E8F0FF" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
                                 </Label>
                             </VerticalStackLayout>
 

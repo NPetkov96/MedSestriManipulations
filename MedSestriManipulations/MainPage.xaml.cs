@@ -10,6 +10,11 @@ namespace MedSestriManipulations
     {
         private CancellationTokenSource? _filterCts;
         private List<BloodTest> BloodTestsList = new();
+        // single ObservableRangeCollection instance bound to the CollectionView
+        // ReplaceRange triggers a single Reset notification which is much cheaper
+        // than clearing/adding one-by-one for large lists.
+        private readonly Helpers.ObservableRangeCollection<BloodTest> _filteredProcedures
+            = new Helpers.ObservableRangeCollection<BloodTest>();
 
         private readonly API _api;
         private readonly CachedDataService _cachedData;
@@ -35,6 +40,11 @@ namespace MedSestriManipulations
                 SkeletonView.IsLoading = false;
                 ProcedureList.IsVisible = true;
 
+                // Bind the CollectionView once to the observable collection
+                // and populate it via ApplyFilter. This keeps the same
+                // collection instance so the CollectionView doesn't rebind
+                // which is expensive on large lists.
+                ProcedureList.ItemsSource = _filteredProcedures;
                 ApplyFilter();
 
                 var reusedPatient = SelectedPatientService.PatientToReuse;
@@ -339,24 +349,124 @@ namespace MedSestriManipulations
             await ShowBottomSheet();
         }
 
-        private void ApplyFilter(string? searchText = null)
+        private async void ApplyFilter(string? searchText = null)
         {
             searchText ??= SearchBar.Text?.Trim() ?? string.Empty;
 
-            var filtered = string.IsNullOrEmpty(searchText)
-                ? (IEnumerable<BloodTest>)BloodTestsList
-                : BloodTestsList.Where(p => p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+            // Capture the current cancellation token if any (set by the debounced search)
+            var token = _filterCts?.Token ?? CancellationToken.None;
 
-            // Always pin НЗОК to the top of the results
-            var filteredList = filtered
-                .OrderByDescending(p => p.Name.Contains("НЗОК", StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            try
+            {
+                // Run the filtering and ordering on a background thread to avoid UI jank
+                var filteredList = await Task.Run(() =>
+                {
+                    token.ThrowIfCancellationRequested();
 
-            // Set search text on each item so the HighlightConverter can use it
-            foreach (var item in filteredList)
-                item.SearchText = searchText;
+                    var filtered = string.IsNullOrEmpty(searchText)
+                        ? (IEnumerable<BloodTest>)BloodTestsList
+                        : BloodTestsList.Where(p => p.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase));
 
-            ProcedureList.ItemsSource = filteredList;
+                    // Always pin НЗОК to the top of the results
+                    var list = filtered
+                        .OrderByDescending(p => p.Name.Contains("НЗОК", StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+
+                    // Set search text on each item so the HighlightConverter can use it
+                    foreach (var item in list)
+                        item.SearchText = searchText;
+
+                    return list;
+                }, token).ConfigureAwait(false);
+
+                if (token.IsCancellationRequested)
+                    return;
+
+                // Update the single bound collection on the UI thread using a minimal diff
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    // Precompute cached FormattedString for each item to avoid doing work during layout
+                    foreach (var bt in filteredList)
+                        bt.UpdateFormattedName(searchText);
+
+                    UpdateCollectionWithMinimalDiff(_filteredProcedures, filteredList);
+                });
+            }
+            catch (OperationCanceledException)
+            {
+                // expected when a newer filter cancels the previous work
+            }
+            catch (Exception ex)
+            {
+                // don't crash the UI on unexpected errors
+                System.Diagnostics.Debug.WriteLine($"ApplyFilter error: {ex}");
+            }
+        }
+
+        // Update target collection to match newItems with minimal removes/inserts/moves.
+        // Uses BloodTest.Name as the key (assumes names are unique identifiers).
+        private void UpdateCollectionWithMinimalDiff(Helpers.ObservableRangeCollection<BloodTest> target, List<BloodTest> newItems)
+        {
+            if (target == null) return;
+            if (newItems == null) newItems = new List<BloodTest>();
+
+            // Fast path: empty target -> add all
+            if (target.Count == 0)
+            {
+                target.AddRange(newItems);
+                return;
+            }
+
+            // Build quick lookup for new items by key
+            var newIndex = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < newItems.Count; i++)
+                newIndex[newItems[i].Name] = i;
+
+            // Remove items that are not present in newItems (iterate backwards)
+            for (int i = target.Count - 1; i >= 0; i--)
+            {
+                var name = target[i].Name;
+                if (!newIndex.ContainsKey(name))
+                    target.RemoveAt(i);
+            }
+
+            // Now ensure order and insert missing items
+            for (int destIndex = 0; destIndex < newItems.Count; destIndex++)
+            {
+                var desired = newItems[destIndex];
+
+                if (destIndex < target.Count && string.Equals(target[destIndex].Name, desired.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    // already in correct place
+                    continue;
+                }
+
+                // Try to find the desired item later in the target
+                int currentIndex = -1;
+                for (int j = destIndex + 1; j < target.Count; j++)
+                {
+                    if (string.Equals(target[j].Name, desired.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        currentIndex = j;
+                        break;
+                    }
+                }
+
+                if (currentIndex >= 0)
+                {
+                    // Move existing item into the desired position
+                    target.Move(currentIndex, destIndex);
+                }
+                else
+                {
+                    // Insert missing item at the desired position
+                    target.Insert(destIndex, desired);
+                }
+            }
+
+            // If target is longer than newItems after operations, remove the tail
+            while (target.Count > newItems.Count)
+                target.RemoveAt(target.Count - 1);
         }
     }
 }
