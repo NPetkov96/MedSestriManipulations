@@ -23,7 +23,7 @@ namespace MedSestriManipulations
         private int _displayCount = 0;
         private bool _isAppendingPage;
         private double _lastLoggedVerticalOffset = -1;
-        private const int PageSize = 80;
+        private const int PageSize = 50;
 
         private readonly API _api;
         private readonly CachedDataService _cachedData;
@@ -433,18 +433,7 @@ namespace MedSestriManipulations
                         .OrderByDescending(p => p.Name.Contains("НЗОК", StringComparison.OrdinalIgnoreCase))
                         .ToList();
 
-                    // Build pair of (item, isMatch) cheaply
-                    var result = new List<(BloodTest item, bool isMatch)>(list.Count);
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        var it = list[i];
-                        var isMatch = !string.IsNullOrEmpty(searchText) && it.Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0;
-                        // still record the search text for converters if needed
-                        it.SearchText = searchText;
-                        result.Add((it, isMatch));
-                    }
-
-                    return result;
+                    return list;
                 }, token).ConfigureAwait(false);
                 if (token.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
                     return;
@@ -454,14 +443,8 @@ namespace MedSestriManipulations
                     if (token.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
                         return;
 
-                    // Apply lightweight match flags on UI thread (raise PropertyChanged there)
-                    // apply match flags
-                    var filteredList = pairedList.Select(p => p.item).ToList();
-                    for (int i = 0; i < pairedList.Count; i++)
-                        pairedList[i].item.IsMatch = pairedList[i].isMatch;
-
                     // update paging cache and populate first page only to reduce initial render cost
-                    _allFilteredCache = filteredList;
+                    _allFilteredCache = pairedList;
                     _displayCount = Math.Min(PageSize, _allFilteredCache.Count);
                     var firstPage = _allFilteredCache.Take(_displayCount).ToList();
 

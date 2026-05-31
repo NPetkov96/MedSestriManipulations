@@ -2,13 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:MedSestriManipulations.Controls"
              xmlns:models="clr-namespace:MedSestriManipulations.Models"
-             xmlns:converters="clr-namespace:MedSestriManipulations.Converters"
              BackgroundColor="#F9FAFB"
              x:Class="MedSestriManipulations.MainPage">
-
-    <ContentPage.Resources>
-        <converters:HighlightConverter x:Key="HighlightConverter" />
-    </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,Auto,Auto,*">
 
@@ -108,7 +103,7 @@
                                 <Setter Property="StrokeThickness" Value="1.5" />
                             </DataTrigger>
                         </Border.Triggers>
-                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" Padding="14,12" ColumnSpacing="12">
+                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,10" ColumnSpacing="10">
 
                             <CheckBox Grid.Column="0"
                                       IsChecked="{Binding IsSelected}"
@@ -116,37 +111,23 @@
                                       Color="#0F766E" Scale="1.2"
                                       VerticalOptions="Center" />
 
-                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
-                                <VerticalStackLayout.GestureRecognizers>
+                            <Label Grid.Column="1"
+                                   Text="{Binding Name}"
+                                   LineBreakMode="WordWrap"
+                                   FontSize="14"
+                                   FontAttributes="Bold"
+                                   TextColor="#111827"
+                                   VerticalOptions="Center">
+                                <Label.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="ShowsPopupDetailsBloodTest" />
-                                </VerticalStackLayout.GestureRecognizers>
+                                </Label.GestureRecognizers>
+                            </Label>
 
-                                <!-- Name with lightweight highlight using DataTrigger -->
-                                <Label LineBreakMode="WordWrap" FontSize="14" FontAttributes="Bold"
-                                       Text="{Binding Name}" TextColor="#111827">
-                                    <Label.Triggers>
-                                        <DataTrigger TargetType="Label" Binding="{Binding IsMatch}" Value="True">
-                                            <Setter Property="TextColor" Value="#0066CC" />
-                                            <Setter Property="BackgroundColor" Value="#E8F0FF" />
-                                        </DataTrigger>
-                                    </Label.Triggers>
-                                </Label>
-                            </VerticalStackLayout>
-
-                            <!-- Price pill -->
-                            <Border Grid.Column="2"
-                                    BackgroundColor="#F0FDF9"
-                                    StrokeShape="RoundRectangle 10"
-                                    Stroke="Transparent"
-                                    Padding="6,2"
-                                    VerticalOptions="Center">
-                                <Label Text="{Binding EuroPrice, StringFormat='{0:F2} €'}"
-                                       FontSize="11" FontAttributes="Bold" TextColor="#0F766E" />
-                            </Border>
-
-                            <Label Grid.Column="3"
-                                   Text="›" FontSize="20"
-                                   TextColor="#D1D5DB"
+                            <Label Grid.Column="2"
+                                   Text="{Binding EuroPrice, StringFormat='{0:F2} €'}"
+                                   FontSize="12"
+                                   FontAttributes="Bold"
+                                   TextColor="#0F766E"
                                    VerticalOptions="Center"
                                    HorizontalOptions="End" />
                         </Grid>
