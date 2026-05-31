@@ -1,7 +1,4 @@
-﻿#if ANDROID 
-using MedSestriManipulations.Platforms.Android.Services;
-#endif
-
+﻿// Notification platform services removed; no platform-specific using here.
 
 namespace MedSestriManipulations
 {
@@ -17,42 +14,7 @@ namespace MedSestriManipulations
         {
         }
 
-        public async Task CheckNotificationPermissionAsync()
-        {
-#if ANDROID
-            await CheckNotificationPermissionAndroidAsync();
-#else
-            await Task.CompletedTask;
-#endif
-        }
-
-#if ANDROID
-        private async Task CheckNotificationPermissionAndroidAsync()
-        {
-            if (DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 13)
-            {
-                var status = await Permissions.CheckStatusAsync<Notifications>();
-
-                if (status != PermissionStatus.Granted)
-                {
-                    status = await Permissions.CheckStatusAsync<Notifications>();
-
-                    if (status != PermissionStatus.Granted)
-                    {
-                        var page = Application.Current?.Windows.FirstOrDefault()?.Page;
-                        if (page == null) return;
-
-                        await page.DisplayAlert(
-                            "Разрешение за известия",
-                            "Известията са изключени. Моля, разрешете ги ръчно от настройките на телефона.",
-                            "ОК");
-
-                        OpenAppSettings();
-                    }
-                }
-            }
-        }
-#endif
+    public Task CheckNotificationPermissionAsync() => Task.CompletedTask;
 
         public void OpenAppSettings()
         {

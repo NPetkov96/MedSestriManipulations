@@ -30,7 +30,7 @@ namespace MedSestriManipulations.Platforms.Android
 
             HandleIntent(Intent);
 
-            FirebaseMessaging.Instance.SubscribeToTopic("all");
+            // Firebase messaging disabled: removed automatic topic subscription
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop && Window != null)
             {

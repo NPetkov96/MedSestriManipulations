@@ -1,6 +1,9 @@
 using MedSestriManipulations.ApiHandler;
 using MedSestriManipulations.Models;
 using MedSestriManipulations.Services;
+using System.Collections.ObjectModel;
+using System.Threading;
+using Microsoft.Maui.ApplicationModel;
 
 namespace MedSestriManipulations
 {
@@ -11,17 +14,27 @@ namespace MedSestriManipulations
 
         private List<Patient> _allPatients = new();
         private Patient? _selectedPatient;
+        private readonly ObservableCollection<PatientGroup> _groupCollection = new();
+        private CancellationTokenSource? _searchCts;
 
         public HistoryPage(API api, CachedDataService cachedData)
         {
             InitializeComponent();
             _api = api;
             _cachedData = cachedData;
+            // keep the same collection instance to avoid reassigning ItemsSource frequently
+            PatientsCollection.ItemsSource = _groupCollection;
         }
 
-        protected override async void OnAppearing()
+        protected override void OnAppearing()
         {
             base.OnAppearing();
+            // Start loading in background so the UI appears quickly
+            _ = LoadPatientsAndApplyFilterAsync();
+        }
+
+        private async Task LoadPatientsAndApplyFilterAsync()
+        {
             try
             {
                 PatientsSkeleton.IsLoading = true;
@@ -29,11 +42,15 @@ namespace MedSestriManipulations
 
                 var patients = await _cachedData.GetPatientsAsync();
                 _allPatients = patients.OrderByDescending(p => p.Date).ToList();
-                ApplyFilter();
+                await ApplyFilter();
             }
             catch (Exception ex)
             {
-                await DisplayAlert("Грешка", $"{ex.Message}", "OK");
+                // Ensure alert runs on main thread
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    await DisplayAlert("Грешка", $"{ex.Message}", "OK");
+                });
             }
             finally
             {
@@ -44,54 +61,75 @@ namespace MedSestriManipulations
 
         // ─── Search ───────────────────────────────────────────────────────────
 
-        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        private async void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
-            ApplyFilter(e.NewTextValue);
+            // debounce input to avoid heavy work on every keystroke
+            _searchCts?.Cancel();
+            _searchCts = new CancellationTokenSource();
+            var token = _searchCts.Token;
+            try
+            {
+                await Task.Delay(300, token);
+            }
+            catch (TaskCanceledException)
+            {
+                return;
+            }
+
+            await ApplyFilter(e.NewTextValue);
         }
 
-        private void ApplyFilter(string? searchText = null)
+        private async Task ApplyFilter(string? searchText = null)
         {
             searchText = (searchText ?? SearchBar.Text)?.Trim() ?? string.Empty;
-
-            IEnumerable<Patient> filtered = _allPatients;
-
-            if (!string.IsNullOrEmpty(searchText))
+            // perform filtering & grouping off the UI thread
+            var groupedData = await Task.Run(() =>
             {
-                filtered = _allPatients.Where(p =>
-                    p.FullName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                    p.EGN.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                    p.PhoneNumber.Contains(searchText, StringComparison.OrdinalIgnoreCase));
-            }
+                IEnumerable<Patient> filtered = _allPatients;
 
-            // Group by month/year (Bulgarian month names) and order groups by year/month descending
-            var bulgarianMonths = new[]
-            {
-                "Януари","Февруари","Март","Април","Май","Юни",
-                "Юли","Август","Септември","Октомври","Ноември","Декември"
-            };
-
-            var groups = filtered
-                .GroupBy(p => new { p.Date.Year, p.Date.Month })
-                .OrderByDescending(g => g.Key.Year)
-                .ThenByDescending(g => g.Key.Month)
-                .Select(g =>
+                if (!string.IsNullOrEmpty(searchText))
                 {
-                    var monthName = bulgarianMonths[g.Key.Month - 1];
-                    var key = $"{monthName} {g.Key.Year}";
-                    var patientsInGroup = g.OrderByDescending(p => p.Date).ToList();
-                    return new PatientGroup(key, patientsInGroup);
-                })
-                .ToList();
+                    filtered = _allPatients.Where(p =>
+                        p.FullName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                        p.EGN.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                        p.PhoneNumber.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+                }
 
-            // If user is searching, expand groups so matching patients are visible.
-            // Otherwise keep groups collapsed by default.
+                // Group by month/year (Bulgarian month names) and order groups by year/month descending
+                var bulgarianMonths = new[]
+                {
+                    "Януари","Февруари","Март","Април","Май","Юни",
+                    "Юли","Август","Септември","Октомври","Ноември","Декември"
+                };
+
+                var groups = filtered
+                    .GroupBy(p => new { p.Date.Year, p.Date.Month })
+                    .OrderByDescending(g => g.Key.Year)
+                    .ThenByDescending(g => g.Key.Month)
+                    .Select(g =>
+                    {
+                        var monthName = bulgarianMonths[g.Key.Month - 1];
+                        var key = $"{monthName} {g.Key.Year}";
+                        var patientsInGroup = g.OrderByDescending(p => p.Date).ToList();
+                        return (Key: key, Patients: patientsInGroup);
+                    })
+                    .ToList();
+
+                return groups;
+            });
+
+            // update UI collection on main thread
             bool expand = !string.IsNullOrEmpty(searchText);
-            foreach (var grp in groups)
+            await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                grp.IsExpanded = expand;
-            }
-
-            PatientsCollection.ItemsSource = groups;
+                _groupCollection.Clear();
+                foreach (var g in groupedData)
+                {
+                    var pg = new PatientGroup(g.Key, g.Patients);
+                    pg.IsExpanded = expand;
+                    _groupCollection.Add(pg);
+                }
+            });
         }
 
         // ─── Bottom sheet ─────────────────────────────────────────────────────
@@ -194,12 +232,13 @@ namespace MedSestriManipulations
                 {
                     _allPatients.Remove(patient);
                     _cachedData.InvalidatePatients();
-                    ApplyFilter();
+                    await ApplyFilter();
                     await HideSheet();
                 }
                 else
                 {
                     await DisplayAlert("Грешка", "Неуспешно изтриване.", "OK");
+                    await ApplyFilter();
                 }
             }
             catch (Exception ex)

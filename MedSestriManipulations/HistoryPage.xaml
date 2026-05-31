@@ -46,7 +46,7 @@
 
                         <Label Text="{Binding Key}"
                                TextColor="#9CA3AF"
-                               FontSize="12"
+                               FontSize="18"
                                Padding="16,12,4,4"
                                VerticalOptions="Center" />
 
@@ -55,7 +55,7 @@
                                x:Name="Chevron"
                                Text="▾"
                                TextColor="#9CA3AF"
-                               FontSize="12"
+                               FontSize="18"
                                Padding="8,12,12,4"
                                VerticalOptions="Center">
                             <Label.Triggers>
