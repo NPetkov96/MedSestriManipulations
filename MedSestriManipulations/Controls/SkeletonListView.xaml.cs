@@ -1,3 +1,5 @@
+using Microsoft.Maui.Controls.Shapes;
+
 namespace MedSestriManipulations.Controls;
 
 public partial class SkeletonListView : ContentView
@@ -10,6 +12,14 @@ public partial class SkeletonListView : ContentView
             false,
             propertyChanged: OnIsLoadingChanged);
 
+    public static readonly BindableProperty SkeletonTypeProperty =
+        BindableProperty.Create(
+            nameof(SkeletonType),
+            typeof(SkeletonType),
+            typeof(SkeletonListView),
+            SkeletonType.Patient,
+            propertyChanged: OnSkeletonTypeChanged);
+
     private bool _isAnimating;
 
     public SkeletonListView()
@@ -21,6 +31,19 @@ public partial class SkeletonListView : ContentView
     {
         get => (bool)GetValue(IsLoadingProperty);
         set => SetValue(IsLoadingProperty, value);
+    }
+
+    public SkeletonType SkeletonType
+    {
+        get => (SkeletonType)GetValue(SkeletonTypeProperty);
+        set => SetValue(SkeletonTypeProperty, value);
+    }
+
+    private static void OnSkeletonTypeChanged(BindableObject bindable, object oldValue, object newValue)
+    {
+        var view = (SkeletonListView)bindable;
+        // regenerate skeleton children when type changes
+        view.GenerateSkeletonChildren();
     }
 
     private static void OnIsLoadingChanged(BindableObject bindable, object oldValue, object newValue)
@@ -46,6 +69,9 @@ public partial class SkeletonListView : ContentView
             return;
         }
 
+        // ensure children reflect the current type when starting
+        GenerateSkeletonChildren();
+
         _isAnimating = true;
         _ = AnimateAsync();
     }
@@ -69,6 +95,95 @@ public partial class SkeletonListView : ContentView
             }
 
             await SkeletonRoot.FadeTo(1, 700);
+        }
+    }
+
+    private void GenerateSkeletonChildren()
+    {
+        if (SkeletonRoot == null)
+            return;
+
+        SkeletonRoot.Children.Clear();
+
+        Color placeholderColor = Color.FromArgb("#E8EEF5");
+
+        Border CreateCard(View content, double height)
+        {
+            return new Border
+            {
+                StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(8) },
+                BackgroundColor = Colors.White,
+                Stroke = Color.FromArgb("#D4DDE8"),
+                StrokeThickness = 1,
+                HeightRequest = height,
+                Content = content
+            };
+        }
+
+        switch (SkeletonType)
+        {
+            case SkeletonType.BloodTest:
+            {
+                for (int i = 0; i < 7; i++)
+                {
+                    var grid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition(GridLength.Auto), new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) }, Padding = new Thickness(14,8) };
+
+                    var square = new BoxView { WidthRequest = 24, HeightRequest = 24, BackgroundColor = placeholderColor, CornerRadius = 4, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Center };
+                    grid.Add(square);
+
+                    var center = new BoxView { WidthRequest = 180, HeightRequest = 14, BackgroundColor = placeholderColor, CornerRadius = 4, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Center };
+                    grid.Add(center, 1, 0);
+
+                    var pill = new BoxView { WidthRequest = 50, HeightRequest = 22, BackgroundColor = placeholderColor, CornerRadius = 10, HorizontalOptions = LayoutOptions.End, VerticalOptions = LayoutOptions.Center };
+                    grid.Add(pill, 2, 0);
+
+                    SkeletonRoot.Children.Add(CreateCard(grid, 52));
+                }
+
+                break;
+            }
+            case SkeletonType.Patient:
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    var grid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) }, Padding = new Thickness(14,10) };
+
+                    var left = new VerticalStackLayout { Spacing = 6 };
+                    left.Add(new BoxView { WidthRequest = 160, HeightRequest = 14, BackgroundColor = placeholderColor, CornerRadius = 4, HorizontalOptions = LayoutOptions.Start });
+                    left.Add(new BoxView { WidthRequest = 100, HeightRequest = 10, BackgroundColor = placeholderColor, CornerRadius = 4, HorizontalOptions = LayoutOptions.Start });
+                    grid.Add(left);
+
+                    var right = new VerticalStackLayout { Spacing = 6, HorizontalOptions = LayoutOptions.End, VerticalOptions = LayoutOptions.Center };
+                    right.Add(new BoxView { WidthRequest = 55, HeightRequest = 18, BackgroundColor = placeholderColor, CornerRadius = 4, HorizontalOptions = LayoutOptions.End });
+                    right.Add(new BoxView { WidthRequest = 70, HeightRequest = 14, BackgroundColor = placeholderColor, CornerRadius = 4, HorizontalOptions = LayoutOptions.End });
+                    grid.Add(right, 1, 0);
+
+                    SkeletonRoot.Children.Add(CreateCard(grid, 68));
+                }
+
+                break;
+            }
+            case SkeletonType.Catheter:
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    var grid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) }, Padding = new Thickness(14,12) };
+
+                    var left = new VerticalStackLayout { Spacing = 6 };
+                    left.Add(new BoxView { WidthRequest = 150, HeightRequest = 14, BackgroundColor = placeholderColor, CornerRadius = 4, HorizontalOptions = LayoutOptions.Start });
+                    left.Add(new BoxView { WidthRequest = 100, HeightRequest = 10, BackgroundColor = placeholderColor, CornerRadius = 4, HorizontalOptions = LayoutOptions.Start });
+                    left.Add(new BoxView { WidthRequest = 120, HeightRequest = 10, BackgroundColor = placeholderColor, CornerRadius = 4, HorizontalOptions = LayoutOptions.Start });
+                    grid.Add(left);
+
+                    var right = new VerticalStackLayout { Spacing = 0, HorizontalOptions = LayoutOptions.End, VerticalOptions = LayoutOptions.Center };
+                    right.Add(new BoxView { WidthRequest = 75, HeightRequest = 28, BackgroundColor = placeholderColor, CornerRadius = 6, HorizontalOptions = LayoutOptions.End });
+                    grid.Add(right, 1, 0);
+
+                    SkeletonRoot.Children.Add(CreateCard(grid, 78));
+                }
+
+                break;
+            }
         }
     }
 }

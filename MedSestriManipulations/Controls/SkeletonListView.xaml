@@ -9,47 +9,6 @@
         x:Name="SkeletonRoot"
         Padding="16,8,16,8"
         Spacing="10">
-
-        <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
-            <VerticalStackLayout Padding="14,14" Spacing="8">
-                <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="220" HorizontalOptions="Start" />
-                <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="120" HorizontalOptions="Start" />
-            </VerticalStackLayout>
-        </Border>
-
-        <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
-            <VerticalStackLayout Padding="14,14" Spacing="8">
-                <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="170" HorizontalOptions="Start" />
-                <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="90" HorizontalOptions="Start" />
-            </VerticalStackLayout>
-        </Border>
-
-        <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
-            <VerticalStackLayout Padding="14,14" Spacing="8">
-                <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="250" HorizontalOptions="Start" />
-                <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="130" HorizontalOptions="Start" />
-            </VerticalStackLayout>
-        </Border>
-
-        <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
-            <VerticalStackLayout Padding="14,14" Spacing="8">
-                <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="190" HorizontalOptions="Start" />
-                <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="105" HorizontalOptions="Start" />
-            </VerticalStackLayout>
-        </Border>
-
-        <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
-            <VerticalStackLayout Padding="14,14" Spacing="8">
-                <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="230" HorizontalOptions="Start" />
-                <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="100" HorizontalOptions="Start" />
-            </VerticalStackLayout>
-        </Border>
-
-        <Border StrokeShape="RoundRectangle 8" BackgroundColor="White" Stroke="#D4DDE8" StrokeThickness="1">
-            <VerticalStackLayout Padding="14,14" Spacing="8">
-                <BoxView HeightRequest="14" Color="#E8EEF5" CornerRadius="4" WidthRequest="160" HorizontalOptions="Start" />
-                <BoxView HeightRequest="10" Color="#F0F3F7" CornerRadius="4" WidthRequest="115" HorizontalOptions="Start" />
-            </VerticalStackLayout>
-        </Border>
+        <!-- children are generated in code-behind based on SkeletonType -->
     </VerticalStackLayout>
 </ContentView>
