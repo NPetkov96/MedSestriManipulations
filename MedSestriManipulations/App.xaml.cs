@@ -29,26 +29,8 @@ namespace MedSestriManipulations
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new LaunchPage());
-        }
-
-        public async Task ShowMainShellAsync()
-        {
-            if (_mainShellShown)
-            {
-                return;
-            }
-
-            _mainShellShown = true;
-
-            var window = Application.Current?.Windows.FirstOrDefault();
-            if (window == null)
-            {
-                return;
-            }
-
-            window.Page = new AppShell();
-            await CheckNotificationPermissionAsync();
+            // Show the main shell immediately to reduce perceived startup time.
+            return new Window(new AppShell());
         }
     }
 }
