@@ -25,7 +25,6 @@
                            FontSize="16" HeightRequest="48"
                            CancelButtonColor="#0066CC"
                            TextColor="#1A1A1A"
-                           HorizontalTextAlignment="Center"
                            PlaceholderColor="#999999" />
             </Border>
         </VerticalStackLayout>

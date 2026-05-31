@@ -37,17 +37,16 @@
 		<MauiSplashScreen Include="Resources\Splash\medsestri_splashscreen.png" Color="#F1F7FD" />
 
 		<!-- Images -->
-		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
-		<MauiImage Update="Resources\Images\history.png">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</MauiImage>
+		<MauiImage Include="Resources\Images\medsestri_mark.png" />
+		<!-- dotnet_bot.png, home.png, catheter.png, history.png, medsestri_logo.png excluded (unused) -->
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+		<!-- procedures.json is fetched from API at runtime; exclude from bundle -->
+		<MauiAsset Remove="Resources\Raw\procedures.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -85,12 +84,6 @@
 		<MauiXaml Update="HistoryPage.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
-	</ItemGroup>
-
-	<ItemGroup>
-		<MauiAsset Update="Resources\Raw\procedures.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</MauiAsset>
 	</ItemGroup>
 
 	<ItemGroup>

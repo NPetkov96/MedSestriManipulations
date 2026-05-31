@@ -31,9 +31,6 @@ namespace MedSestriManipulations.Models
             }
         }
 
-        [JsonIgnore]
-        public DateTime CreatedAtLocal => Date.ToLocalTime();
-
         // ── UI-only display helpers ──
         [JsonIgnore]
         public decimal TotalEuro => BloodTests?.Sum(b => b.EuroPrice) ?? 0;

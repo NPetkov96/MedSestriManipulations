@@ -14,7 +14,7 @@ namespace MedSestriManipulations
         private readonly API _api;
         private readonly CachedDataService _cachedData;
 
-        public MainPage(PaginationState paginationState, API api, CachedDataService cachedData)
+        public MainPage(API api, CachedDataService cachedData)
         {
             InitializeComponent();
             BindingContext = this;
@@ -176,9 +176,6 @@ namespace MedSestriManipulations
         {
             UpdateTotalSum();
         }
-
-        private void OnLoadMore(object sender, EventArgs e) { }
-
 
         private async void OnSendClicked(object sender, EventArgs e)
         {

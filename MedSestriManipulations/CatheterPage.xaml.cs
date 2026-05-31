@@ -12,10 +12,7 @@ namespace MedSestriManipulations
         private readonly CachedDataService _cacheData;
         private List<Catheter> _allCatheters = new();
 
-        public ICommand ShowPopupCommand => new Command<object>(item =>
-        {
-            if (item is Catheter catheter) ManipulateCatheter(catheter);
-        });
+        public ICommand ShowPopupCommand { get; }
 
         public CatheterPage(API api, CachedDataService cacheData)
         {
@@ -24,6 +21,11 @@ namespace MedSestriManipulations
 
             _api = api;
             _cacheData = cacheData;
+
+            ShowPopupCommand = new Command<object>(item =>
+            {
+                if (item is Catheter catheter) ManipulateCatheter(catheter);
+            });
         }
 
         protected override async void OnAppearing()

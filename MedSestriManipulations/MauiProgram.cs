@@ -24,7 +24,6 @@ namespace MedSestriManipulations
             });
 
             builder.Services.AddHttpClient<API>();
-            builder.Services.AddSingleton<PaginationState>();
             builder.Services.AddSingleton<CachedDataService>();
 
 #if DEBUG

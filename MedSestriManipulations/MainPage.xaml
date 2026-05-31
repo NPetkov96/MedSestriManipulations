@@ -36,20 +36,11 @@
                    x:Name="SummaryLabel"
                    Text="Избери изследвания"
                    TextColor="#0F766E"
-                   FontSize="12"
+                   FontSize="16"
                    FontAttributes="Bold"
                    HorizontalOptions="Center"
                    VerticalOptions="Center" />
 
-            <!--<Button Grid.Column="2"
-                    Text="Изпрати →"
-                    Clicked="OnOpenSheetClicked"
-                    BackgroundColor="#0066CC"
-                    TextColor="White"
-                    CornerRadius="6"
-                    Padding="14,8"
-                    FontAttributes="Bold"
-                    FontSize="13" />-->
         </Grid>
 
         <!-- Row 2: Search bar -->
@@ -319,20 +310,6 @@
                         FontSize="16" />
             </VerticalStackLayout>
         </Border>
-
-        <!-- Loading overlay -->
-        <Grid x:Name="LoadingOverlay"
-              Grid.RowSpan="4"
-              BackgroundColor="#80000000"
-              IsVisible="False">
-            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10">
-                <ActivityIndicator IsRunning="True" IsVisible="True"
-                                   WidthRequest="60" HeightRequest="60" Color="White" />
-                <Label Text="Зареждане на SMS..."
-                       TextColor="White" FontSize="14"
-                       HorizontalOptions="Center" />
-            </VerticalStackLayout>
-        </Grid>
 
     </Grid>
 </ContentPage>
