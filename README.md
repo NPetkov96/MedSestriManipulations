@@ -4,18 +4,6 @@
 
 ---
 
-## 📸 Screenshots
-
-| Home Screen | Patient Entry | Request History |
-|-------------|----------------|------------------|
-| ![Home](https://github.com/NPetkov96/MedSestri/blob/master/MedSestriManipulations/Resources/Screenshots/splash.jpg) | ![Form](https://github.com/NPetkov96/MedSestri/blob/master/MedSestriManipulations/Resources/Screenshots/form.jpg) | ![History](https://github.com/NPetkov96/MedSestri/blob/master/MedSestriManipulations/Resources/Screenshots/history.jpg) |
-
-| Search View | App Icon |
-|-------------|-----------|
-| ![Search](https://github.com/NPetkov96/MedSestri/blob/master/MedSestriManipulations/Resources/Screenshots/search.jpg) | ![App Icon](https://github.com/NPetkov96/MedSestri/blob/master/MedSestriManipulations/Resources/Screenshots/app_icon.jpg) |
-
----
-
 ## ✨ Features
 
 - 👩‍⚕️ Easy patient data input (Name, EGN, Phone, Doctor UIN)
