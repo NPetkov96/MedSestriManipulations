@@ -2,87 +2,95 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:MedSestriManipulations.Controls"
              xmlns:models="clr-namespace:MedSestriManipulations.Models"
-             BackgroundColor="#F9FAFB"
+             xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
+             BackgroundColor="{StaticResource WarmBg}"
              x:Class="MedSestriManipulations.MainPage">
 
     <Grid RowDefinitions="Auto,Auto,Auto,*">
 
-        
         <controls:TopNavigationMenu Grid.Row="0" />
 
-        
-        <Grid Grid.Row="1"
-              ColumnDefinitions="Auto,*,Auto"
-              Padding="16,0,16,0"
-              Margin="0,4,0,8"
-              ColumnSpacing="10"
-              BackgroundColor="#F9FAFB">
+        <!-- Sticky search field -->
+        <Border Grid.Row="1"
+                Style="{StaticResource WarmFieldBorder}"
+                Margin="18,9,18,9"
+                Padding="14,0">
+            <Border.StrokeShape>
+                <shapes:RoundRectangle CornerRadius="4" />
+            </Border.StrokeShape>
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="9">
 
-            <Button Grid.Column="0"
-                    Text="↺ Изчисти"
-                    Clicked="OnClearClicked"
-                    BackgroundColor="Transparent"
-                    TextColor="#760f0f"
-                    FontSize="16"
-                    Padding="0"
-                    BorderWidth="0" />
+                <Grid Grid.Column="0" WidthRequest="16" HeightRequest="16" VerticalOptions="Center">
+                    <shapes:Ellipse WidthRequest="11" HeightRequest="11"
+                                    Stroke="{StaticResource WarmNeutral500}"
+                                    StrokeThickness="1.5"
+                                    HorizontalOptions="Start" VerticalOptions="Start" />
+                    <shapes:Line X1="8" Y1="8" X2="15" Y2="15"
+                                 Stroke="{StaticResource WarmNeutral500}"
+                                 StrokeThickness="1.5" />
+                </Grid>
 
-            <Label Grid.Column="2"
-                   x:Name="SummaryLabel"
-                   Text="Избери изследвания"
-                   TextColor="#0F766E"
-                   FontSize="16"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center" />
+                <Entry Grid.Column="1"
+                       x:Name="SearchEntry"
+                       Style="{StaticResource WarmEntry}"
+                       Placeholder="Търси изследване…"
+                       ReturnType="Search"
+                       TextChanged="OnSearchTextChanged"
+                       HeightRequest="48" />
 
-        </Grid>
+                <Button Grid.Column="2"
+                        x:Name="SearchClearButton"
+                        Text="×"
+                        FontSize="20"
+                        Style="{StaticResource WarmGhostButton}"
+                        IsVisible="False"
+                        Clicked="OnSearchClearClicked"
+                        SemanticProperties.Description="Изчисти търсенето" />
+            </Grid>
+        </Border>
 
-        
-        <Grid Grid.Row="2"
-              ColumnDefinitions="*,Auto"
-              Padding="16,4,16,10"
-              ColumnSpacing="8"
-              BackgroundColor="#F9FAFB">
+        <!-- Consolidated sticky selection / CTA header -->
+        <Border Grid.Row="2"
+                x:Name="SelectionHeader"
+                IsVisible="False"
+                BackgroundColor="{StaticResource WarmSurface}"
+                Stroke="Transparent"
+                Padding="18,9,18,14">
+            <Border.Shadow>
+                <Shadow Brush="{StaticResource WarmText}" Offset="0,2" Radius="6" Opacity="0.10" />
+            </Border.Shadow>
+            <VerticalStackLayout Spacing="9">
+                <Grid ColumnDefinitions="Auto,*" VerticalOptions="Center">
+                    <Button Grid.Column="0"
+                            Text="Изчисти"
+                            Style="{StaticResource WarmGhostButton}"
+                            TextColor="{StaticResource WarmError}"
+                            Padding="0"
+                            HorizontalOptions="Start"
+                            Clicked="OnClearClicked" />
+                    <Label Grid.Column="1"
+                           x:Name="SelectionSummaryLabel"
+                           Style="{StaticResource WarmBody}"
+                           HorizontalOptions="End"
+                           VerticalOptions="Center" />
+                </Grid>
 
-            <Border Grid.Column="0"
-                    Stroke="#D4DDE8" StrokeThickness="1"
-                    BackgroundColor="White"
-                    StrokeShape="RoundRectangle 8"
-                    Padding="6,0">
-                <SearchBar x:Name="SearchBar"
-                           Placeholder="Търси изследване..."
-                           TextChanged="OnSearchTextChanged"
-                           Focused="OnSearchBarFocused"
-                           Unfocused="OnSearchBarUnfocused"
-                           BackgroundColor="Transparent"
-                           FontSize="16" HeightRequest="48"
-                           CancelButtonColor="#0066CC"
-                           TextColor="#1A1A1A"
-                           PlaceholderColor="#999999" />
-            </Border>
+                <Button x:Name="ContinueButton"
+                        Text="Продължи"
+                        Style="{StaticResource WarmPrimaryButton}"
+                        HorizontalOptions="Fill"
+                        Clicked="OnContinueClicked" />
+            </VerticalStackLayout>
+        </Border>
 
-            <Button x:Name="SearchCloseButton"
-                    Grid.Column="1"
-                    Text="Откажи"
-                    Clicked="OnSearchCloseClicked"
-                    IsVisible="False"
-                    BackgroundColor="Transparent"
-                    TextColor="#0066CC"
-                    FontSize="13"
-                    FontAttributes="Bold"
-                    Padding="0" />
-        </Grid>
-
-        
         <controls:SkeletonListView x:Name="SkeletonView"
+                                   SkeletonType="BloodTest"
                                    Grid.Row="3"
                                    IsLoading="True" />
 
-        
         <CollectionView x:Name="ProcedureList"
                         Grid.Row="3"
-                        Margin="16,4,16,0"
+                        Margin="18,0,18,0"
                         IsVisible="False"
                         ItemsLayout="VerticalList"
                         ItemSizingStrategy="MeasureAllItems"
@@ -90,234 +98,40 @@
                         RemainingItemsThresholdReached="ProcedureList_RemainingItemsThresholdReached">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:BloodTest">
-                    <Border Margin="0,0,0,5"
-                            StrokeShape="RoundRectangle 10"
-                            BackgroundColor="{Binding RowBackgroundColor}"
-                            Stroke="#F3F4F6"
-                            StrokeThickness="1">
-                        
-                        <Border.Triggers>
-                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
-                                <Setter Property="BackgroundColor" Value="#F0FDF9" />
-                                <Setter Property="Stroke" Value="#0F766E" />
-                                <Setter Property="StrokeThickness" Value="1.5" />
-                            </DataTrigger>
-                        </Border.Triggers>
-                        <Grid ColumnDefinitions="Auto,*,Auto" Padding="12,10" ColumnSpacing="10">
-                            <Grid.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnBloodTestRowTapped" />
-                            </Grid.GestureRecognizers>
-
-                            <Border Grid.Column="0"
-                                    WidthRequest="24"
-                                    HeightRequest="24"
-                                    StrokeShape="RoundRectangle 12"
-                                    Stroke="#D1D5DB"
-                                    StrokeThickness="1.5"
-                                    BackgroundColor="White"
-                                    VerticalOptions="Center">
-                                <Border.Triggers>
-                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
-                                        <Setter Property="BackgroundColor" Value="#0F766E" />
-                                        <Setter Property="Stroke" Value="#0F766E" />
-                                    </DataTrigger>
-                                </Border.Triggers>
-                                <Label Text="✓"
-                                       Opacity="0"
-                                       TextColor="White"
-                                       FontSize="14"
-                                       FontAttributes="Bold"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center">
-                                    <Label.Triggers>
-                                        <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
-                                            <Setter Property="Opacity" Value="1" />
-                                        </DataTrigger>
-                                    </Label.Triggers>
-                                </Label>
-                            </Border>
-
-                            <Label Grid.Column="1"
-                                   Text="{Binding Name}"
-                                   LineBreakMode="WordWrap"
-                                   FontSize="16"
-                                   LineHeight="1.15"
-                                   FontAttributes="Bold"
-                                   TextColor="#111827"
-                                   VerticalOptions="Center">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="ShowsPopupDetailsBloodTest" />
-                                </Label.GestureRecognizers>
-                            </Label>
-
-                            <Label Grid.Column="2"
-                                   Text="{Binding EuroPrice, StringFormat='{0:F2} €'}"
-                                   FontSize="14"
-                                   FontAttributes="Bold"
-                                   TextColor="#0F766E"
-                                   VerticalOptions="Center"
-                                   HorizontalOptions="End" />
-                        </Grid>
-                    </Border>
+                    <controls:TestRowView>
+                        <controls:TestRowView.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnBloodTestRowTapped" />
+                        </controls:TestRowView.GestureRecognizers>
+                    </controls:TestRowView>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
 
             <CollectionView.EmptyView>
                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
-                                     Padding="32,60" Spacing="10">
-                    <Label Text="🔍"
-                           FontSize="44"
-                           HorizontalOptions="Center"
-                           Opacity="0.4" />
-                    <Label Text="Няма намерени изследвания"
-                           FontSize="16" FontAttributes="Bold"
-                           TextColor="#666666"
-                           HorizontalOptions="Center" />
-                    <Label Text="Опитай с друга дума за търсене"
-                           FontSize="13"
-                           TextColor="#AAAAAA"
+                                     Padding="37,74" Spacing="14">
+                    <Grid WidthRequest="40" HeightRequest="40" HorizontalOptions="Center">
+                        <shapes:Ellipse WidthRequest="26" HeightRequest="26"
+                                        Stroke="{StaticResource WarmNeutral400}"
+                                        StrokeThickness="2"
+                                        HorizontalOptions="Start" VerticalOptions="Start" />
+                        <shapes:Line X1="22" Y1="22" X2="34" Y2="34"
+                                     Stroke="{StaticResource WarmNeutral400}"
+                                     StrokeThickness="2" />
+                    </Grid>
+                    <Label Text="Нищо не намерихме"
+                           Style="{StaticResource WarmSectionHeading}"
                            HorizontalOptions="Center"
                            HorizontalTextAlignment="Center" />
+                    <Label Text="Опитайте с друга дума или проверете изписването."
+                           Style="{StaticResource WarmCaption}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+                    <Button Text="Изчисти търсенето"
+                            Style="{StaticResource WarmSecondaryButton}"
+                            Clicked="OnClearSearchClicked" />
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
-
-        
-        <Grid x:Name="SearchDismissOverlay"
-              Grid.Row="3"
-              IsVisible="False"
-              BackgroundColor="Transparent">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnSearchDismissOverlayTapped" />
-            </Grid.GestureRecognizers>
-        </Grid>
-
-        
-        <Border x:Name="SelectionPill"
-                Grid.Row="3"
-                IsVisible="False"
-                VerticalOptions="End"
-                HorizontalOptions="Center"
-                Margin="0,0,0,20"
-                BackgroundColor="#0066CC"
-                StrokeShape="RoundRectangle 26"
-                Stroke="Transparent"
-                Padding="20,12">
-            <Border.Shadow>
-                <Shadow Brush="#0066CC" Offset="0,4" Radius="12" Opacity="0.4" />
-            </Border.Shadow>
-            <Border.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnSelectionPillTapped" />
-            </Border.GestureRecognizers>
-            <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-                <Label x:Name="PillCountLabel"
-                       Text="0 избрани"
-                       TextColor="White"
-                       FontSize="14" FontAttributes="Bold"
-                       VerticalOptions="Center" />
-                <Label Text="·" TextColor="#CCDFF7" FontSize="14" VerticalOptions="Center" />
-                <Label x:Name="PillTotalLabel"
-                       Text="0.00 €"
-                       TextColor="White"
-                       FontSize="14" FontAttributes="Bold"
-                       VerticalOptions="Center" />
-                <Label Text="→" TextColor="White" FontSize="16" FontAttributes="Bold" VerticalOptions="Center" />
-            </HorizontalStackLayout>
-        </Border>
-
-        
-        <Grid x:Name="BottomSheetOverlay"
-              Grid.RowSpan="4"
-              IsVisible="False"
-              BackgroundColor="#70000000">
-            <Grid.GestureRecognizers>
-                <TapGestureRecognizer Tapped="OnBottomSheetOverlayTapped" />
-            </Grid.GestureRecognizers>
-        </Grid>
-
-        
-        <Border x:Name="BottomSheetPanel"
-                Grid.RowSpan="4"
-                VerticalOptions="End"
-                IsVisible="False"
-                BackgroundColor="White"
-                Stroke="Transparent"
-                StrokeShape="RoundRectangle 20,20,0,0">
-            <VerticalStackLayout Spacing="16" Padding="20,12,20,32">
-
-                
-                <BoxView WidthRequest="40" HeightRequest="4"
-                         BackgroundColor="#D4DDE8"
-                         HorizontalOptions="Center"
-                         CornerRadius="2" />
-
-                <Label Text="Данни за пациента"
-                       HorizontalOptions="Center"
-                       FontSize="17" FontAttributes="Bold"
-                       TextColor="#1A1A1A" />
-
-                
-                <Border BackgroundColor="#E8F0FF"
-                        StrokeShape="RoundRectangle 8"
-                        Stroke="Transparent"
-                        Padding="14,10">
-                    <Grid ColumnDefinitions="*,Auto">
-                        <Label Grid.Column="0"
-                               Text="Избрани изследвания:"
-                               FontSize="13" TextColor="#666666"
-                               VerticalOptions="Center" />
-                        <Label x:Name="TotalEURLabel"
-                               Grid.Column="1"
-                               Text="0.00 €"
-                               FontSize="16" FontAttributes="Bold"
-                               TextColor="#0066CC"
-                               VerticalOptions="Center" />
-                    </Grid>
-                </Border>
-
-                
-                <Border Stroke="#D4DDE8" StrokeThickness="1"
-                        BackgroundColor="White"
-                        StrokeShape="RoundRectangle 8"
-                        Padding="0">
-                    <VerticalStackLayout Spacing="0">
-                        <Entry x:Name="CurrentName"
-                               Placeholder="Име на пациент"
-                               FontSize="14" BackgroundColor="Transparent"
-                               TextColor="#1A1A1A" PlaceholderColor="#999999"
-                               HeightRequest="46" Margin="14,0"
-                               Focused="OnSheetEntryFocused"
-                               Unfocused="OnSheetEntryUnfocused" />
-                        <BoxView Color="#F0F3F7" HeightRequest="1" />
-                        <Entry x:Name="EGNEntry"
-                               Placeholder="ЕГН"
-                               Keyboard="Numeric" FontSize="14"
-                               BackgroundColor="Transparent" TextColor="#1A1A1A"
-                               PlaceholderColor="#999999" HeightRequest="46" Margin="14,0"
-                               Focused="OnSheetEntryFocused"
-                               Unfocused="OnSheetEntryUnfocused" />
-                        <BoxView Color="#F0F3F7" HeightRequest="1" />
-                        <Entry x:Name="PhoneEntry"
-                               Placeholder="Телефонен номер"
-                               Keyboard="Telephone" FontSize="14"
-                               BackgroundColor="Transparent" TextColor="#1A1A1A"
-                               PlaceholderColor="#999999" HeightRequest="46" Margin="14,0"
-                               Focused="OnSheetEntryFocused"
-                               Unfocused="OnSheetEntryUnfocused" />
-                    </VerticalStackLayout>
-                </Border>
-
-                
-                <Button Text="Изпрати"
-                        Clicked="OnSendClicked"
-                        BackgroundColor="#0066CC"
-                        TextColor="White"
-                        CornerRadius="8"
-                        HeightRequest="52"
-                        FontAttributes="Bold"
-                        FontSize="16" />
-            </VerticalStackLayout>
-        </Border>
 
     </Grid>
 </ContentPage>

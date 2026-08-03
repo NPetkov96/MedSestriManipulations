@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="MedSestriManipulations.Controls.TestRowView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
+    xmlns:helpers="clr-namespace:MedSestriManipulations.Helpers"
+    xmlns:models="clr-namespace:MedSestriManipulations.Models"
+    x:DataType="models:BloodTest">
+
+    <ContentView.Resources>
+        <helpers:InverseBoolConverter x:Key="InverseBoolConverter" />
+    </ContentView.Resources>
+
+    <Grid RowDefinitions="Auto,Auto">
+
+        <Border x:Name="RowBorder"
+                Grid.Row="0"
+                Stroke="Transparent"
+                StrokeThickness="1"
+                BackgroundColor="Transparent"
+                Margin="0"
+                Padding="0">
+            <Border.StrokeShape>
+                <shapes:RoundRectangle CornerRadius="4" />
+            </Border.StrokeShape>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="SelectionStates">
+                        <VisualState x:Name="Unselected">
+                            <VisualState.Setters>
+                                <Setter Property="Stroke" Value="Transparent" />
+                                <Setter Property="BackgroundColor" Value="Transparent" />
+                                <Setter Property="Margin" Value="0" />
+                                <Setter TargetName="CheckCircle" Property="Stroke" Value="{StaticResource WarmNeutral400}" />
+                                <Setter TargetName="CheckCircle" Property="BackgroundColor" Value="Transparent" />
+                                <Setter TargetName="CheckGlyph" Property="Opacity" Value="0" />
+                                <Setter TargetName="RowDivider" Property="IsVisible" Value="True" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="Stroke" Value="{StaticResource WarmAccent}" />
+                                <Setter Property="BackgroundColor" Value="{StaticResource WarmAccent100}" />
+                                <Setter Property="Margin" Value="4,2" />
+                                <Setter TargetName="CheckCircle" Property="Stroke" Value="{StaticResource WarmAccent600}" />
+                                <Setter TargetName="CheckCircle" Property="BackgroundColor" Value="{StaticResource WarmAccent600}" />
+                                <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
+                                <Setter TargetName="RowDivider" Property="IsVisible" Value="False" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </VisualStateManager.VisualStateGroups>
+
+            <Grid ColumnDefinitions="Auto,*,Auto"
+                  ColumnSpacing="14"
+                  Padding="14,12"
+                  MinimumHeightRequest="48">
+
+                <Border x:Name="CheckCircle"
+                        Grid.Column="0"
+                        WidthRequest="24"
+                        HeightRequest="24"
+                        StrokeThickness="1.5"
+                        Stroke="{StaticResource WarmNeutral400}"
+                        BackgroundColor="Transparent"
+                        VerticalOptions="Center">
+                    <Border.StrokeShape>
+                        <shapes:RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <Label x:Name="CheckGlyph"
+                           Text="✓"
+                           Opacity="0"
+                           TextColor="White"
+                           FontSize="13"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Border>
+
+                <Label Grid.Column="1"
+                       Text="{Binding Name}"
+                       Style="{StaticResource WarmBodyTight}"
+                       LineBreakMode="WordWrap"
+                       VerticalOptions="Center" />
+
+                <Grid Grid.Column="2" VerticalOptions="Center">
+                    <Label Text="{Binding EuroPrice, StringFormat='{0:F2} €'}"
+                           Style="{StaticResource WarmPriceEmphasis}"
+                           IsVisible="{Binding IsFree, Converter={StaticResource InverseBoolConverter}}" />
+
+                    <Border BackgroundColor="{StaticResource WarmAccent100}"
+                            Stroke="Transparent"
+                            Padding="9,4"
+                            IsVisible="{Binding IsFree}">
+                        <Border.StrokeShape>
+                            <shapes:RoundRectangle CornerRadius="4" />
+                        </Border.StrokeShape>
+                        <Label Text="Безплатно"
+                               FontFamily="{StaticResource WarmBodyFont}"
+                               FontSize="12"
+                               TextColor="{StaticResource WarmAccent800}" />
+                    </Border>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <BoxView x:Name="RowDivider"
+                 Grid.Row="1"
+                 HeightRequest="1"
+                 Color="{StaticResource WarmDivider}" />
+    </Grid>
+</ContentView>

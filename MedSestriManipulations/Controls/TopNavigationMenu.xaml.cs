@@ -61,8 +61,10 @@ public partial class TopNavigationMenu : ContentView
 
     private static void SetTabState(Label label, BoxView underline, bool isActive)
     {
-        label.TextColor = isActive ? Color.FromArgb("#0F766E") : Color.FromArgb("#9CA3AF");
-        label.FontAttributes = isActive ? FontAttributes.Bold : FontAttributes.None;
+        var activeColor = (Color)Application.Current!.Resources["WarmAccent700"];
+        var inactiveColor = (Color)Application.Current!.Resources["WarmTextMuted"];
+
+        label.TextColor = isActive ? activeColor : inactiveColor;
         underline.IsVisible = isActive;
     }
 }

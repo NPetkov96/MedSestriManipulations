@@ -103,15 +103,18 @@ public partial class SkeletonListView : ContentView
 
         SkeletonRoot.Children.Clear();
 
-        Color placeholderColor = Color.FromArgb("#E8EEF5");
+        var resources = Application.Current!.Resources;
+        Color placeholderColor = (Color)resources["WarmNeutral300"];
+        Color cardBackground = (Color)resources["WarmBg"];
+        Color cardStroke = (Color)resources["WarmDivider"];
 
         Border CreateCard(View content, double height)
         {
             return new Border
             {
-                StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(8) },
-                BackgroundColor = Colors.White,
-                Stroke = Color.FromArgb("#D4DDE8"),
+                StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(4) },
+                BackgroundColor = cardBackground,
+                Stroke = cardStroke,
                 StrokeThickness = 1,
                 HeightRequest = height,
                 Content = content
@@ -126,7 +129,7 @@ public partial class SkeletonListView : ContentView
                 {
                     var grid = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition(GridLength.Auto), new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) }, Padding = new Thickness(14,8) };
 
-                    var square = new BoxView { WidthRequest = 24, HeightRequest = 24, BackgroundColor = placeholderColor, CornerRadius = 4, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Center };
+                    var square = new BoxView { WidthRequest = 24, HeightRequest = 24, BackgroundColor = placeholderColor, CornerRadius = 12, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Center };
                     grid.Add(square);
 
                     var center = new BoxView { WidthRequest = 180, HeightRequest = 14, BackgroundColor = placeholderColor, CornerRadius = 4, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Center };
