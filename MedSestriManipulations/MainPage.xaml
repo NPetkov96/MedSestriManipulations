@@ -36,7 +36,7 @@
                        Placeholder="Търси изследване…"
                        ReturnType="Search"
                        TextChanged="OnSearchTextChanged"
-                       HeightRequest="48" />
+                       VerticalOptions="Center" />
 
                 <Button Grid.Column="2"
                         x:Name="SearchClearButton"

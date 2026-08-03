@@ -9,11 +9,11 @@
 
         <!-- Header -->
         <Grid Grid.Row="0"
-              ColumnDefinitions="48,*,48"
+              ColumnDefinitions="Auto,*,Auto"
               BackgroundColor="{StaticResource WarmSurface}"
               Padding="9,9">
             <Grid Grid.Column="0"
-                  WidthRequest="48" HeightRequest="48"
+                  MinimumWidthRequest="48" MinimumHeightRequest="48"
                   SemanticProperties.Description="Назад">
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnBackTapped" />
@@ -30,6 +30,9 @@
                    Style="{StaticResource WarmPageTitle}"
                    HorizontalOptions="Center"
                    VerticalOptions="Center" />
+
+            <!-- Symmetric spacer so the title stays centered against the back button -->
+            <Grid Grid.Column="2" MinimumWidthRequest="48" MinimumHeightRequest="48" />
         </Grid>
 
         <!-- Scrollable content -->
@@ -61,7 +64,9 @@
                         <Label Text="Промени избора"
                                Style="{StaticResource WarmButtonText}"
                                TextDecorations="Underline"
-                               HorizontalOptions="Start">
+                               HorizontalOptions="Start"
+                               VerticalTextAlignment="Center"
+                               MinimumHeightRequest="48">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnEditSelectionTapped" />
                             </Label.GestureRecognizers>
