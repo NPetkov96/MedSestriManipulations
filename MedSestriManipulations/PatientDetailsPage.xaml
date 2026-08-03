@@ -1,0 +1,157 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
+             BackgroundColor="{StaticResource WarmBg}"
+             Shell.NavBarIsVisible="False"
+             x:Class="MedSestriManipulations.PatientDetailsPage">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Header -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="48,*,48"
+              BackgroundColor="{StaticResource WarmSurface}"
+              Padding="9,9">
+            <Grid Grid.Column="0"
+                  WidthRequest="48" HeightRequest="48"
+                  SemanticProperties.Description="Назад">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnBackTapped" />
+                </Grid.GestureRecognizers>
+                <Label Text="‹"
+                       FontFamily="{StaticResource WarmHeadingFont}"
+                       FontSize="28"
+                       TextColor="{StaticResource WarmText}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Grid>
+            <Label Grid.Column="1"
+                   Text="Данни за пациента"
+                   Style="{StaticResource WarmPageTitle}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
+        </Grid>
+
+        <!-- Scrollable content -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="18,18,18,28" Spacing="18">
+
+                <!-- Summary card -->
+                <Border Style="{StaticResource WarmCard}" Padding="14">
+                    <Border.StrokeShape>
+                        <shapes:RoundRectangle CornerRadius="4" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="9">
+                        <Label Text="Избрани изследвания" Style="{StaticResource WarmCaption}" />
+                        <Label x:Name="SummaryTitleLabel" Style="{StaticResource WarmSectionHeading}" />
+
+                        <VerticalStackLayout x:Name="SummaryTestsLayout" Spacing="4" />
+
+                        <Label x:Name="SummaryMoreLabel"
+                               Style="{StaticResource WarmCaption}"
+                               IsVisible="False" />
+
+                        <BoxView HeightRequest="1" Color="{StaticResource WarmDivider}" Margin="0,4" />
+
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0" Text="Общо" Style="{StaticResource WarmBody}" VerticalOptions="Center" />
+                            <Label Grid.Column="1" x:Name="SummaryTotalLabel" Style="{StaticResource WarmPriceEmphasis}" VerticalOptions="Center" />
+                        </Grid>
+
+                        <Label Text="Промени избора"
+                               Style="{StaticResource WarmButtonText}"
+                               TextDecorations="Underline"
+                               HorizontalOptions="Start">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnEditSelectionTapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Name field -->
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Име на пациент" Style="{StaticResource WarmCaption}" />
+                    <Border x:Name="NameFieldBorder" Style="{StaticResource WarmFieldBorder}" Padding="14,0">
+                        <Border.StrokeShape>
+                            <shapes:RoundRectangle CornerRadius="4" />
+                        </Border.StrokeShape>
+                        <Entry x:Name="NameEntry"
+                               Style="{StaticResource WarmEntry}"
+                               Placeholder="напр. Иван Петров"
+                               TextChanged="OnNameTextChanged" />
+                    </Border>
+                    <HorizontalStackLayout x:Name="NameErrorRow" IsVisible="False" Spacing="4">
+                        <Label Text="!" TextColor="{StaticResource WarmError}" FontFamily="{StaticResource WarmHeadingFont}" FontSize="13" />
+                        <Label Text="Моля, въведете име и фамилия."
+                               Style="{StaticResource WarmCaption}"
+                               TextColor="{StaticResource WarmError}" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- EGN field -->
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="ЕГН" Style="{StaticResource WarmCaption}" />
+                    <Border x:Name="EgnFieldBorder" Style="{StaticResource WarmFieldBorder}" Padding="14,0">
+                        <Border.StrokeShape>
+                            <shapes:RoundRectangle CornerRadius="4" />
+                        </Border.StrokeShape>
+                        <Entry x:Name="EgnEntry"
+                               Style="{StaticResource WarmEntry}"
+                               Placeholder="10 цифри"
+                               Keyboard="Numeric"
+                               MaxLength="10"
+                               TextChanged="OnEgnTextChanged" />
+                    </Border>
+                    <Label x:Name="EgnHelperLabel"
+                           Text="Използваме го само за да Ви идентифицираме коректно."
+                           Style="{StaticResource WarmCaption}" />
+                    <HorizontalStackLayout x:Name="EgnErrorRow" IsVisible="False" Spacing="4">
+                        <Label Text="!" TextColor="{StaticResource WarmError}" FontFamily="{StaticResource WarmHeadingFont}" FontSize="13" />
+                        <Label Text="ЕГН трябва да съдържа точно 10 цифри."
+                               Style="{StaticResource WarmCaption}"
+                               TextColor="{StaticResource WarmError}" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- Phone field -->
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Телефонен номер" Style="{StaticResource WarmCaption}" />
+                    <Border x:Name="PhoneFieldBorder" Style="{StaticResource WarmFieldBorder}" Padding="14,0">
+                        <Border.StrokeShape>
+                            <shapes:RoundRectangle CornerRadius="4" />
+                        </Border.StrokeShape>
+                        <Entry x:Name="PhoneEntry"
+                               Style="{StaticResource WarmEntry}"
+                               Placeholder="0899 123 456"
+                               Keyboard="Telephone"
+                               TextChanged="OnPhoneTextChanged" />
+                    </Border>
+                    <HorizontalStackLayout x:Name="PhoneErrorRow" IsVisible="False" Spacing="4">
+                        <Label Text="!" TextColor="{StaticResource WarmError}" FontFamily="{StaticResource WarmHeadingFont}" FontSize="13" />
+                        <Label Text="Въведете валиден номер, напр. 0899 123 456."
+                               Style="{StaticResource WarmCaption}"
+                               TextColor="{StaticResource WarmError}" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Sticky submit bar -->
+        <Border Grid.Row="2"
+                BackgroundColor="{StaticResource WarmSurface}"
+                Stroke="Transparent"
+                Padding="18,14">
+            <Border.Shadow>
+                <Shadow Brush="{StaticResource WarmText}" Offset="0,-2" Radius="6" Opacity="0.10" />
+            </Border.Shadow>
+            <Button x:Name="SubmitButton"
+                    Text="Изпрати заявка"
+                    Style="{StaticResource WarmPrimaryButton}"
+                    HorizontalOptions="Fill"
+                    Clicked="OnSubmitClicked" />
+        </Border>
+
+    </Grid>
+</ContentPage>
