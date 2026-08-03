@@ -13,7 +13,8 @@ namespace MedSestriManipulations.ApiHandler
         public API(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("https://homeserver.ngrok.pro/");
+            _httpClient.BaseAddress = new Uri("https://home-api.jollyflower-51e4d941.northeurope.azurecontainerapps.io/");
+            _httpClient.DefaultRequestHeaders.Add("X-Api-Key", ApiSecrets.ApiKey);
         }
 
         public async Task<List<BloodTest>> GetAllBloodTest()
