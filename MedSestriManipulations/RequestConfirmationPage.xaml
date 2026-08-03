@@ -1,0 +1,71 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
+             BackgroundColor="{StaticResource WarmBg}"
+             Shell.NavBarIsVisible="False"
+             x:Class="MedSestriManipulations.RequestConfirmationPage">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="18,37,18,28" Spacing="18">
+
+            <Border WidthRequest="64" HeightRequest="64"
+                    Stroke="{StaticResource WarmAccent700}"
+                    StrokeThickness="2"
+                    BackgroundColor="{StaticResource WarmAccent100}"
+                    HorizontalOptions="Center">
+                <Border.StrokeShape>
+                    <shapes:RoundRectangle CornerRadius="32" />
+                </Border.StrokeShape>
+                <Label Text="✓"
+                       FontFamily="{StaticResource WarmHeadingFont}"
+                       FontSize="30"
+                       TextColor="{StaticResource WarmAccent700}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+            </Border>
+
+            <Label Text="Заявката е изпратена"
+                   Style="{StaticResource WarmPageTitle}"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center" />
+
+            <Border Style="{StaticResource WarmCard}" Padding="14">
+                <Border.StrokeShape>
+                    <shapes:RoundRectangle CornerRadius="4" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="9">
+
+                    <VerticalStackLayout x:Name="TestsLayout" Spacing="4" />
+
+                    <BoxView HeightRequest="1" Color="{StaticResource WarmDivider}" Margin="0,4" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0" Text="Пациент" Style="{StaticResource WarmCaption}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" x:Name="PatientNameLabel" Style="{StaticResource WarmBody}" HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0" Text="Телефон" Style="{StaticResource WarmCaption}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" x:Name="PatientPhoneLabel" Style="{StaticResource WarmBody}" HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0" Text="ЕГН" Style="{StaticResource WarmCaption}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" x:Name="PatientEgnLabel" Style="{StaticResource WarmBody}" HorizontalOptions="End" VerticalOptions="Center" />
+                    </Grid>
+
+                    <BoxView HeightRequest="1" Color="{StaticResource WarmDivider}" Margin="0,4" />
+
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0" Text="Общо" Style="{StaticResource WarmBody}" VerticalOptions="Center" />
+                        <Label Grid.Column="1" x:Name="TotalLabel" Style="{StaticResource WarmPriceEmphasis}" VerticalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Към начало"
+                    Style="{StaticResource WarmPrimaryButton}"
+                    HorizontalOptions="Fill"
+                    Clicked="OnGoHomeClicked" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
