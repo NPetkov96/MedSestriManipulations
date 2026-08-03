@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+    Warm-neutral editorial design tokens for the Начало (Home) flow: test list,
+    Patient Details and Request Confirmation. Scoped as new, uniquely-named
+    resources so История/Катетри keep using their own inline colors untouched.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- ===================== Color tokens ===================== -->
+    <Color x:Key="WarmBg">#F3F2F2</Color>
+    <Color x:Key="WarmSurface">#EAE9E9</Color>
+    <Color x:Key="WarmText">#201F1D</Color>
+    <!-- WarmText @ 55% opacity, for secondary/muted text -->
+    <Color x:Key="WarmTextMuted">#8C201F1D</Color>
+    <!-- WarmText @ 16% opacity, for hairlines/borders -->
+    <Color x:Key="WarmDivider">#29201F1D</Color>
+
+    <Color x:Key="WarmAccent">#B68235</Color>
+    <Color x:Key="WarmAccent100">#FFF3E4</Color>
+    <Color x:Key="WarmAccent600">#A06F24</Color>
+    <Color x:Key="WarmAccent700">#7D5411</Color>
+    <Color x:Key="WarmAccent800">#5A3B0A</Color>
+
+    <Color x:Key="WarmNeutral200">#EAE7E7</Color>
+    <Color x:Key="WarmNeutral300">#D7D3D3</Color>
+    <Color x:Key="WarmNeutral400">#BAB6B6</Color>
+    <Color x:Key="WarmNeutral500">#9B9797</Color>
+
+    <Color x:Key="WarmError">#AD4A3A</Color>
+
+    <SolidColorBrush x:Key="WarmAccentBrush" Color="{StaticResource WarmAccent}" />
+
+    <!-- ===================== Spacing scale ===================== -->
+    <x:Double x:Key="WarmSpace4">4</x:Double>
+    <x:Double x:Key="WarmSpace9">9</x:Double>
+    <x:Double x:Key="WarmSpace14">14</x:Double>
+    <x:Double x:Key="WarmSpace18">18</x:Double>
+    <x:Double x:Key="WarmSpace28">28</x:Double>
+    <x:Double x:Key="WarmSpace37">37</x:Double>
+
+    <!-- ===================== Radius scale ===================== -->
+    <x:Double x:Key="WarmRadiusSm">2</x:Double>
+    <x:Double x:Key="WarmRadiusMd">4</x:Double>
+    <x:Double x:Key="WarmRadiusLg">7</x:Double>
+
+    <!-- ===================== Font families ===================== -->
+    <x:String x:Key="WarmHeadingFont">CormorantGaramondSemiBold</x:String>
+    <x:String x:Key="WarmBodyFont">LoraRegular</x:String>
+
+    <!-- ===================== Typography ===================== -->
+    <Style x:Key="WarmPageTitle" TargetType="Label">
+        <Setter Property="FontFamily" Value="{StaticResource WarmHeadingFont}" />
+        <Setter Property="FontSize" Value="21" />
+        <Setter Property="TextColor" Value="{StaticResource WarmText}" />
+    </Style>
+
+    <Style x:Key="WarmSectionHeading" TargetType="Label">
+        <Setter Property="FontFamily" Value="{StaticResource WarmHeadingFont}" />
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="TextColor" Value="{StaticResource WarmText}" />
+    </Style>
+
+    <Style x:Key="WarmBody" TargetType="Label">
+        <Setter Property="FontFamily" Value="{StaticResource WarmBodyFont}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource WarmText}" />
+        <Setter Property="LineHeight" Value="1.5" />
+    </Style>
+
+    <!-- Tighter line-height variant for list rows -->
+    <Style x:Key="WarmBodyTight" TargetType="Label" BasedOn="{StaticResource WarmBody}">
+        <Setter Property="LineHeight" Value="1.25" />
+    </Style>
+
+    <Style x:Key="WarmCaption" TargetType="Label">
+        <Setter Property="FontFamily" Value="{StaticResource WarmBodyFont}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="TextColor" Value="{StaticResource WarmTextMuted}" />
+    </Style>
+
+    <Style x:Key="WarmButtonText" TargetType="Label">
+        <Setter Property="FontFamily" Value="{StaticResource WarmBodyFont}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource WarmAccent700}" />
+    </Style>
+
+    <Style x:Key="WarmPriceEmphasis" TargetType="Label">
+        <Setter Property="FontFamily" Value="{StaticResource WarmHeadingFont}" />
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="TextColor" Value="{StaticResource WarmAccent700}" />
+    </Style>
+
+    <!-- ===================== Buttons (outlined, never filled) ===================== -->
+    <Style x:Key="WarmPrimaryButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource WarmBg}" />
+        <Setter Property="TextColor" Value="{StaticResource WarmAccent700}" />
+        <Setter Property="BorderColor" Value="{StaticResource WarmAccent}" />
+        <Setter Property="BorderWidth" Value="1.5" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="FontFamily" Value="{StaticResource WarmBodyFont}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+        <Setter Property="Padding" Value="{StaticResource WarmSpace18},{StaticResource WarmSpace14}" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="{StaticResource WarmNeutral500}" />
+                            <Setter Property="BorderColor" Value="{StaticResource WarmNeutral400}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{StaticResource WarmAccent100}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style x:Key="WarmSecondaryButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource WarmText}" />
+        <Setter Property="BorderColor" Value="{StaticResource WarmNeutral400}" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="FontFamily" Value="{StaticResource WarmBodyFont}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+        <Setter Property="Padding" Value="{StaticResource WarmSpace18},{StaticResource WarmSpace14}" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="{StaticResource WarmNeutral500}" />
+                            <Setter Property="BorderColor" Value="{StaticResource WarmNeutral300}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style x:Key="WarmGhostButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource WarmAccent700}" />
+        <Setter Property="BorderWidth" Value="0" />
+        <Setter Property="FontFamily" Value="{StaticResource WarmBodyFont}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+        <Setter Property="MinimumWidthRequest" Value="48" />
+        <Setter Property="Padding" Value="{StaticResource WarmSpace9},{StaticResource WarmSpace4}" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="{StaticResource WarmNeutral500}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <!-- ===================== Fields ===================== -->
+    <Style x:Key="WarmEntry" TargetType="Entry">
+        <Setter Property="TextColor" Value="{StaticResource WarmText}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource WarmNeutral500}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="FontFamily" Value="{StaticResource WarmBodyFont}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+    </Style>
+
+    <Style x:Key="WarmSearchBar" TargetType="SearchBar">
+        <Setter Property="TextColor" Value="{StaticResource WarmText}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource WarmNeutral500}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="CancelButtonColor" Value="{StaticResource WarmAccent700}" />
+        <Setter Property="FontFamily" Value="{StaticResource WarmBodyFont}" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+    </Style>
+
+    <!-- ===================== Borders / cards ===================== -->
+    <!-- Plain outlined card/surface (summary card, field container, sticky bars) -->
+    <Style x:Key="WarmCard" TargetType="Border">
+        <Setter Property="Stroke" Value="{StaticResource WarmDivider}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="BackgroundColor" Value="{StaticResource WarmSurface}" />
+    </Style>
+
+    <!-- Outlined field container sitting on page background (outline only, no fill) -->
+    <Style x:Key="WarmFieldBorder" TargetType="Border">
+        <Setter Property="Stroke" Value="{StaticResource WarmDivider}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="BackgroundColor" Value="{StaticResource WarmBg}" />
+    </Style>
+
+    <!-- Selected list-row highlight: soft tint + accent outline -->
+    <Style x:Key="WarmSelectedRow" TargetType="Border">
+        <Setter Property="Stroke" Value="{StaticResource WarmAccent}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="BackgroundColor" Value="{StaticResource WarmAccent100}" />
+    </Style>
+
+</ResourceDictionary>

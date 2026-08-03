@@ -23,6 +23,8 @@ namespace MedSestriManipulations
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                fonts.AddFont("CormorantGaramond-SemiBold.ttf", "CormorantGaramondSemiBold");
+                fonts.AddFont("Lora-Regular.ttf", "LoraRegular");
             });
 
             builder.Services.AddHttpClient<API>();
