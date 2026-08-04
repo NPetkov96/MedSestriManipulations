@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Graphics;
 
 namespace MedSestriManipulations.Models
 {
@@ -51,6 +53,32 @@ namespace MedSestriManipulations.Models
 
         [JsonIgnore]
         public string ShortDateText => _shortDateText ??= Date.ToString("dd.MM · HH:mm");
+
+        // Компактен ред за История: ЕГН · dd.MM · HH:mm - изцяло цифри/символи,
+        // затова целият ред използва обикновения шрифт (без нужда от FormattedString).
+        [JsonIgnore]
+        public string HistoryRowMetaText => $"{EGN} · {Date:dd.MM} · {Date:HH:mm}";
+
+        // "N изследвания"/"1 изследване" с цифрата в обикновения шрифт, думата - в серифния,
+        // както се показват сумите в Начало.
+        [JsonIgnore]
+        public FormattedString TestsCountFormatted
+        {
+            get
+            {
+                var resources = Application.Current!.Resources;
+                var color = (Color)resources["WarmAccent700"];
+
+                return new FormattedString
+                {
+                    Spans =
+                    {
+                        new Span { Text = TestsCount.ToString(), FontFamily = "OpenSansRegular", FontSize = 12, TextColor = color },
+                        new Span { Text = TestsCount == 1 ? " изследване" : " изследвания", FontFamily = "LoraRegular", FontSize = 12, TextColor = color }
+                    }
+                };
+            }
+        }
 
         [JsonIgnore]
         public string PhoneFormatted

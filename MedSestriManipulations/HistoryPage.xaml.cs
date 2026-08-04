@@ -1,42 +1,35 @@
-using MedSestriManipulations.ApiHandler;
-using MedSestriManipulations.Helpers;
 using MedSestriManipulations.Models;
 using MedSestriManipulations.Services;
-using System.Threading;
-using Microsoft.Maui.ApplicationModel;
 using System.Diagnostics;
 
 namespace MedSestriManipulations
 {
     public partial class HistoryPage : ContentPage
     {
-        private readonly API _api;
         private readonly CachedDataService _cachedData;
 
         private List<Patient> _allPatients = new();
-        private Patient? _selectedPatient;
-        private readonly ObservableRangeCollection<HistoryListItem> _historyItems = new();
-        private List<HistoryListItem> _allHistoryItemsCache = new();
         private CancellationTokenSource? _searchCts;
         private int _loadedPatientsVersion = -1;
         private int _filterVersion;
         private bool _isLoadingPatients;
-        private bool _isAppendingPage;
         private bool _isSheetClosing;
-        private int _displayCount;
-        private const int PageSize = 50;
 
-        public HistoryPage(API api, CachedDataService cachedData)
+        public HistoryPage(CachedDataService cachedData)
         {
             InitializeComponent();
-            _api = api;
             _cachedData = cachedData;
-            PatientsCollection.ItemsSource = _historyItems;
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
+
+            // Switching tabs away and back should never leave a stale detail sheet open.
+            SheetOverlay.IsVisible = false;
+            SheetPanel.IsVisible = false;
+            SheetPanel.TranslationY = 0;
+
             if (_isLoadingPatients)
                 return;
 
@@ -84,37 +77,39 @@ namespace MedSestriManipulations
             }
         }
 
-
-        private async void OnSearchTextChanged(object sender, TextChangedEventArgs e)
+        private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
+            SearchClearButton.IsVisible = !string.IsNullOrEmpty(e.NewTextValue);
+
             _searchCts?.Cancel();
             _searchCts = new CancellationTokenSource();
             var token = _searchCts.Token;
-            try
-            {
-                await Task.Delay(300, token);
-            }
-            catch (TaskCanceledException)
-            {
-                return;
-            }
+            var text = e.NewTextValue;
 
-            try
+            Task.Delay(300, token).ContinueWith(_ =>
             {
-                await ApplyFilter(e.NewTextValue, token);
-            }
-            catch (OperationCanceledException)
-            {
-            }
+                if (!token.IsCancellationRequested)
+                    MainThread.BeginInvokeOnMainThread(() => _ = ApplyFilter(text, token));
+            }, token, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
+        }
+
+        private void OnSearchClearClicked(object sender, EventArgs e) => ClearSearch();
+
+        private void OnClearSearchClicked(object sender, EventArgs e) => ClearSearch();
+
+        private void ClearSearch()
+        {
+            SearchEntry.Text = string.Empty;
+            SearchEntry.Unfocus();
         }
 
         private async Task ApplyFilter(string? searchText = null, CancellationToken cancellationToken = default)
         {
-            searchText = (searchText ?? SearchBar.Text)?.Trim() ?? string.Empty;
+            searchText = (searchText ?? SearchEntry.Text)?.Trim() ?? string.Empty;
             var filterVersion = Interlocked.Increment(ref _filterVersion);
             var sw = Stopwatch.StartNew();
 
-            var filterResult = await Task.Run(() =>
+            var groups = await Task.Run(() =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 IEnumerable<Patient> filtered = _allPatients;
@@ -123,31 +118,16 @@ namespace MedSestriManipulations
                 {
                     filtered = _allPatients.Where(p =>
                         p.FullName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                        p.EGN.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                        p.PhoneNumber.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+                        p.EGN.Contains(searchText, StringComparison.OrdinalIgnoreCase));
                 }
 
-                var filteredList = filtered.ToList();
-
-                var weeks = filteredList
+                return filtered
                     .GroupBy(p => GetWeekStart(p.Date))
                     .OrderByDescending(g => g.Key)
-                    .Select(g =>
-                    {
-                        var key = FormatWeekRange(g.Key);
-                        var patientsInGroup = g.OrderByDescending(p => p.Date).ToList();
-                        return (Key: key, Patients: patientsInGroup);
-                    })
+                    .Select(g => new VisitWeekGroup(
+                        FormatWeekRange(g.Key),
+                        g.OrderByDescending(p => p.Date)))
                     .ToList();
-
-                var displayItems = new List<HistoryListItem>(filteredList.Count + weeks.Count);
-                foreach (var week in weeks)
-                {
-                    displayItems.Add(new HistoryListItem { HeaderText = week.Key });
-                    displayItems.AddRange(week.Patients.Select(patient => new HistoryListItem { Patient = patient }));
-                }
-
-                return (Items: displayItems, TotalCount: filteredList.Count, WeekCount: weeks.Count);
             }, cancellationToken);
 
             if (cancellationToken.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
@@ -158,40 +138,11 @@ namespace MedSestriManipulations
                 if (cancellationToken.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
                     return;
 
-                _allHistoryItemsCache = filterResult.Items;
-                _displayCount = Math.Min(PageSize, _allHistoryItemsCache.Count);
-                _historyItems.ReplaceRange(_allHistoryItemsCache.Take(_displayCount));
+                PatientsCollection.ItemsSource = groups;
 
                 sw.Stop();
-                Debug.WriteLine($"History filter completed in {sw.ElapsedMilliseconds} ms (search='{searchText}', patients={filterResult.TotalCount}, weeks={filterResult.WeekCount}, displayed={_displayCount})");
+                Debug.WriteLine($"History filter completed in {sw.ElapsedMilliseconds} ms (search='{searchText}', groups={groups.Count})");
             });
-        }
-
-        private void PatientsCollection_RemainingItemsThresholdReached(object sender, EventArgs e)
-        {
-            if (_isAppendingPage || _displayCount >= _allHistoryItemsCache.Count)
-                return;
-
-            _isAppendingPage = true;
-            Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(50), AppendNextPage);
-        }
-
-        private void AppendNextPage()
-        {
-            try
-            {
-                var nextCount = Math.Min(_displayCount + PageSize, _allHistoryItemsCache.Count);
-                if (nextCount <= _displayCount)
-                    return;
-
-                _historyItems.AddRange(_allHistoryItemsCache.Skip(_displayCount).Take(nextCount - _displayCount));
-                _displayCount = nextCount;
-                Debug.WriteLine($"History appended page: displayed={_displayCount}, totalItems={_allHistoryItemsCache.Count}");
-            }
-            finally
-            {
-                _isAppendingPage = false;
-            }
         }
 
         private static DateTime GetWeekStart(DateTime date)
@@ -206,39 +157,99 @@ namespace MedSestriManipulations
             return $"{weekStart:dd.MM.yyyy} - {weekEnd:dd.MM.yyyy}";
         }
 
-
         private async void OnPatientTapped(object sender, TappedEventArgs e)
         {
-            if (sender is BindableObject { BindingContext: HistoryListItem { Patient: Patient patient } })
+            if (sender is not BindableObject { BindingContext: Patient patient })
+                return;
+
+            var resources = Application.Current!.Resources;
+            var accent700 = (Color)resources["WarmAccent700"];
+
+            SheetNameLabel.Text = patient.FullName;
+            SheetEgnLabel.Text = $"№ {patient.EGN}";
+            SheetPhoneLabel.Text = patient.PhoneNumber;
+            SheetDateOnlyLabel.Text = patient.Date.ToString("dd.MM.yyyy");
+            SheetTimeLabel.Text = patient.Date.ToString("HH:mm");
+            SheetInfoNameLabel.Text = patient.FullName;
+            SheetInfoEgnLabel.Text = patient.EGN;
+            SheetInfoPhoneLabel.Text = patient.PhoneNumber;
+
+            SheetTestsCountLabel.FormattedText = new FormattedString
             {
-                _selectedPatient = patient;
+                Spans =
+                {
+                    new Span { Text = patient.TestsCount.ToString(), FontFamily = "OpenSansRegular", FontSize = 12, TextColor = accent700 },
+                    new Span { Text = " бр.", FontFamily = "LoraRegular", FontSize = 12, TextColor = accent700 }
+                }
+            };
 
-                SheetNameLabel.Text = patient.FullName;
-                SheetEgnLabel.Text = patient.EGN;
-                SheetPhoneLabel.Text = patient.PhoneNumber;
-                SheetDateOnlyLabel.Text = patient.Date.ToString("dd.MM.yyyy");
-                SheetTimeLabel.Text = patient.Date.ToString("HH:mm");
-                SheetInfoNameLabel.Text = patient.FullName;
-                SheetInfoEgnLabel.Text = patient.EGN;
-                SheetInfoPhoneLabel.Text = patient.PhoneNumber;
-                SheetTestsCountLabel.Text = $"{patient.TestsCount} бр.";
-                SheetTotalLabel.Text = $"{patient.TotalEuro:F2} €";
-                BindableLayout.SetItemsSource(SheetTestsLayout, CreateProcedureRows(patient));
+            SheetTotalLabel.Text = $"{patient.TotalEuro:F2} €";
 
-                await ShowSheet();
-            }
+            PopulateTestsList(patient);
+
+            await ShowSheet();
         }
 
-        private static List<PatientProcedureRow> CreateProcedureRows(Patient patient)
+        private void PopulateTestsList(Patient patient)
         {
+            var resources = Application.Current!.Resources;
+            var textColor = (Color)resources["WarmText"];
+            var mutedColor = (Color)resources["WarmTextMuted"];
+            var dividerColor = (Color)resources["WarmDivider"];
+
             var tests = patient.BloodTests ?? new List<BloodTest>();
-            return tests.Select((test, index) => new PatientProcedureRow
+
+            SheetTestsLayout.Children.Clear();
+            for (int i = 0; i < tests.Count; i++)
             {
-                Number = index + 1,
-                Name = test.Name,
-                EuroPrice = test.EuroPrice,
-                HasDivider = index < tests.Count - 1
-            }).ToList();
+                var test = tests[i];
+
+                var row = new Grid
+                {
+                    ColumnDefinitions = new ColumnDefinitionCollection
+                    {
+                        new ColumnDefinition(new GridLength(28)),
+                        new ColumnDefinition(GridLength.Star),
+                        new ColumnDefinition(GridLength.Auto)
+                    },
+                    Padding = new Thickness(0, 9)
+                };
+
+                row.Add(new Label
+                {
+                    Text = $"{i + 1}.",
+                    FontFamily = "OpenSansRegular",
+                    FontSize = 13,
+                    TextColor = mutedColor,
+                    HorizontalTextAlignment = TextAlignment.Center
+                }, 0, 0);
+
+                row.Add(new Label
+                {
+                    Text = test.Name,
+                    FontFamily = "LoraRegular",
+                    FontSize = 14,
+                    TextColor = textColor,
+                    LineBreakMode = LineBreakMode.WordWrap
+                }, 1, 0);
+
+                row.Add(new Label
+                {
+                    Text = test.IsFree ? "Безплатно" : $"{test.EuroPrice:F2} €",
+                    FontFamily = test.IsFree ? "LoraRegular" : "OpenSansRegular",
+                    FontSize = 14,
+                    TextColor = textColor,
+                    HorizontalOptions = LayoutOptions.End
+                }, 2, 0);
+
+                var container = new VerticalStackLayout { Spacing = 0 };
+                container.Children.Add(row);
+
+                if (i < tests.Count - 1)
+                    container.Children.Add(new BoxView { HeightRequest = 1, Color = dividerColor });
+
+                SheetTestsLayout.Children.Add(container);
+            }
         }
 
         private async Task ShowSheet()
@@ -277,7 +288,7 @@ namespace MedSestriManipulations
             await HideSheet();
         }
 
-        private async void OnSheetCloseClicked(object sender, EventArgs e)
+        private async void OnSheetCloseClicked(object sender, TappedEventArgs e)
         {
             await HideSheet();
         }
@@ -316,76 +327,6 @@ namespace MedSestriManipulations
                         );
                     }
                     break;
-            }
-        }
-
-
-        private async void OnCopyClicked(object sender, EventArgs e)
-        {
-            if (_selectedPatient == null) return;
-            await Clipboard.SetTextAsync(_selectedPatient.Note);
-            await Toast();
-        }
-
-        private async Task Toast()
-        {
-            try
-            {
-                await CommunityToolkit.Maui.Alerts.Toast
-                    .Make("Копирано", CommunityToolkit.Maui.Core.ToastDuration.Short)
-                    .Show();
-            }
-            catch {  }
-        }
-
-        private async void OnReuseClicked(object sender, EventArgs e)
-        {
-            if (_selectedPatient == null) return;
-
-            SelectedPatientService.PatientToReuse = _selectedPatient;
-            await HideSheet();
-            await Shell.Current.GoToAsync("//MainPage");
-        }
-
-        private async void OnDeleteClicked(object sender, EventArgs e)
-        {
-            if (_selectedPatient == null) return;
-
-            var patient = _selectedPatient;
-
-            bool confirm = await DisplayAlert(
-                "Потвърждение",
-                $"Сигурни ли сте, че искате да изтриете пациента:\n{patient.FullName} — ЕГН: {patient.EGN}?",
-                "ДА", "НЕ");
-
-            if (!confirm) return;
-
-            try
-            {
-                LoadingOverlay.IsVisible = true;
-
-                var result = await _api.DeletePatient(patient.Date);
-
-                if (result.IsSuccessStatusCode)
-                {
-                    _allPatients.Remove(patient);
-                    _cachedData.InvalidatePatients();
-                    await ApplyFilter();
-                    await HideSheet();
-                }
-                else
-                {
-                    await DisplayAlert("Грешка", "Неуспешно изтриване.", "OK");
-                    await ApplyFilter();
-                }
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Грешка", $"{ex.Message}", "OK");
-            }
-            finally
-            {
-                LoadingOverlay.IsVisible = false;
             }
         }
     }

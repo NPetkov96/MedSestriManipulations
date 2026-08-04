@@ -2,180 +2,186 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:models="clr-namespace:MedSestriManipulations.Models"
-             xmlns:helpers="clr-namespace:MedSestriManipulations.Helpers"
              xmlns:controls="clr-namespace:MedSestriManipulations.Controls"
+             xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
              x:Class="MedSestriManipulations.HistoryPage"
-             BackgroundColor="#F9FAFB">
-
-    <ContentPage.Resources>
-        <DataTemplate x:Key="HistoryWeekHeaderTemplate" x:DataType="models:HistoryListItem">
-            <Grid BackgroundColor="#F9FAFB"
-                  HorizontalOptions="Center"
-                  Padding="0,16,0,5">
-                <Label Text="{Binding HeaderText}"
-                       TextColor="#9CA3AF"
-                       FontSize="13"
-                       FontAttributes="Bold"
-                       VerticalOptions="Center" />
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="HistoryPatientTemplate" x:DataType="models:HistoryListItem">
-            <Border Margin="0,0,0,5"
-                    StrokeShape="RoundRectangle 8"
-                    BackgroundColor="White"
-                    Stroke="#F3F4F6"
-                    StrokeThickness="1">
-                <Grid ColumnDefinitions="*,Auto" Padding="14,12" ColumnSpacing="12">
-
-                    <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnPatientTapped" />
-                    </Grid.GestureRecognizers>
-
-                    <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
-                        <Label Text="{Binding Patient.FullName}"
-                               FontSize="15" FontAttributes="Bold"
-                               TextColor="#111827" LineBreakMode="WordWrap" />
-
-                        <HorizontalStackLayout Spacing="6">
-                            <Label Text="{Binding Patient.EGN}" FontSize="12" TextColor="#3B82F6" />
-                            <Label Text="·" FontSize="10" TextColor="#9CA3AF" />
-                            <Label Text="{Binding Patient.ShortDateText}" FontSize="10" TextColor="#9CA3AF" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
-                    </VerticalStackLayout>
-
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center"
-                                         HorizontalOptions="End" Spacing="2">
-                        <Label Text="{Binding Patient.TotalEuro, StringFormat='{0:F2} €'}"
-                               FontSize="14"
-                               FontAttributes="Bold"
-                               TextColor="#0F766E"
-                               HorizontalOptions="End" />
-                        <Label Text="{Binding Patient.TestsCountText}"
-                               FontSize="10"
-                               FontAttributes="Bold"
-                               TextColor="#3B82F6"
-                               HorizontalOptions="End" />
-                    </VerticalStackLayout>
-                </Grid>
-            </Border>
-        </DataTemplate>
-
-        <helpers:HistoryListItemTemplateSelector x:Key="HistoryListItemTemplateSelector"
-                                                 HeaderTemplate="{StaticResource HistoryWeekHeaderTemplate}"
-                                                 PatientTemplate="{StaticResource HistoryPatientTemplate}" />
-
-        <DataTemplate x:Key="SheetProcedureTemplate" x:DataType="models:PatientProcedureRow">
-            <VerticalStackLayout Spacing="0">
-                <Grid ColumnDefinitions="28,*,Auto" Padding="0,10" ColumnSpacing="8">
-                    <Label Grid.Column="0"
-                           Text="{Binding Number, StringFormat='{0}.'}"
-                           FontSize="13"
-                           FontAttributes="Bold"
-                           TextColor="#3B82F6"
-                           VerticalOptions="Start"
-                           HorizontalTextAlignment="Center" />
-                    <Label Grid.Column="1"
-                           Text="{Binding Name}"
-                           FontSize="14"
-                           TextColor="#111827"
-                           LineBreakMode="WordWrap"
-                           LineHeight="1.12" />
-                    <Label Grid.Column="2"
-                           Text="{Binding EuroPrice, StringFormat='{0:F2} €'}"
-                           FontSize="14"
-                           FontAttributes="Bold"
-                           TextColor="#0F766E"
-                           VerticalOptions="Start"
-                           HorizontalOptions="End" />
-                </Grid>
-                <BoxView HeightRequest="1"
-                         Color="#EEF2F7"
-                         IsVisible="{Binding HasDivider}" />
-            </VerticalStackLayout>
-        </DataTemplate>
-    </ContentPage.Resources>
+             BackgroundColor="{StaticResource WarmBg}">
 
     <Grid RowDefinitions="Auto,Auto,*">
 
-        
         <controls:TopNavigationMenu Grid.Row="0" />
 
-        
-        <VerticalStackLayout Grid.Row="1" Padding="16,12,16,8" Spacing="10" BackgroundColor="#F8F9FB">
+        <!-- Sticky search field - same pattern as Начало -->
+        <Border Grid.Row="1"
+                Style="{StaticResource WarmFieldBorder}"
+                Margin="18,9,18,9"
+                Padding="14,0">
+            <Border.StrokeShape>
+                <shapes:RoundRectangle CornerRadius="4" />
+            </Border.StrokeShape>
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="9">
 
-            <Border Stroke="#D4DDE8" StrokeThickness="1"
-                    BackgroundColor="White"
-                    StrokeShape="RoundRectangle 8"
-                    Padding="6,0">
-                <SearchBar x:Name="SearchBar"
-                           Placeholder="Търси история на пациенти..."
-                           TextChanged="OnSearchTextChanged"
-                           BackgroundColor="Transparent"
-                           FontSize="16" HeightRequest="48"
-                           CancelButtonColor="#0066CC"
-                           TextColor="#1A1A1A"
-                           PlaceholderColor="#999999" />
-            </Border>
-        </VerticalStackLayout>
+                <Grid Grid.Column="0" WidthRequest="16" HeightRequest="16" VerticalOptions="Center">
+                    <shapes:Ellipse WidthRequest="11" HeightRequest="11"
+                                    Stroke="{StaticResource WarmNeutral500}"
+                                    StrokeThickness="1.5"
+                                    HorizontalOptions="Start" VerticalOptions="Start" />
+                    <shapes:Line X1="8" Y1="8" X2="15" Y2="15"
+                                 Stroke="{StaticResource WarmNeutral500}"
+                                 StrokeThickness="1.5" />
+                </Grid>
 
-        
-        <CollectionView Grid.Row="2"
-                        x:Name="PatientsCollection"
-                        SelectionMode="None"
-                        Margin="16,4,16,0"
+                <Entry Grid.Column="1"
+                       x:Name="SearchEntry"
+                       Style="{StaticResource WarmEntry}"
+                       Placeholder="Търси история на пациенти…"
+                       ReturnType="Search"
+                       TextChanged="OnSearchTextChanged"
+                       VerticalOptions="Center" />
+
+                <Button Grid.Column="2"
+                        x:Name="SearchClearButton"
+                        Text="×"
+                        FontSize="20"
+                        Style="{StaticResource WarmGhostButton}"
                         IsVisible="False"
-                        RemainingItemsThreshold="8"
-                        RemainingItemsThresholdReached="PatientsCollection_RemainingItemsThresholdReached"
-                        ItemTemplate="{StaticResource HistoryListItemTemplateSelector}">
+                        Clicked="OnSearchClearClicked"
+                        SemanticProperties.Description="Изчисти търсенето" />
+            </Grid>
+        </Border>
+
+        <!-- Grouped visit list -->
+        <CollectionView x:Name="PatientsCollection"
+                        Grid.Row="2"
+                        IsGrouped="True"
+                        SelectionMode="None"
+                        Margin="18,0,18,0"
+                        IsVisible="False">
+
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate x:DataType="models:VisitWeekGroup">
+                    <Grid HorizontalOptions="Center" Padding="0,18,0,9">
+                        <Label Text="{Binding WeekRangeLabel}"
+                               Style="{StaticResource WarmCaption}"
+                               FontFamily="OpenSansRegular" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Patient">
+                    <Border Stroke="Transparent" BackgroundColor="Transparent" Padding="0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroupList>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor" Value="{StaticResource WarmSurface}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateGroupList>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid RowDefinitions="Auto,Auto">
+                            <Grid Grid.Row="0"
+                                  ColumnDefinitions="*,Auto"
+                                  ColumnSpacing="12"
+                                  Padding="4,12"
+                                  MinimumHeightRequest="48">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnPatientTapped" />
+                                </Grid.GestureRecognizers>
+
+                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
+                                    <Label Text="{Binding FullName}"
+                                           FontFamily="{StaticResource WarmHeadingFont}"
+                                           FontSize="16"
+                                           TextColor="{StaticResource WarmText}"
+                                           LineBreakMode="WordWrap" />
+                                    <Label Text="{Binding HistoryRowMetaText}"
+                                           FontFamily="OpenSansRegular"
+                                           FontSize="12"
+                                           TextColor="{StaticResource WarmTextMuted}"
+                                           LineBreakMode="WordWrap" />
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center" Spacing="2">
+                                    <Label Text="{Binding TotalEuro, StringFormat='{0:F2} €'}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="14"
+                                           TextColor="{StaticResource WarmAccent700}"
+                                           HorizontalOptions="End" />
+                                    <Label FormattedText="{Binding TestsCountFormatted}"
+                                           HorizontalOptions="End" />
+                                </VerticalStackLayout>
+                            </Grid>
+
+                            <BoxView Grid.Row="1" HeightRequest="1" Color="{StaticResource WarmDivider}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
 
             <CollectionView.EmptyView>
                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
-                                     Padding="32,60" Spacing="10">
-                    <Label Text="🗂"
-                           FontSize="44"
-                           HorizontalOptions="Center"
-                           Opacity="0.4" />
-                    <Label Text="Няма намерени пациенти"
-                           FontSize="16" FontAttributes="Bold"
-                           TextColor="#666666"
-                           HorizontalOptions="Center" />
-                    <Label Text="Изпратените пациенти ще се показват тук"
-                           FontSize="13"
-                           TextColor="#AAAAAA"
+                                     Padding="37,74" Spacing="14">
+                    <Grid WidthRequest="40" HeightRequest="40" HorizontalOptions="Center">
+                        <shapes:Ellipse WidthRequest="26" HeightRequest="26"
+                                        Stroke="{StaticResource WarmNeutral400}"
+                                        StrokeThickness="2"
+                                        HorizontalOptions="Start" VerticalOptions="Start" />
+                        <shapes:Line X1="22" Y1="22" X2="34" Y2="34"
+                                     Stroke="{StaticResource WarmNeutral400}"
+                                     StrokeThickness="2" />
+                    </Grid>
+                    <Label Text="Нищо не намерихме"
+                           Style="{StaticResource WarmSectionHeading}"
                            HorizontalOptions="Center"
                            HorizontalTextAlignment="Center" />
+                    <Label Text="Опитайте с друга дума или проверете изписването."
+                           Style="{StaticResource WarmCaption}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+                    <Button Text="Изчисти търсенето"
+                            Style="{StaticResource WarmSecondaryButton}"
+                            Clicked="OnClearSearchClicked" />
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
 
         <controls:SkeletonListView x:Name="PatientsSkeleton"
+                                   SkeletonType="Patient"
                                    Grid.Row="2" />
 
-        
+        <!-- Detail sheet backdrop -->
         <Grid x:Name="SheetOverlay"
               Grid.RowSpan="3"
               IsVisible="False"
-              BackgroundColor="#70000000">
+              BackgroundColor="#80000000">
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Tapped="OnSheetOverlayTapped" />
             </Grid.GestureRecognizers>
         </Grid>
 
-        
+        <!-- Detail sheet -->
         <Border x:Name="SheetPanel"
                 Grid.RowSpan="3"
                 VerticalOptions="End"
                 IsVisible="False"
-                BackgroundColor="#F8FAFC"
+                BackgroundColor="{StaticResource WarmBg}"
                 Stroke="Transparent"
-                StrokeShape="RoundRectangle 20,20,0,0">
+                Padding="0">
+            <Border.StrokeShape>
+                <shapes:RoundRectangle CornerRadius="20,20,0,0" />
+            </Border.StrokeShape>
             <Border.Shadow>
-                <Shadow Brush="#334155" Offset="0,-6" Radius="18" Opacity="0.14" />
+                <Shadow Brush="{StaticResource WarmText}" Offset="0,-6" Radius="18" Opacity="0.14" />
             </Border.Shadow>
-            <ScrollView x:Name="SheetScrollView"
-                        MaximumHeightRequest="760">
-                <VerticalStackLayout Spacing="16" Padding="20,12,20,30">
+            <ScrollView x:Name="SheetScrollView" MaximumHeightRequest="760">
+                <VerticalStackLayout Spacing="18" Padding="20,12,20,30">
+
                     <Grid ColumnDefinitions="44,*,44" HeightRequest="40">
                         <Grid.GestureRecognizers>
                             <PanGestureRecognizer PanUpdated="OnSheetPanUpdated" />
@@ -184,211 +190,180 @@
                         <BoxView Grid.Column="1"
                                  WidthRequest="70"
                                  HeightRequest="4"
-                                 BackgroundColor="#CBD5E1"
+                                 BackgroundColor="{StaticResource WarmNeutral400}"
                                  HorizontalOptions="Center"
                                  VerticalOptions="Center"
                                  CornerRadius="2" />
-                        <Button Grid.Column="2"
-                                Text="×"
-                                Clicked="OnSheetCloseClicked"
-                                BackgroundColor="#EEF2F7"
-                                TextColor="#64748B"
-                                FontSize="22"
-                                FontAttributes="Bold"
-                                Padding="0"
-                                CornerRadius="18"
-                                WidthRequest="36"
-                                HeightRequest="36"
+                        <Border Grid.Column="2"
+                                MinimumWidthRequest="44" MinimumHeightRequest="44"
+                                BackgroundColor="{StaticResource WarmSurface}"
+                                Stroke="Transparent"
                                 HorizontalOptions="End"
-                                VerticalOptions="Center" />
+                                VerticalOptions="Center"
+                                SemanticProperties.Description="Затвори">
+                            <Border.StrokeShape>
+                                <shapes:RoundRectangle CornerRadius="22" />
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSheetCloseClicked" />
+                            </Border.GestureRecognizers>
+                            <Label Text="×"
+                                   FontSize="22"
+                                   TextColor="{StaticResource WarmText}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
                     </Grid>
 
                     <VerticalStackLayout Spacing="10" HorizontalOptions="Fill">
-                        <Border WidthRequest="64"
-                                HeightRequest="64"
-                                BackgroundColor="#E8F3FF"
-                                Stroke="#C7E0FF"
+                        <Border WidthRequest="64" HeightRequest="64"
+                                BackgroundColor="{StaticResource WarmAccent100}"
+                                Stroke="{StaticResource WarmAccent}"
                                 StrokeThickness="1"
-                                StrokeShape="RoundRectangle 32"
                                 HorizontalOptions="Center">
-                            <Border.Shadow>
-                                <Shadow Brush="#3B82F6" Offset="0,4" Radius="12" Opacity="0.12" />
-                            </Border.Shadow>
-                            <Label Text="☤"
-                                   FontSize="30"
-                                   TextColor="#0F766E"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center" />
+                            <Border.StrokeShape>
+                                <shapes:RoundRectangle CornerRadius="32" />
+                            </Border.StrokeShape>
+                            <Grid>
+                                <shapes:Ellipse Fill="{StaticResource WarmAccent700}"
+                                                WidthRequest="20" HeightRequest="20"
+                                                HorizontalOptions="Center" VerticalOptions="Start"
+                                                Margin="0,14,0,0" />
+                                <shapes:Ellipse Fill="{StaticResource WarmAccent700}"
+                                                WidthRequest="42" HeightRequest="40"
+                                                HorizontalOptions="Center" VerticalOptions="End"
+                                                Margin="0,0,0,-16" />
+                            </Grid>
                         </Border>
 
                         <Label x:Name="SheetNameLabel"
                                HorizontalOptions="Center"
-                               Text=""
-                               FontSize="23"
-                               FontAttributes="Bold"
-                               TextColor="#111827"
+                               Style="{StaticResource WarmPageTitle}"
                                HorizontalTextAlignment="Center"
                                LineBreakMode="WordWrap" />
 
                         <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                            <Border Grid.Column="0"
-                                    BackgroundColor="White"
-                                    Stroke="#E2E8F0"
-                                    StrokeThickness="1"
-                                    StrokeShape="RoundRectangle 14"
-                                    Padding="10,8">
-                                <HorizontalStackLayout Spacing="6" HorizontalOptions="Center">
-                                    <Label Text="№" FontSize="13" FontAttributes="Bold" TextColor="#3B82F6" VerticalOptions="Center" />
-                                    <Label x:Name="SheetEgnLabel" Text="" FontSize="14" FontAttributes="Bold" TextColor="#475569" VerticalOptions="Center" />
-                                </HorizontalStackLayout>
+                            <Border Grid.Column="0" Style="{StaticResource WarmCard}" Padding="10,8">
+                                <Border.StrokeShape>
+                                    <shapes:RoundRectangle CornerRadius="4" />
+                                </Border.StrokeShape>
+                                <Label x:Name="SheetEgnLabel"
+                                       FontFamily="OpenSansRegular"
+                                       FontSize="13"
+                                       TextColor="{StaticResource WarmText}"
+                                       HorizontalOptions="Center" />
                             </Border>
-                            <Border Grid.Column="1"
-                                    BackgroundColor="White"
-                                    Stroke="#E2E8F0"
-                                    StrokeThickness="1"
-                                    StrokeShape="RoundRectangle 14"
-                                    Padding="10,8">
+                            <Border Grid.Column="1" Style="{StaticResource WarmCard}" Padding="10,8">
+                                <Border.StrokeShape>
+                                    <shapes:RoundRectangle CornerRadius="4" />
+                                </Border.StrokeShape>
                                 <HorizontalStackLayout Spacing="6" HorizontalOptions="Center">
-                                    <Label Text="☎" FontSize="13" TextColor="#0F766E" VerticalOptions="Center" />
-                                    <Label x:Name="SheetPhoneLabel" Text="" FontSize="14" FontAttributes="Bold" TextColor="#475569" VerticalOptions="Center" />
+                                    <Grid WidthRequest="10" HeightRequest="14" VerticalOptions="Center">
+                                        <shapes:RoundRectangle Stroke="{StaticResource WarmTextMuted}"
+                                                                StrokeThickness="1.3"
+                                                                Fill="Transparent"
+                                                                CornerRadius="2" />
+                                    </Grid>
+                                    <Label x:Name="SheetPhoneLabel"
+                                           FontFamily="OpenSansRegular"
+                                           FontSize="13"
+                                           TextColor="{StaticResource WarmText}" />
                                 </HorizontalStackLayout>
                             </Border>
                         </Grid>
 
                         <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
-                            <Border BackgroundColor="#EEF6FF" Stroke="Transparent" StrokeShape="RoundRectangle 12" Padding="10,7">
+                            <Border Style="{StaticResource WarmCard}" Padding="10,7">
+                                <Border.StrokeShape>
+                                    <shapes:RoundRectangle CornerRadius="4" />
+                                </Border.StrokeShape>
                                 <HorizontalStackLayout Spacing="6">
-                                    <Label Text="□" FontSize="13" TextColor="#3B82F6" VerticalOptions="Center" />
-                                    <Label x:Name="SheetDateOnlyLabel" Text="" FontSize="13" FontAttributes="Bold" TextColor="#64748B" />
+                                    <Grid WidthRequest="13" HeightRequest="12" VerticalOptions="Center">
+                                        <shapes:RoundRectangle Stroke="{StaticResource WarmTextMuted}"
+                                                                StrokeThickness="1.2"
+                                                                Fill="Transparent"
+                                                                CornerRadius="2" />
+                                        <shapes:Line X1="1" Y1="4" X2="12" Y2="4"
+                                                     Stroke="{StaticResource WarmTextMuted}"
+                                                     StrokeThickness="1.2" />
+                                    </Grid>
+                                    <Label x:Name="SheetDateOnlyLabel"
+                                           FontFamily="OpenSansRegular"
+                                           FontSize="13"
+                                           TextColor="{StaticResource WarmText}" />
                                 </HorizontalStackLayout>
                             </Border>
-                            <Border BackgroundColor="#F0FDFA" Stroke="Transparent" StrokeShape="RoundRectangle 12" Padding="10,7">
+                            <Border Style="{StaticResource WarmCard}" Padding="10,7">
+                                <Border.StrokeShape>
+                                    <shapes:RoundRectangle CornerRadius="4" />
+                                </Border.StrokeShape>
                                 <HorizontalStackLayout Spacing="6">
-                                    <Label Text="◷" FontSize="14" TextColor="#0F766E" VerticalOptions="Center" />
-                                    <Label x:Name="SheetTimeLabel" Text="" FontSize="13" FontAttributes="Bold" TextColor="#64748B" />
+                                    <Grid WidthRequest="13" HeightRequest="13" VerticalOptions="Center">
+                                        <shapes:Ellipse Stroke="{StaticResource WarmTextMuted}"
+                                                        StrokeThickness="1.2"
+                                                        Fill="Transparent" />
+                                        <shapes:Line X1="6.5" Y1="6.5" X2="6.5" Y2="2.5"
+                                                     Stroke="{StaticResource WarmTextMuted}"
+                                                     StrokeThickness="1.2" />
+                                        <shapes:Line X1="6.5" Y1="6.5" X2="9.5" Y2="6.5"
+                                                     Stroke="{StaticResource WarmTextMuted}"
+                                                     StrokeThickness="1.2" />
+                                    </Grid>
+                                    <Label x:Name="SheetTimeLabel"
+                                           FontFamily="OpenSansRegular"
+                                           FontSize="13"
+                                           TextColor="{StaticResource WarmText}" />
                                 </HorizontalStackLayout>
                             </Border>
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
 
-                    <Border BackgroundColor="White"
-                            Stroke="#E2E8F0"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 18"
-                            Padding="16">
-                        <Border.Shadow>
-                            <Shadow Brush="#94A3B8" Offset="0,6" Radius="16" Opacity="0.10" />
-                        </Border.Shadow>
+                    <Border Style="{StaticResource WarmCard}" Padding="16">
+                        <Border.StrokeShape>
+                            <shapes:RoundRectangle CornerRadius="4" />
+                        </Border.StrokeShape>
                         <VerticalStackLayout Spacing="12">
-                            <Label Text="Информация за пациента"
-                                   FontSize="15"
-                                   FontAttributes="Bold"
-                                   TextColor="#111827" />
+                            <Label Text="Информация за пациента" Style="{StaticResource WarmSectionHeading}" />
                             <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,*" RowSpacing="8" ColumnSpacing="14">
-                                <Label Grid.Row="0" Grid.Column="0" Text="Пациент" FontSize="12" TextColor="#94A3B8" />
-                                <Label Grid.Row="0" Grid.Column="1" x:Name="SheetInfoNameLabel" Text="" FontSize="13" FontAttributes="Bold" TextColor="#334155" HorizontalTextAlignment="End" />
-                                <Label Grid.Row="1" Grid.Column="0" Text="ЕГН" FontSize="12" TextColor="#94A3B8" />
-                                <Label Grid.Row="1" Grid.Column="1" x:Name="SheetInfoEgnLabel" Text="" FontSize="13" FontAttributes="Bold" TextColor="#334155" HorizontalTextAlignment="End" />
-                                <Label Grid.Row="2" Grid.Column="0" Text="Телефон" FontSize="12" TextColor="#94A3B8" />
-                                <Label Grid.Row="2" Grid.Column="1" x:Name="SheetInfoPhoneLabel" Text="" FontSize="13" FontAttributes="Bold" TextColor="#334155" HorizontalTextAlignment="End" />
+                                <Label Grid.Row="0" Grid.Column="0" Text="Пациент" Style="{StaticResource WarmCaption}" />
+                                <Label Grid.Row="0" Grid.Column="1" x:Name="SheetInfoNameLabel"
+                                       Style="{StaticResource WarmBody}" HorizontalTextAlignment="End" />
+                                <Label Grid.Row="1" Grid.Column="0" Text="ЕГН" Style="{StaticResource WarmCaption}" />
+                                <Label Grid.Row="1" Grid.Column="1" x:Name="SheetInfoEgnLabel"
+                                       FontFamily="OpenSansRegular" FontSize="15" TextColor="{StaticResource WarmText}"
+                                       HorizontalTextAlignment="End" />
+                                <Label Grid.Row="2" Grid.Column="0" Text="Телефон" Style="{StaticResource WarmCaption}" />
+                                <Label Grid.Row="2" Grid.Column="1" x:Name="SheetInfoPhoneLabel"
+                                       FontFamily="OpenSansRegular" FontSize="15" TextColor="{StaticResource WarmText}"
+                                       HorizontalTextAlignment="End" />
                             </Grid>
                         </VerticalStackLayout>
                     </Border>
 
-                    <Border BackgroundColor="White"
-                            Stroke="#E2E8F0"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 18"
-                            Padding="16">
-                        <Border.Shadow>
-                            <Shadow Brush="#94A3B8" Offset="0,6" Radius="16" Opacity="0.10" />
-                        </Border.Shadow>
+                    <Border Style="{StaticResource WarmCard}" Padding="16">
+                        <Border.StrokeShape>
+                            <shapes:RoundRectangle CornerRadius="4" />
+                        </Border.StrokeShape>
                         <VerticalStackLayout Spacing="10">
                             <Grid ColumnDefinitions="*,Auto">
-                                <Label Grid.Column="0"
-                                       Text="Избрани манипулации"
-                                       FontSize="15"
-                                       FontAttributes="Bold"
-                                       TextColor="#111827" />
-                                <Label Grid.Column="1"
-                                       x:Name="SheetTestsCountLabel"
-                                       Text=""
-                                       FontSize="12"
-                                       FontAttributes="Bold"
-                                       TextColor="#3B82F6"
-                                       VerticalOptions="Center" />
+                                <Label Grid.Column="0" Text="Избрани манипулации" Style="{StaticResource WarmSectionHeading}" />
+                                <Label Grid.Column="1" x:Name="SheetTestsCountLabel" VerticalOptions="Center" />
                             </Grid>
 
-                            <VerticalStackLayout x:Name="SheetTestsLayout"
-                                                 Spacing="0"
-                                                 BindableLayout.ItemTemplate="{StaticResource SheetProcedureTemplate}" />
+                            <VerticalStackLayout x:Name="SheetTestsLayout" Spacing="0" />
 
-                            <Border BackgroundColor="#EAF4FF"
-                                    Stroke="#C7E0FF"
-                                    StrokeThickness="1"
-                                    StrokeShape="RoundRectangle 14"
-                                    Padding="14,12"
-                                    Margin="0,4,0,0">
-                                <Grid ColumnDefinitions="*,Auto">
-                                    <Label Grid.Column="0"
-                                           Text="Общо"
-                                           FontSize="15"
-                                           FontAttributes="Bold"
-                                           TextColor="#0F172A" />
-                                    <Label Grid.Column="1"
-                                           x:Name="SheetTotalLabel"
-                                           Text=""
-                                           FontSize="18"
-                                           FontAttributes="Bold"
-                                           TextColor="#0F766E" />
-                                </Grid>
-                            </Border>
+                            <BoxView HeightRequest="1" Color="{StaticResource WarmDivider}" Margin="0,4" />
+
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Grid.Column="0" Text="Общо" Style="{StaticResource WarmBody}" VerticalOptions="Center" />
+                                <Label Grid.Column="1" x:Name="SheetTotalLabel" Style="{StaticResource WarmPriceEmphasis}" VerticalOptions="Center" />
+                            </Grid>
                         </VerticalStackLayout>
                     </Border>
 
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                        <Button Grid.Column="0"
-                                Text="Копирай"
-                                Clicked="OnCopyClicked"
-                                BackgroundColor="White"
-                                TextColor="#0066CC"
-                                BorderColor="#0066CC"
-                                BorderWidth="1"
-                                CornerRadius="12"
-                                HeightRequest="50"
-                                FontAttributes="Bold"
-                                FontSize="14" />
-                        <Button Grid.Column="1"
-                                Text="Използвай"
-                                Clicked="OnReuseClicked"
-                                BackgroundColor="#0066CC"
-                                TextColor="White"
-                                CornerRadius="12"
-                                HeightRequest="50"
-                                FontAttributes="Bold"
-                                FontSize="14" />
-                    </Grid>
-
-                    <Button Text="🗑 Изтрий пациента"
-                            Clicked="OnDeleteClicked"
-                            BackgroundColor="Transparent"
-                            TextColor="#DC2626"
-                            FontSize="14"
-                            FontAttributes="Bold"
-                            HeightRequest="44" />
                 </VerticalStackLayout>
             </ScrollView>
         </Border>
-
-        
-        <Grid x:Name="LoadingOverlay"
-              Grid.RowSpan="3"
-              BackgroundColor="#80000000"
-              IsVisible="False">
-            <ActivityIndicator IsRunning="True" IsVisible="True"
-                               WidthRequest="55" HeightRequest="55" Color="White"
-                               HorizontalOptions="Center" VerticalOptions="Center" />
-        </Grid>
 
     </Grid>
 </ContentPage>
