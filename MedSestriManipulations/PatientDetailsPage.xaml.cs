@@ -9,6 +9,12 @@ namespace MedSestriManipulations
 {
     public partial class PatientDetailsPage : ContentPage
     {
+        // Rough allowance for a software keyboard (incl. suggestion bar) so the ScrollView
+        // has enough runway to bring the last field fully above it - see OnEntryFocused.
+        private const double KeyboardSpacerHeight = 280;
+        private const int FocusScrollDelayMs = 250;
+        private const int UnfocusCollapseDelayMs = 150;
+
         private readonly API _api;
         private readonly CachedDataService _cachedData;
         private List<BloodTest> _selectedTests = new();
@@ -135,6 +141,48 @@ namespace MedSestriManipulations
         {
             PhoneErrorRow.IsVisible = false;
             PhoneFieldBorder.Stroke = (Color)Application.Current!.Resources["WarmDivider"];
+        }
+
+        private void OnNameEntryCompleted(object sender, EventArgs e) => PhoneEntry.Focus();
+
+        private void OnPhoneEntryCompleted(object sender, EventArgs e) => EgnEntry.Focus();
+
+        // Tapping empty background (root Grid) dismisses whichever field is focused.
+        // Entries/Buttons/the "Промени избора" link all consume their own taps first,
+        // so this only fires for taps that land outside any of them.
+        private void OnRootTapped(object sender, TappedEventArgs e)
+        {
+            NameEntry.Unfocus();
+            PhoneEntry.Unfocus();
+            EgnEntry.Unfocus();
+        }
+
+        private async void OnEntryFocused(object sender, FocusEventArgs e)
+        {
+            KeyboardSpacer.HeightRequest = KeyboardSpacerHeight;
+
+            VisualElement? target = null;
+            if (sender == NameEntry) target = NameFieldGroup;
+            else if (sender == PhoneEntry) target = PhoneFieldGroup;
+            else if (sender == EgnEntry) target = EgnFieldGroup;
+
+            if (target == null)
+                return;
+
+            // Give the soft keyboard (and Android's AdjustResize layout pass) time to finish
+            // animating in before measuring where "in view" actually is.
+            await Task.Delay(FocusScrollDelayMs);
+            await FormScrollView.ScrollToAsync(target, ScrollToPosition.Center, true);
+        }
+
+        private async void OnEntryUnfocused(object sender, FocusEventArgs e)
+        {
+            await Task.Delay(UnfocusCollapseDelayMs);
+
+            if (NameEntry.IsFocused || PhoneEntry.IsFocused || EgnEntry.IsFocused)
+                return;
+
+            KeyboardSpacer.HeightRequest = 0;
         }
 
         private async void OnSubmitClicked(object sender, EventArgs e)

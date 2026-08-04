@@ -7,6 +7,10 @@
 
     <Grid RowDefinitions="Auto,*,Auto">
 
+        <Grid.GestureRecognizers>
+            <TapGestureRecognizer Tapped="OnRootTapped" />
+        </Grid.GestureRecognizers>
+
         <!-- Header -->
         <Grid Grid.Row="0"
               ColumnDefinitions="Auto,*,Auto"
@@ -36,7 +40,7 @@
         </Grid>
 
         <!-- Scrollable content -->
-        <ScrollView Grid.Row="1">
+        <ScrollView x:Name="FormScrollView" Grid.Row="1">
             <VerticalStackLayout Padding="18,18,18,28" Spacing="18">
 
                 <!-- Summary card -->
@@ -75,7 +79,7 @@
                 </Border>
 
                 <!-- Name field -->
-                <VerticalStackLayout Spacing="4">
+                <VerticalStackLayout x:Name="NameFieldGroup" Spacing="4">
                     <Label Text="Име на пациент" Style="{StaticResource WarmCaption}" />
                     <Border x:Name="NameFieldBorder" Style="{StaticResource WarmFieldBorder}" Padding="14,0">
                         <Border.StrokeShape>
@@ -84,7 +88,11 @@
                         <Entry x:Name="NameEntry"
                                Style="{StaticResource WarmEntry}"
                                Placeholder="напр. Иван Петров"
-                               TextChanged="OnNameTextChanged" />
+                               ReturnType="Next"
+                               TextChanged="OnNameTextChanged"
+                               Completed="OnNameEntryCompleted"
+                               Focused="OnEntryFocused"
+                               Unfocused="OnEntryUnfocused" />
                     </Border>
                     <HorizontalStackLayout x:Name="NameErrorRow" IsVisible="False" Spacing="4">
                         <Label Text="!" TextColor="{StaticResource WarmError}" FontFamily="{StaticResource WarmHeadingFont}" FontSize="13" />
@@ -94,8 +102,33 @@
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
 
+                <!-- Phone field -->
+                <VerticalStackLayout x:Name="PhoneFieldGroup" Spacing="4">
+                    <Label Text="Телефонен номер" Style="{StaticResource WarmCaption}" />
+                    <Border x:Name="PhoneFieldBorder" Style="{StaticResource WarmFieldBorder}" Padding="14,0">
+                        <Border.StrokeShape>
+                            <shapes:RoundRectangle CornerRadius="4" />
+                        </Border.StrokeShape>
+                        <Entry x:Name="PhoneEntry"
+                               Style="{StaticResource WarmEntry}"
+                               Placeholder="0899 123 456"
+                               Keyboard="Telephone"
+                               ReturnType="Next"
+                               TextChanged="OnPhoneTextChanged"
+                               Completed="OnPhoneEntryCompleted"
+                               Focused="OnEntryFocused"
+                               Unfocused="OnEntryUnfocused" />
+                    </Border>
+                    <HorizontalStackLayout x:Name="PhoneErrorRow" IsVisible="False" Spacing="4">
+                        <Label Text="!" TextColor="{StaticResource WarmError}" FontFamily="{StaticResource WarmHeadingFont}" FontSize="13" />
+                        <Label Text="Въведете валиден номер, напр. 0899 123 456."
+                               Style="{StaticResource WarmCaption}"
+                               TextColor="{StaticResource WarmError}" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
                 <!-- EGN field -->
-                <VerticalStackLayout Spacing="4">
+                <VerticalStackLayout x:Name="EgnFieldGroup" Spacing="4">
                     <Label Text="ЕГН" Style="{StaticResource WarmCaption}" />
                     <Border x:Name="EgnFieldBorder" Style="{StaticResource WarmFieldBorder}" Padding="14,0">
                         <Border.StrokeShape>
@@ -106,7 +139,11 @@
                                Placeholder="10 цифри"
                                Keyboard="Numeric"
                                MaxLength="10"
-                               TextChanged="OnEgnTextChanged" />
+                               ReturnType="Done"
+                               TextChanged="OnEgnTextChanged"
+                               Completed="OnSubmitClicked"
+                               Focused="OnEntryFocused"
+                               Unfocused="OnEntryUnfocused" />
                     </Border>
                     <Label x:Name="EgnHelperLabel"
                            Text="Използваме го само за да Ви идентифицираме коректно."
@@ -119,26 +156,9 @@
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
 
-                <!-- Phone field -->
-                <VerticalStackLayout Spacing="4">
-                    <Label Text="Телефонен номер" Style="{StaticResource WarmCaption}" />
-                    <Border x:Name="PhoneFieldBorder" Style="{StaticResource WarmFieldBorder}" Padding="14,0">
-                        <Border.StrokeShape>
-                            <shapes:RoundRectangle CornerRadius="4" />
-                        </Border.StrokeShape>
-                        <Entry x:Name="PhoneEntry"
-                               Style="{StaticResource WarmEntry}"
-                               Placeholder="0899 123 456"
-                               Keyboard="Telephone"
-                               TextChanged="OnPhoneTextChanged" />
-                    </Border>
-                    <HorizontalStackLayout x:Name="PhoneErrorRow" IsVisible="False" Spacing="4">
-                        <Label Text="!" TextColor="{StaticResource WarmError}" FontFamily="{StaticResource WarmHeadingFont}" FontSize="13" />
-                        <Label Text="Въведете валиден номер, напр. 0899 123 456."
-                               Style="{StaticResource WarmCaption}"
-                               TextColor="{StaticResource WarmError}" />
-                    </HorizontalStackLayout>
-                </VerticalStackLayout>
+                <!-- Reserves scroll headroom while the keyboard is open so the last field can
+                     still be scrolled clear of it (toggled in code-behind, zero height otherwise) -->
+                <BoxView x:Name="KeyboardSpacer" HeightRequest="0" Opacity="0" InputTransparent="True" />
 
             </VerticalStackLayout>
         </ScrollView>
