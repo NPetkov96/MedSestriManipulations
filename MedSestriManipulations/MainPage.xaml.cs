@@ -155,9 +155,19 @@ namespace MedSestriManipulations
             int count = selected.Count;
 
             SelectionHeader.IsVisible = count > 0;
-            SelectionSummaryLabel.Text = count == 1
-                ? $"1 изследване · {totalEur:F2} €"
-                : $"{count} изследвания · {totalEur:F2} €";
+
+            var countText = count == 1 ? "1 изследване · " : $"{count} изследвания · ";
+            var textColor = (Color)Application.Current!.Resources["WarmText"];
+
+            // Amount digits get the plain sans font; the surrounding label text keeps the body serif.
+            SelectionSummaryLabel.FormattedText = new FormattedString
+            {
+                Spans =
+                {
+                    new Span { Text = countText, FontFamily = "LoraRegular", FontSize = 15, TextColor = textColor },
+                    new Span { Text = $"{totalEur:F2} €", FontFamily = "OpenSansRegular", FontSize = 15, TextColor = textColor }
+                }
+            };
         }
 
         private async void ApplyFilter(string? searchText = null)

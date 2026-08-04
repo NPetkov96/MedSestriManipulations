@@ -85,8 +85,10 @@
         <Setter Property="TextColor" Value="{StaticResource WarmAccent700}" />
     </Style>
 
+    <!-- Amount/price digits use the plain embedded sans font, not the display serif -
+         numerals in Cormorant Garamond/Lora don't read as cleanly as currency figures. -->
     <Style x:Key="WarmPriceEmphasis" TargetType="Label">
-        <Setter Property="FontFamily" Value="{StaticResource WarmHeadingFont}" />
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
         <Setter Property="FontSize" Value="17" />
         <Setter Property="TextColor" Value="{StaticResource WarmAccent700}" />
     </Style>

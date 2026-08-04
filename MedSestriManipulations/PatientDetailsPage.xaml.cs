@@ -72,7 +72,7 @@ namespace MedSestriManipulations
                 var priceLabel = new Label
                 {
                     Text = test.IsFree ? "Безплатно" : $"{test.EuroPrice:F2} €",
-                    FontFamily = "LoraRegular",
+                    FontFamily = test.IsFree ? "LoraRegular" : "OpenSansRegular",
                     FontSize = 15,
                     HorizontalOptions = LayoutOptions.End,
                     TextColor = (Color)resources["WarmTextMuted"]
