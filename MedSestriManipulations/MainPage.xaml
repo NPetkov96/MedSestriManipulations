@@ -10,8 +10,45 @@
 
         <controls:TopNavigationMenu Grid.Row="0" />
 
-        <!-- Sticky search field -->
+        <!-- Consolidated sticky selection / CTA header -->
         <Border Grid.Row="1"
+                x:Name="SelectionHeader"
+                IsVisible="False"
+                BackgroundColor="{StaticResource WarmSurface}"
+                Stroke="Transparent"
+                Padding="18,9,18,14">
+            <Border.Shadow>
+                <Shadow Brush="{StaticResource WarmText}" Offset="0,2" Radius="6" Opacity="0.10" />
+            </Border.Shadow>
+            <VerticalStackLayout Spacing="9">
+                <Grid ColumnDefinitions="Auto,*" VerticalOptions="Center">
+                    <Button Grid.Column="0"
+                            Text="Изчисти"
+                            Style="{StaticResource WarmGhostButton}"
+                            TextColor="{StaticResource WarmError}"
+                            FontSize="13"
+                            Padding="0"
+                            HorizontalOptions="Start"
+                            Clicked="OnClearClicked" />
+                    <Label Grid.Column="1"
+                           x:Name="SelectionSummaryLabel"
+                           FontSize="13"
+                           HorizontalOptions="End"
+                           VerticalOptions="Center" />
+                </Grid>
+
+                <Button x:Name="ContinueButton"
+                        Text="Продължи"
+                        Style="{StaticResource WarmPrimaryButton}"
+                        FontSize="14"
+                        Padding="18,10"
+                        HorizontalOptions="Fill"
+                        Clicked="OnContinueClicked" />
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Sticky search field - always directly above the test list, nothing in between -->
+        <Border Grid.Row="2"
                 Style="{StaticResource WarmFieldBorder}"
                 Margin="18,9,18,9"
                 Padding="14,0">
@@ -47,40 +84,6 @@
                         Clicked="OnSearchClearClicked"
                         SemanticProperties.Description="Изчисти търсенето" />
             </Grid>
-        </Border>
-
-        <!-- Consolidated sticky selection / CTA header -->
-        <Border Grid.Row="2"
-                x:Name="SelectionHeader"
-                IsVisible="False"
-                BackgroundColor="{StaticResource WarmSurface}"
-                Stroke="Transparent"
-                Padding="18,9,18,14">
-            <Border.Shadow>
-                <Shadow Brush="{StaticResource WarmText}" Offset="0,2" Radius="6" Opacity="0.10" />
-            </Border.Shadow>
-            <VerticalStackLayout Spacing="9">
-                <Grid ColumnDefinitions="Auto,*" VerticalOptions="Center">
-                    <Button Grid.Column="0"
-                            Text="Изчисти"
-                            Style="{StaticResource WarmGhostButton}"
-                            TextColor="{StaticResource WarmError}"
-                            Padding="0"
-                            HorizontalOptions="Start"
-                            Clicked="OnClearClicked" />
-                    <Label Grid.Column="1"
-                           x:Name="SelectionSummaryLabel"
-                           Style="{StaticResource WarmBody}"
-                           HorizontalOptions="End"
-                           VerticalOptions="Center" />
-                </Grid>
-
-                <Button x:Name="ContinueButton"
-                        Text="Продължи"
-                        Style="{StaticResource WarmPrimaryButton}"
-                        HorizontalOptions="Fill"
-                        Clicked="OnContinueClicked" />
-            </VerticalStackLayout>
         </Border>
 
         <controls:SkeletonListView x:Name="SkeletonView"

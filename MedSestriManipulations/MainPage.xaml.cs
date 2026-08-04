@@ -164,8 +164,8 @@ namespace MedSestriManipulations
             {
                 Spans =
                 {
-                    new Span { Text = countText, FontFamily = "LoraRegular", FontSize = 15, TextColor = textColor },
-                    new Span { Text = $"{totalEur:F2} €", FontFamily = "OpenSansRegular", FontSize = 15, TextColor = textColor }
+                    new Span { Text = countText, FontFamily = "LoraRegular", FontSize = 10, TextColor = textColor },
+                    new Span { Text = $"{totalEur:F2} €", FontFamily = "OpenSansRegular", FontSize = 10, TextColor = textColor }
                 }
             };
         }

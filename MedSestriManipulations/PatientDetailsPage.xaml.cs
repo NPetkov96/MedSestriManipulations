@@ -133,7 +133,7 @@ namespace MedSestriManipulations
             }
 
             EgnErrorRow.IsVisible = false;
-            EgnHelperLabel.IsVisible = true;
+            //EgnHelperLabel.IsVisible = true;
             EgnFieldBorder.Stroke = (Color)Application.Current!.Resources["WarmDivider"];
         }
 
@@ -204,7 +204,7 @@ namespace MedSestriManipulations
             if (egn.Length != 10 || !egn.All(char.IsDigit))
             {
                 EgnErrorRow.IsVisible = true;
-                EgnHelperLabel.IsVisible = false;
+                //EgnHelperLabel.IsVisible = false;
                 EgnFieldBorder.Stroke = errorColor;
                 isValid = false;
             }

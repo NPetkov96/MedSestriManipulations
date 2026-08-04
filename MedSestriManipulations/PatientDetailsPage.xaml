@@ -50,7 +50,7 @@
                     </Border.StrokeShape>
                     <VerticalStackLayout Spacing="9">
                         <Label Text="Избрани изследвания" Style="{StaticResource WarmCaption}" />
-                        <Label x:Name="SummaryTitleLabel" Style="{StaticResource WarmSectionHeading}" />
+                        <Label x:Name="SummaryTitleLabel"/>
 
                         <VerticalStackLayout x:Name="SummaryTestsLayout" Spacing="4" />
 
@@ -145,9 +145,6 @@
                                Focused="OnEntryFocused"
                                Unfocused="OnEntryUnfocused" />
                     </Border>
-                    <Label x:Name="EgnHelperLabel"
-                           Text="Използваме го само за да Ви идентифицираме коректно."
-                           Style="{StaticResource WarmCaption}" />
                     <HorizontalStackLayout x:Name="EgnErrorRow" IsVisible="False" Spacing="4">
                         <Label Text="!" TextColor="{StaticResource WarmError}" FontFamily="{StaticResource WarmHeadingFont}" FontSize="13" />
                         <Label Text="ЕГН трябва да съдържа точно 10 цифри."
