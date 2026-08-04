@@ -40,8 +40,8 @@
                 <Button x:Name="ContinueButton"
                         Text="Продължи"
                         Style="{StaticResource WarmPrimaryButton}"
-                        FontSize="14"
-                        Padding="18,10"
+                        FontSize="13"
+                        Padding="18,6"
                         HorizontalOptions="Fill"
                         Clicked="OnContinueClicked" />
             </VerticalStackLayout>

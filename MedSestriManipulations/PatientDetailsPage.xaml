@@ -5,7 +5,7 @@
              Shell.NavBarIsVisible="False"
              x:Class="MedSestriManipulations.PatientDetailsPage">
 
-    <Grid RowDefinitions="Auto,*,Auto">
+    <Grid RowDefinitions="Auto,*">
 
         <Grid.GestureRecognizers>
             <TapGestureRecognizer Tapped="OnRootTapped" />
@@ -87,7 +87,7 @@
                         </Border.StrokeShape>
                         <Entry x:Name="NameEntry"
                                Style="{StaticResource WarmEntry}"
-                               Placeholder="напр. Иван Петров"
+                               Placeholder="напр. Николай Петков"
                                ReturnType="Next"
                                TextChanged="OnNameTextChanged"
                                Completed="OnNameEntryCompleted"
@@ -111,7 +111,7 @@
                         </Border.StrokeShape>
                         <Entry x:Name="PhoneEntry"
                                Style="{StaticResource WarmEntry}"
-                               Placeholder="0899 123 456"
+                               Placeholder="0882 259 007не"
                                Keyboard="Telephone"
                                ReturnType="Next"
                                TextChanged="OnPhoneTextChanged"
@@ -153,27 +153,29 @@
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
 
-                <!-- Reserves scroll headroom while the keyboard is open so the last field can
-                     still be scrolled clear of it (toggled in code-behind, zero height otherwise) -->
-                <BoxView x:Name="KeyboardSpacer" HeightRequest="0" Opacity="0" InputTransparent="True" />
+                <!-- Submit button sits right under ЕГН so it's always reachable while filling
+                     in the form, instead of relying on a sticky bar the keyboard can cover -->
+                <Button x:Name="SubmitButton"
+                        Text="Изпрати заявка"
+                        Style="{StaticResource WarmPrimaryButton}"
+                        HorizontalOptions="Fill"
+                        Clicked="OnSubmitClicked" />
+
+                <!-- Reserves scroll headroom while the keyboard is open so the submit button
+                     above has room to scroll clear of it (toggled in code-behind, collapsed
+                     otherwise). Filled with the company mark instead of sitting empty. -->
+                <Grid x:Name="KeyboardSpacer" HeightRequest="0" IsClippedToBounds="True" InputTransparent="True">
+                    <Image Source="medsestri_mark.png"
+                           Aspect="AspectFit"
+                           WidthRequest="72"
+                           HeightRequest="72"
+                           Opacity="0.35"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+                </Grid>
 
             </VerticalStackLayout>
         </ScrollView>
-
-        <!-- Sticky submit bar -->
-        <Border Grid.Row="2"
-                BackgroundColor="{StaticResource WarmSurface}"
-                Stroke="Transparent"
-                Padding="18,14">
-            <Border.Shadow>
-                <Shadow Brush="{StaticResource WarmText}" Offset="0,-2" Radius="6" Opacity="0.10" />
-            </Border.Shadow>
-            <Button x:Name="SubmitButton"
-                    Text="Изпрати заявка"
-                    Style="{StaticResource WarmPrimaryButton}"
-                    HorizontalOptions="Fill"
-                    Clicked="OnSubmitClicked" />
-        </Border>
 
     </Grid>
 </ContentPage>
