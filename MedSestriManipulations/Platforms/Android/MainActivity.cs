@@ -7,6 +7,7 @@ using Android.Provider;
 using Android.Views;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
+using AndroidX.Core.View;
 using Firebase.Messaging;
 using MedSestriManipulations.Services;
 using Plugin.Firebase.CloudMessaging;
@@ -33,7 +34,15 @@ namespace MedSestriManipulations.Platforms.Android
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop && Window != null)
             {
-                Window.SetStatusBarColor(Color.ParseColor("#007BFF"));
+                // Matches WarmSurface from WarmDesign.xaml - the top app bar's background -
+                // so the status bar blends into the header instead of showing the old blue.
+                Window.SetStatusBarColor(Color.ParseColor("#EAE9E9"));
+
+                // Light background needs dark status bar icons/text (clock, battery, signal),
+                // otherwise they stay white and are invisible against it.
+                var insetsController = WindowCompat.GetInsetsController(Window, Window.DecorView);
+                if (insetsController != null)
+                    insetsController.AppearanceLightStatusBars = true;
             }
 
         }
