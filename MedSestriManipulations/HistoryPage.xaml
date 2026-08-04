@@ -323,18 +323,19 @@
                             <shapes:RoundRectangle CornerRadius="4" />
                         </Border.StrokeShape>
                         <VerticalStackLayout Spacing="12">
-                            <Label Text="Информация за пациента" Style="{StaticResource WarmSectionHeading}" />
+                            <Label Text="Информация" Style="{StaticResource WarmSectionHeading}" />
                             <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="Auto,*" RowSpacing="8" ColumnSpacing="14">
-                                <Label Grid.Row="0" Grid.Column="0" Text="Пациент" Style="{StaticResource WarmCaption}" />
-                                <Label Grid.Row="0" Grid.Column="1" x:Name="SheetInfoNameLabel"
-                                       Style="{StaticResource WarmBody}" HorizontalTextAlignment="End" />
+                                <Label Grid.Row="0" Grid.Column="0" Text="Име" Style="{StaticResource WarmCaption}" />
+                                <Label Grid.Row="0" Grid.Column="1" FontSize="14" x:Name="SheetInfoNameLabel"
+                                       Style="{StaticResource WarmBody}" TextColor="{StaticResource WarmAccent700}"
+                                       HorizontalTextAlignment="End" />
                                 <Label Grid.Row="1" Grid.Column="0" Text="ЕГН" Style="{StaticResource WarmCaption}" />
                                 <Label Grid.Row="1" Grid.Column="1" x:Name="SheetInfoEgnLabel"
-                                       FontFamily="OpenSansRegular" FontSize="15" TextColor="{StaticResource WarmText}"
+                                       FontFamily="OpenSansRegular" FontSize="14" TextColor="{StaticResource WarmAccent700}"
                                        HorizontalTextAlignment="End" />
                                 <Label Grid.Row="2" Grid.Column="0" Text="Телефон" Style="{StaticResource WarmCaption}" />
                                 <Label Grid.Row="2" Grid.Column="1" x:Name="SheetInfoPhoneLabel"
-                                       FontFamily="OpenSansRegular" FontSize="15" TextColor="{StaticResource WarmText}"
+                                       FontFamily="OpenSansRegular" FontSize="14" TextColor="{StaticResource WarmAccent700}"
                                        HorizontalTextAlignment="End" />
                             </Grid>
                         </VerticalStackLayout>
@@ -346,7 +347,7 @@
                         </Border.StrokeShape>
                         <VerticalStackLayout Spacing="10">
                             <Grid ColumnDefinitions="*,Auto">
-                                <Label Grid.Column="0" Text="Избрани манипулации" Style="{StaticResource WarmSectionHeading}" />
+                                <Label Grid.Column="0" Text="Изследвания:" Style="{StaticResource WarmSectionHeading}" TextColor="{StaticResource WarmAccent700}" />
                                 <Label Grid.Column="1" x:Name="SheetTestsCountLabel" VerticalOptions="Center" />
                             </Grid>
 
@@ -361,9 +362,37 @@
                         </VerticalStackLayout>
                     </Border>
 
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0"
+                                Text="Копирай"
+                                Style="{StaticResource WarmSecondaryButton}"
+                                Clicked="OnCopyClicked" />
+                        <Button Grid.Column="1"
+                                Text="Използвай"
+                                Style="{StaticResource WarmPrimaryButton}"
+                                Clicked="OnReuseClicked" />
+                    </Grid>
+
+                    <Button Text="Изтрий пациента"
+                            Style="{StaticResource WarmGhostButton}"
+                            TextColor="{StaticResource WarmError}"
+                            HorizontalOptions="Center"
+                            Clicked="OnDeleteClicked" />
+
                 </VerticalStackLayout>
             </ScrollView>
         </Border>
+
+        <!-- Loading overlay for delete -->
+        <Grid x:Name="LoadingOverlay"
+              Grid.RowSpan="3"
+              BackgroundColor="#80000000"
+              IsVisible="False">
+            <ActivityIndicator IsRunning="True" IsVisible="True"
+                               WidthRequest="48" HeightRequest="48"
+                               Color="{StaticResource WarmAccent100}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
 
     </Grid>
 </ContentPage>

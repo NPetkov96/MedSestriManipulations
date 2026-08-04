@@ -1,3 +1,5 @@
+using CommunityToolkit.Maui.Alerts;
+using MedSestriManipulations.ApiHandler;
 using MedSestriManipulations.Models;
 using MedSestriManipulations.Services;
 using System.Diagnostics;
@@ -6,18 +8,21 @@ namespace MedSestriManipulations
 {
     public partial class HistoryPage : ContentPage
     {
+        private readonly API _api;
         private readonly CachedDataService _cachedData;
 
         private List<Patient> _allPatients = new();
+        private Patient? _selectedPatient;
         private CancellationTokenSource? _searchCts;
         private int _loadedPatientsVersion = -1;
         private int _filterVersion;
         private bool _isLoadingPatients;
         private bool _isSheetClosing;
 
-        public HistoryPage(CachedDataService cachedData)
+        public HistoryPage(API api, CachedDataService cachedData)
         {
             InitializeComponent();
+            _api = api;
             _cachedData = cachedData;
         }
 
@@ -162,6 +167,8 @@ namespace MedSestriManipulations
             if (sender is not BindableObject { BindingContext: Patient patient })
                 return;
 
+            _selectedPatient = patient;
+
             var resources = Application.Current!.Resources;
             var accent700 = (Color)resources["WarmAccent700"];
 
@@ -196,6 +203,7 @@ namespace MedSestriManipulations
             var textColor = (Color)resources["WarmText"];
             var mutedColor = (Color)resources["WarmTextMuted"];
             var dividerColor = (Color)resources["WarmDivider"];
+            var accentColor = (Color)resources["WarmAccent700"];
 
             var tests = patient.BloodTests ?? new List<BloodTest>();
 
@@ -238,7 +246,7 @@ namespace MedSestriManipulations
                     Text = test.IsFree ? "Безплатно" : $"{test.EuroPrice:F2} €",
                     FontFamily = test.IsFree ? "LoraRegular" : "OpenSansRegular",
                     FontSize = 14,
-                    TextColor = textColor,
+                    TextColor = accentColor,
                     HorizontalOptions = LayoutOptions.End
                 }, 2, 0);
 
@@ -327,6 +335,73 @@ namespace MedSestriManipulations
                         );
                     }
                     break;
+            }
+        }
+
+        private async void OnCopyClicked(object sender, EventArgs e)
+        {
+            if (_selectedPatient == null) return;
+            await Clipboard.SetTextAsync(_selectedPatient.Note);
+            await ShowCopiedToast();
+        }
+
+        private async Task ShowCopiedToast()
+        {
+            try
+            {
+                await Toast.Make("Копирано", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+            }
+            catch { }
+        }
+
+        private async void OnReuseClicked(object sender, EventArgs e)
+        {
+            if (_selectedPatient == null) return;
+
+            SelectedPatientService.PatientToReuse = _selectedPatient;
+            SelectedPatientService.ContactInfoToReuse = _selectedPatient;
+            await HideSheet();
+            await Shell.Current.GoToAsync("//MainPage");
+        }
+
+        private async void OnDeleteClicked(object sender, EventArgs e)
+        {
+            if (_selectedPatient == null) return;
+
+            var patient = _selectedPatient;
+
+            bool confirm = await DisplayAlert(
+                "Потвърждение",
+                $"Сигурни ли сте, че искате да изтриете пациента:\n{patient.FullName} — ЕГН: {patient.EGN}?",
+                "ДА", "НЕ");
+
+            if (!confirm) return;
+
+            try
+            {
+                LoadingOverlay.IsVisible = true;
+
+                var result = await _api.DeletePatient(patient.Date);
+
+                if (result.IsSuccessStatusCode)
+                {
+                    _allPatients.Remove(patient);
+                    _cachedData.InvalidatePatients();
+                    await ApplyFilter();
+                    await HideSheet();
+                }
+                else
+                {
+                    await DisplayAlert("Грешка", "Неуспешно изтриване.", "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Грешка", $"{ex.Message}", "OK");
+            }
+            finally
+            {
+                LoadingOverlay.IsVisible = false;
             }
         }
     }

@@ -20,6 +20,7 @@ namespace MedSestriManipulations
         private List<BloodTest> _selectedTests = new();
         private bool _isNavigating;
         private bool _isUpdatingEgnText;
+        private bool _summaryExpanded;
 
         public PatientDetailsPage(API api, CachedDataService cachedData)
         {
@@ -42,6 +43,15 @@ namespace MedSestriManipulations
                 return;
             }
 
+            var reusedContact = SelectedPatientService.ContactInfoToReuse;
+            if (reusedContact != null)
+            {
+                NameEntry.Text = reusedContact.FullName;
+                EgnEntry.Text = reusedContact.EGN;
+                PhoneEntry.Text = reusedContact.PhoneNumber;
+                SelectedPatientService.ContactInfoToReuse = null;
+            }
+
             PopulateSummary();
         }
 
@@ -53,8 +63,10 @@ namespace MedSestriManipulations
                 ? "1 изследване"
                 : $"{_selectedTests.Count} изследвания";
 
+            var visibleCount = _summaryExpanded ? _selectedTests.Count : Math.Min(3, _selectedTests.Count);
+
             SummaryTestsLayout.Children.Clear();
-            foreach (var test in _selectedTests.Take(3))
+            foreach (var test in _selectedTests.Take(visibleCount))
             {
                 var row = new Grid { ColumnDefinitions = new ColumnDefinitionCollection { new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto) } };
 
@@ -85,7 +97,9 @@ namespace MedSestriManipulations
 
             if (_selectedTests.Count > 3)
             {
-                SummaryMoreLabel.Text = $"и още {_selectedTests.Count - 3} изследвания";
+                SummaryMoreLabel.Text = _summaryExpanded
+                    ? "Покажи по-малко"
+                    : $"и още {_selectedTests.Count - 3} изследвания";
                 SummaryMoreLabel.IsVisible = true;
             }
             else
@@ -94,6 +108,12 @@ namespace MedSestriManipulations
             }
 
             SummaryTotalLabel.Text = $"{total:F2} €";
+        }
+
+        private void OnSummaryMoreTapped(object sender, TappedEventArgs e)
+        {
+            _summaryExpanded = !_summaryExpanded;
+            PopulateSummary();
         }
 
         private async void OnBackTapped(object sender, TappedEventArgs e) => await GoBackToListAsync();
@@ -236,9 +256,9 @@ namespace MedSestriManipulations
                 messageBuilder.AppendLine($"Избрани манипулации {_selectedTests.Count} бр:");
                 messageBuilder.AppendLine(manipulationsList);
                 messageBuilder.AppendLine();
-                messageBuilder.AppendLine($"Общо сума: {totalEur} €");
+                messageBuilder.AppendLine($"Общо сума: {totalEur:F2} €");
                 messageBuilder.AppendLine("--------------------");
-                messageBuilder.AppendLine($"Сума с отстъпка: {discountTotalEur} €");
+                messageBuilder.AppendLine($"Сума с отстъпка: {discountTotalEur:F2} €");
                 messageBuilder.AppendLine("https://medsestri.com/");
                 string message = messageBuilder.ToString().Trim();
 

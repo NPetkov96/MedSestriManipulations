@@ -38,11 +38,14 @@ namespace MedSestriManipulations
 
                 BloodTestsList = await _cachedData.GetBloodTestsAsync();
 
+                ProcedureList.ItemsSource = _filteredProcedures;
+                await ApplyFilter();
+
+                // Only reveal the list once it actually has items to show - otherwise the
+                // CollectionView briefly renders its EmptyView ("Нищо не намерихме") for the
+                // instant between becoming visible and ApplyFilter finishing on the UI thread.
                 SkeletonView.IsLoading = false;
                 ProcedureList.IsVisible = true;
-
-                ProcedureList.ItemsSource = _filteredProcedures;
-                ApplyFilter();
 
                 var reusedPatient = SelectedPatientService.PatientToReuse;
                 if (reusedPatient != null)
@@ -110,7 +113,7 @@ namespace MedSestriManipulations
             Task.Delay(250, token).ContinueWith(_ =>
             {
                 if (!token.IsCancellationRequested)
-                    MainThread.BeginInvokeOnMainThread(() => ApplyFilter(text));
+                    MainThread.BeginInvokeOnMainThread(() => _ = ApplyFilter(text));
             }, token, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
         }
 
@@ -170,7 +173,7 @@ namespace MedSestriManipulations
             };
         }
 
-        private async void ApplyFilter(string? searchText = null)
+        private async Task ApplyFilter(string? searchText = null)
         {
             searchText ??= SearchEntry.Text?.Trim() ?? string.Empty;
 
@@ -196,7 +199,7 @@ namespace MedSestriManipulations
                 }, token).ConfigureAwait(false);
                 if (token.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
                     return;
-                MainThread.BeginInvokeOnMainThread(() =>
+                await MainThread.InvokeOnMainThreadAsync(() =>
                 {
                     if (token.IsCancellationRequested || filterVersion != Volatile.Read(ref _filterVersion))
                         return;

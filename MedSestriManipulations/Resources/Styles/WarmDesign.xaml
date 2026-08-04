@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!--
-    Warm-neutral editorial design tokens for the Начало (Home) flow: test list,
-    Patient Details and Request Confirmation. Scoped as new, uniquely-named
-    resources so История/Катетри keep using their own inline colors untouched.
+    Warm-neutral editorial design tokens, shared across Начало, История and Катетри.
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
@@ -28,6 +26,8 @@
     <Color x:Key="WarmNeutral500">#9B9797</Color>
 
     <Color x:Key="WarmError">#AD4A3A</Color>
+    <!-- WarmError @ ~11% opacity, for subtle "needs attention" row tints (e.g. overdue) -->
+    <Color x:Key="WarmErrorTint">#1DAD4A3A</Color>
 
     <SolidColorBrush x:Key="WarmAccentBrush" Color="{StaticResource WarmAccent}" />
 

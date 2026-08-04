@@ -56,12 +56,19 @@ namespace MedSestriManipulations
 
         private void OnSearchTextChanged(object sender, TextChangedEventArgs e)
         {
+            SearchClearButton.IsVisible = !string.IsNullOrEmpty(e.NewTextValue);
             ApplyFilter(e.NewTextValue);
+        }
+
+        private void OnSearchClearClicked(object sender, EventArgs e)
+        {
+            SearchEntry.Text = string.Empty;
+            SearchEntry.Unfocus();
         }
 
         private void ApplyFilter(string? searchText = null)
         {
-            searchText = (searchText ?? SearchBar.Text)?.Trim() ?? string.Empty;
+            searchText = (searchText ?? SearchEntry.Text)?.Trim() ?? string.Empty;
 
             IEnumerable<Catheter> filtered = _allCatheters;
 
@@ -119,6 +126,8 @@ namespace MedSestriManipulations
 
         private const double SheetKeyboardLift = 240;
         private bool _sheetLifted = false;
+
+        private void OnNameEntryCompleted(object sender, EventArgs e) => PhoneEntry.Focus();
 
         private async void OnSheetEntryFocused(object sender, FocusEventArgs e)
         {

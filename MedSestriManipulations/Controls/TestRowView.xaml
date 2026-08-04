@@ -97,8 +97,8 @@
                         <Border.StrokeShape>
                             <shapes:RoundRectangle CornerRadius="4" />
                         </Border.StrokeShape>
-                        <Label Text="Безплатно"
-                               FontFamily="{StaticResource WarmBodyFont}"
+                        <Label Text="0.00 €"
+                               Style="{StaticResource WarmPriceEmphasis}"
                                FontSize="12"
                                TextColor="{StaticResource WarmAccent800}" />
                     </Border>

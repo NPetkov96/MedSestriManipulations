@@ -3,65 +3,85 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:MedSestriManipulations.Controls"
              xmlns:models="clr-namespace:MedSestriManipulations.Models"
-             BackgroundColor="#F8F9FB"
+             xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
+             BackgroundColor="{StaticResource WarmBg}"
              x:Class="MedSestriManipulations.CatheterPage">
 
     <Grid RowDefinitions="Auto,Auto,Auto,*">
 
-        
         <controls:TopNavigationMenu Grid.Row="0" />
 
-        
+        <!-- Section title + add action -->
         <Grid Grid.Row="1"
               ColumnDefinitions="*,Auto"
-              Padding="16,12,16,4"
-              BackgroundColor="#F8F9FB">
+              Padding="18,14,18,9">
             <Label Grid.Column="0"
                    Text="Катетри"
-                   FontSize="16" FontAttributes="Bold"
-                   TextColor="#1A1A1A"
+                   Style="{StaticResource WarmPageTitle}"
                    VerticalOptions="Center" />
             <Button Grid.Column="1"
                     Text="+ Добави"
-                    Clicked="OnOpenAddSheetClicked"
-                    BackgroundColor="#0066CC"
-                    TextColor="White"
-                    CornerRadius="6"
-                    Padding="16,8"
-                    FontAttributes="Bold"
-                    FontSize="14" />
+                    Style="{StaticResource WarmPrimaryButton}"
+                    FontSize="13"
+                    Padding="14,6"
+                    Clicked="OnOpenAddSheetClicked" />
         </Grid>
 
-        
-        <Grid Grid.Row="2" Padding="16,4,16,10" BackgroundColor="#F8F9FB">
-            <Border Stroke="#D4DDE8" StrokeThickness="1"
-                    BackgroundColor="White"
-                    StrokeShape="RoundRectangle 8"
-                    Padding="6,0">
-                <SearchBar x:Name="SearchBar"
-                           Placeholder="Търси по име или телефон..."
-                           TextChanged="OnSearchTextChanged"
-                           BackgroundColor="Transparent"
-                           FontSize="14" HeightRequest="48"
-                           CancelButtonColor="#0066CC"
-                           TextColor="#1A1A1A"
-                           PlaceholderColor="#999999" />
-            </Border>
-        </Grid>
+        <!-- Sticky search field -->
+        <Border Grid.Row="2"
+                Style="{StaticResource WarmFieldBorder}"
+                Margin="18,9,18,9"
+                Padding="14,0">
+            <Border.StrokeShape>
+                <shapes:RoundRectangle CornerRadius="4" />
+            </Border.StrokeShape>
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="9">
 
-        
+                <Grid Grid.Column="0" WidthRequest="16" HeightRequest="16" VerticalOptions="Center">
+                    <shapes:Ellipse WidthRequest="11" HeightRequest="11"
+                                    Stroke="{StaticResource WarmNeutral500}"
+                                    StrokeThickness="1.5"
+                                    HorizontalOptions="Start" VerticalOptions="Start" />
+                    <shapes:Line X1="8" Y1="8" X2="15" Y2="15"
+                                 Stroke="{StaticResource WarmNeutral500}"
+                                 StrokeThickness="1.5" />
+                </Grid>
+
+                <Entry Grid.Column="1"
+                       x:Name="SearchEntry"
+                       Style="{StaticResource WarmEntry}"
+                       Placeholder="Търси по име или телефон…"
+                       ReturnType="Search"
+                       TextChanged="OnSearchTextChanged"
+                       VerticalOptions="Center" />
+
+                <Button Grid.Column="2"
+                        x:Name="SearchClearButton"
+                        Text="×"
+                        FontSize="20"
+                        Style="{StaticResource WarmGhostButton}"
+                        IsVisible="False"
+                        Clicked="OnSearchClearClicked"
+                        SemanticProperties.Description="Изчисти търсенето" />
+            </Grid>
+        </Border>
+
+        <!-- Catheter list -->
         <CollectionView Grid.Row="3"
                         x:Name="CathetersListView"
                         SelectionMode="None"
-                        Margin="16,4,16,0"
+                        Margin="18,0,18,0"
                         IsVisible="False">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Catheter">
-                    <Border Margin="0,5,0,5"
-                            StrokeShape="RoundRectangle 8"
-                            BackgroundColor="White"
-                            Stroke="#D4DDE8"
-                            StrokeThickness="1">
+                    <Border x:Name="RowBorder"
+                            Margin="0,4"
+                            Stroke="Transparent"
+                            BackgroundColor="Transparent"
+                            Padding="0">
+                        <Border.StrokeShape>
+                            <shapes:RoundRectangle CornerRadius="4" />
+                        </Border.StrokeShape>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer
                                 Command="{Binding Source={x:Reference CathetersListView}, Path=BindingContext.ShowPopupCommand}"
@@ -70,32 +90,39 @@
 
                         <Border.Triggers>
                             <DataTrigger TargetType="Border" Binding="{Binding IsOverdue}" Value="True">
-                                <Setter Property="BackgroundColor" Value="#FFF4D6" />
-                                <Setter Property="Stroke" Value="#F0C24B" />
+                                <Setter Property="BackgroundColor" Value="{StaticResource WarmErrorTint}" />
+                                <Setter Property="Stroke" Value="{StaticResource WarmError}" />
                             </DataTrigger>
                         </Border.Triggers>
 
-                        <Grid ColumnDefinitions="*,Auto" Padding="14,12" ColumnSpacing="12">
+                        <Grid ColumnDefinitions="*,Auto" Padding="14,12" ColumnSpacing="12" MinimumHeightRequest="48">
                             <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
                                 <Label Text="{Binding ClientName}"
-                                       FontSize="15" FontAttributes="Bold"
-                                       TextColor="#1A1A1A" LineBreakMode="TailTruncation" />
+                                       FontFamily="{StaticResource WarmHeadingFont}"
+                                       FontSize="16"
+                                       TextColor="{StaticResource WarmText}"
+                                       LineBreakMode="WordWrap" />
                                 <Label Text="{Binding PhoneNumber}"
-                                       FontSize="12" TextColor="#666666" />
+                                       FontFamily="OpenSansRegular"
+                                       FontSize="12"
+                                       TextColor="{StaticResource WarmTextMuted}" />
                                 <Label Text="{Binding Address}"
-                                       FontSize="12" TextColor="#999999"
-                                       LineBreakMode="TailTruncation" />
+                                       Style="{StaticResource WarmCaption}"
+                                       LineBreakMode="WordWrap" />
                             </VerticalStackLayout>
 
                             <Border Grid.Column="1"
-                                    BackgroundColor="#E8F0FF"
-                                    StrokeShape="RoundRectangle 6"
+                                    BackgroundColor="{StaticResource WarmAccent100}"
                                     Stroke="Transparent"
-                                    Padding="10,6"
+                                    Padding="9,6"
                                     VerticalOptions="Center">
+                                <Border.StrokeShape>
+                                    <shapes:RoundRectangle CornerRadius="4" />
+                                </Border.StrokeShape>
                                 <Label Text="{Binding Date, StringFormat='{0:dd.MM.yyyy}'}"
-                                       FontSize="12" FontAttributes="Bold"
-                                       TextColor="#0066CC" />
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="12"
+                                       TextColor="{StaticResource WarmAccent800}" />
                             </Border>
                         </Grid>
                     </Border>
@@ -104,86 +131,112 @@
 
             <CollectionView.EmptyView>
                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center"
-                                     Padding="32,60" Spacing="10">
-                    <Label Text="💧" FontSize="44" HorizontalOptions="Center" Opacity="0.4" />
+                                     Padding="37,74" Spacing="14">
+                    <Grid WidthRequest="40" HeightRequest="40" HorizontalOptions="Center">
+                        <shapes:Ellipse WidthRequest="30" HeightRequest="26"
+                                        Stroke="{StaticResource WarmNeutral400}"
+                                        StrokeThickness="2"
+                                        HorizontalOptions="Center" VerticalOptions="Start" />
+                        <shapes:Line X1="20" Y1="24" X2="20" Y2="36"
+                                     Stroke="{StaticResource WarmNeutral400}"
+                                     StrokeThickness="2" />
+                    </Grid>
                     <Label Text="Няма катетри"
-                           FontSize="16" FontAttributes="Bold"
-                           TextColor="#666666" HorizontalOptions="Center" />
-                    <Label Text="Добави нов катетър с бутона горе"
-                           FontSize="13" TextColor="#AAAAAA"
-                           HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                           Style="{StaticResource WarmSectionHeading}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+                    <Label Text="Добави нов катетър с бутона горе."
+                           Style="{StaticResource WarmCaption}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
 
         <controls:SkeletonListView x:Name="CathetersSkeleton"
+                                   SkeletonType="Catheter"
                                    Grid.Row="3" />
 
-        
+        <!-- Add/edit sheet backdrop -->
         <Grid x:Name="SheetOverlay"
               Grid.RowSpan="4"
               IsVisible="False"
-              BackgroundColor="#70000000">
+              BackgroundColor="#80000000">
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Tapped="OnSheetOverlayTapped" />
             </Grid.GestureRecognizers>
         </Grid>
 
-        
+        <!-- Add/edit sheet -->
         <Border x:Name="SheetPanel"
                 Grid.RowSpan="4"
                 VerticalOptions="End"
                 IsVisible="False"
-                BackgroundColor="White"
+                BackgroundColor="{StaticResource WarmBg}"
                 Stroke="Transparent"
-                StrokeShape="RoundRectangle 20,20,0,0">
+                Padding="0">
+            <Border.StrokeShape>
+                <shapes:RoundRectangle CornerRadius="20,20,0,0" />
+            </Border.StrokeShape>
+            <Border.Shadow>
+                <Shadow Brush="{StaticResource WarmText}" Offset="0,-6" Radius="18" Opacity="0.14" />
+            </Border.Shadow>
             <VerticalStackLayout Spacing="14" Padding="20,12,20,32">
 
                 <BoxView WidthRequest="40" HeightRequest="4"
-                         BackgroundColor="#D4DDE8"
+                         BackgroundColor="{StaticResource WarmNeutral400}"
                          HorizontalOptions="Center"
                          CornerRadius="2" />
 
                 <Label x:Name="SheetTitleLabel"
                        Text="Нов катетър"
-                       FontSize="18" FontAttributes="Bold"
-                       TextColor="#1A1A1A" />
+                       Style="{StaticResource WarmPageTitle}" />
 
-                <Border Stroke="#D4DDE8" StrokeThickness="1"
-                        BackgroundColor="White"
-                        StrokeShape="RoundRectangle 8" Padding="0">
-                    <VerticalStackLayout Spacing="0">
-                        <Entry x:Name="PatientNameEntry"
-                               Placeholder="Име на пациента"
-                               FontSize="14" BackgroundColor="Transparent"
-                               TextColor="#1A1A1A" PlaceholderColor="#999999"
-                               HeightRequest="46" Margin="14,0"
-                               Focused="OnSheetEntryFocused" Unfocused="OnSheetEntryUnfocused" />
-                        <BoxView Color="#F0F3F7" HeightRequest="1" />
-                        <Entry x:Name="PhoneEntry"
-                               Placeholder="Телефон"
-                               Keyboard="Telephone" FontSize="14"
-                               BackgroundColor="Transparent" TextColor="#1A1A1A"
-                               PlaceholderColor="#999999" HeightRequest="46" Margin="14,0"
-                               Focused="OnSheetEntryFocused" Unfocused="OnSheetEntryUnfocused" />
-                    </VerticalStackLayout>
+                <Border x:Name="NameFieldBorder" Style="{StaticResource WarmFieldBorder}" Padding="14,0">
+                    <Border.StrokeShape>
+                        <shapes:RoundRectangle CornerRadius="4" />
+                    </Border.StrokeShape>
+                    <Entry x:Name="PatientNameEntry"
+                           Style="{StaticResource WarmEntry}"
+                           Placeholder="Име на пациента"
+                           ReturnType="Next"
+                           Completed="OnNameEntryCompleted"
+                           Focused="OnSheetEntryFocused" Unfocused="OnSheetEntryUnfocused" />
+                </Border>
+
+                <Border x:Name="PhoneFieldBorder" Style="{StaticResource WarmFieldBorder}" Padding="14,0">
+                    <Border.StrokeShape>
+                        <shapes:RoundRectangle CornerRadius="4" />
+                    </Border.StrokeShape>
+                    <Entry x:Name="PhoneEntry"
+                           Style="{StaticResource WarmEntry}"
+                           Placeholder="Телефон"
+                           Keyboard="Telephone"
+                           Focused="OnSheetEntryFocused" Unfocused="OnSheetEntryUnfocused" />
                 </Border>
 
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                    <Label Grid.Column="0" Text="Дата на поставяне"
-                           FontSize="13" TextColor="#666666"
-                           VerticalOptions="Center" />
-                    <Border Grid.Column="1" Stroke="#D4DDE8" StrokeThickness="1"
-                            BackgroundColor="White" StrokeShape="RoundRectangle 8" Padding="10,0">
-                        <DatePicker x:Name="CatheterDatePicker" FontSize="14" TextColor="#1A1A1A" />
+                    <Label Grid.Column="0" Text="Дата на поставяне" Style="{StaticResource WarmCaption}" VerticalOptions="Center" />
+                    <Border Grid.Column="1" Style="{StaticResource WarmFieldBorder}" Padding="10,0">
+                        <Border.StrokeShape>
+                            <shapes:RoundRectangle CornerRadius="4" />
+                        </Border.StrokeShape>
+                        <DatePicker x:Name="CatheterDatePicker"
+                                    FontFamily="OpenSansRegular" FontSize="14"
+                                    TextColor="{StaticResource WarmText}" />
                     </Border>
                 </Grid>
 
-                <Border Stroke="#D4DDE8" StrokeThickness="1"
-                        BackgroundColor="White" StrokeShape="RoundRectangle 8" Padding="10,4">
+                <Border Style="{StaticResource WarmFieldBorder}" Padding="10,4">
+                    <Border.StrokeShape>
+                        <shapes:RoundRectangle CornerRadius="4" />
+                    </Border.StrokeShape>
                     <Editor x:Name="AddressEntry"
                             Placeholder="Адрес"
-                            FontSize="14" TextColor="#1A1A1A" PlaceholderColor="#999999"
+                            FontFamily="LoraRegular" FontSize="14"
+                            TextColor="{StaticResource WarmText}"
+                            PlaceholderColor="{StaticResource WarmNeutral500}"
+                            BackgroundColor="Transparent"
                             AutoSize="TextChanges" HeightRequest="80"
                             Focused="OnSheetEntryFocused" Unfocused="OnSheetEntryUnfocused" />
                 </Border>
@@ -191,38 +244,30 @@
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                     <Button Grid.Column="0"
                             Text="Запиши"
-                            Clicked="OnSaveClicked"
-                            BackgroundColor="#0066CC"
-                            TextColor="White"
-                            CornerRadius="8"
-                            HeightRequest="50"
-                            FontAttributes="Bold"
-                            FontSize="15" />
+                            Style="{StaticResource WarmPrimaryButton}"
+                            HorizontalOptions="Fill"
+                            Clicked="OnSaveClicked" />
                     <Button Grid.Column="1"
                             Text="Изчисти"
-                            Clicked="ClearFields"
-                            BackgroundColor="#E8EEF5"
-                            TextColor="#0066CC"
-                            BorderColor="#0066CC"
-                            BorderWidth="1"
-                            CornerRadius="8"
-                            HeightRequest="50"
-                            Padding="20,0"
-                            FontAttributes="Bold"
-                            FontSize="16" />
+                            Style="{StaticResource WarmSecondaryButton}"
+                            Clicked="ClearFields" />
                 </Grid>
             </VerticalStackLayout>
         </Border>
 
-        
+        <!-- Loading overlay -->
         <Grid x:Name="LoadingOverlay"
               Grid.RowSpan="4"
               BackgroundColor="#80000000"
               IsVisible="False">
-            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10">
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="9">
                 <ActivityIndicator IsRunning="True" IsVisible="True"
-                                   WidthRequest="55" HeightRequest="55" Color="White" />
-                <Label Text="Записване..." TextColor="White" FontSize="14" HorizontalOptions="Center" />
+                                   WidthRequest="48" HeightRequest="48"
+                                   Color="{StaticResource WarmAccent100}" />
+                <Label Text="Записване…"
+                       FontFamily="LoraRegular" FontSize="14"
+                       TextColor="White"
+                       HorizontalOptions="Center" />
             </VerticalStackLayout>
         </Grid>
 

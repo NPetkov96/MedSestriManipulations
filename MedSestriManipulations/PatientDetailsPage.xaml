@@ -55,8 +55,15 @@
                         <VerticalStackLayout x:Name="SummaryTestsLayout" Spacing="4" />
 
                         <Label x:Name="SummaryMoreLabel"
-                               Style="{StaticResource WarmCaption}"
-                               IsVisible="False" />
+                               Style="{StaticResource WarmButtonText}"
+                               TextDecorations="Underline"
+                               VerticalTextAlignment="Center"
+                               MinimumHeightRequest="32"
+                               IsVisible="False">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSummaryMoreTapped" />
+                            </Label.GestureRecognizers>
+                        </Label>
 
                         <BoxView HeightRequest="1" Color="{StaticResource WarmDivider}" Margin="0,4" />
 
@@ -111,7 +118,7 @@
                         </Border.StrokeShape>
                         <Entry x:Name="PhoneEntry"
                                Style="{StaticResource WarmEntry}"
-                               Placeholder="0882 259 007не"
+                               Placeholder="напр. 0882 259 007"
                                Keyboard="Telephone"
                                ReturnType="Next"
                                TextChanged="OnPhoneTextChanged"
