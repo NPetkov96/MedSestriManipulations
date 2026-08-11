@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:MedSestriManipulations.Controls"
+             xmlns:models="clr-namespace:MedSestriManipulations.Models"
+             xmlns:shapes="clr-namespace:Microsoft.Maui.Controls.Shapes;assembly=Microsoft.Maui.Controls"
+             x:Class="MedSestriManipulations.StatisticsPage"
+             x:DataType="models:MedSestriStatistics"
+             BackgroundColor="{StaticResource WarmBg}">
+
+    <ContentPage.Resources>
+        <Style x:Key="StatisticsValue" TargetType="Label">
+            <Setter Property="FontFamily" Value="OpenSansSemibold" />
+            <Setter Property="FontSize" Value="28" />
+            <Setter Property="TextColor" Value="{StaticResource WarmAccent700}" />
+        </Style>
+        <Style x:Key="StatisticsCaption" TargetType="Label" BasedOn="{StaticResource WarmCaption}">
+            <Setter Property="LineBreakMode" Value="TailTruncation" />
+        </Style>
+        <Style x:Key="StatisticsSegmentButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="TextColor" Value="{StaticResource WarmTextMuted}" />
+            <Setter Property="BorderColor" Value="{StaticResource WarmDivider}" />
+            <Setter Property="BorderWidth" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="FontFamily" Value="{StaticResource WarmBodyFont}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="MinimumHeightRequest" Value="36" />
+            <Setter Property="Padding" Value="9,4" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <controls:TopNavigationMenu Grid.Row="0" />
+
+        <Grid Grid.Row="1">
+            <RefreshView x:Name="StatisticsRefreshView"
+                         RefreshColor="{StaticResource WarmAccent700}"
+                         Refreshing="OnRefreshing">
+                <ScrollView>
+                    <VerticalStackLayout x:Name="StatisticsContent"
+                                         IsVisible="False"
+                                         Padding="18,14,18,28"
+                                         Spacing="14">
+
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="9">
+                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                <Label Text="Статистика" Style="{StaticResource WarmPageTitle}" />
+                                <Label x:Name="PeriodLabel" Style="{StaticResource WarmCaption}" />
+                            </VerticalStackLayout>
+                            <Button Grid.Column="1"
+                                    Text="Обнови"
+                                    Style="{StaticResource WarmGhostButton}"
+                                    FontSize="13"
+                                    Clicked="OnRefreshClicked"
+                                    SemanticProperties.Description="Обнови статистиката" />
+                        </Grid>
+
+                        <!-- Primary all-time overview -->
+                        <Border Style="{StaticResource WarmCard}" Padding="16">
+                            <Border.StrokeShape><shapes:RoundRectangle CornerRadius="7" /></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="12">
+                                <Label Text="Общ период" Style="{StaticResource WarmCaption}" />
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="14">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="0">
+                                        <Label x:Name="TotalDaysLabel"
+                                               FontFamily="OpenSansSemibold"
+                                               FontSize="42"
+                                               TextColor="{StaticResource WarmAccent700}" />
+                                        <Label Text="дни от началото" Style="{StaticResource WarmBody}" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="End">
+                                        <Label x:Name="ActiveDaysLabel"
+                                               FontFamily="OpenSansSemibold"
+                                               FontSize="24"
+                                               TextColor="#597EA2"
+                                               HorizontalTextAlignment="End" />
+                                        <Label Text="активни дни"
+                                               Style="{StaticResource WarmCaption}"
+                                               HorizontalTextAlignment="End" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                                <ProgressBar x:Name="ActiveDaysProgress"
+                                             HeightRequest="5"
+                                             ProgressColor="{StaticResource WarmAccent}"
+                                             BackgroundColor="{StaticResource WarmNeutral300}" />
+                                <Label x:Name="ActiveDaysSummaryLabel" Style="{StaticResource WarmCaption}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Secondary metrics -->
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="9">
+                            <Border Grid.Column="0" Style="{StaticResource WarmCard}" Padding="14">
+                                <Border.StrokeShape><shapes:RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="Средно" Style="{StaticResource StatisticsCaption}" />
+                                    <Label x:Name="AverageLabel" Style="{StaticResource StatisticsValue}" />
+                                    <Label Text="на активен ден" Style="{StaticResource WarmCaption}" FontSize="10" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1" Style="{StaticResource WarmCard}" Padding="14">
+                                <Border.StrokeShape><shapes:RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="Най-натоварен ден" Style="{StaticResource StatisticsCaption}" />
+                                    <Label x:Name="MaximumLabel"
+                                           Style="{StaticResource StatisticsValue}"
+                                           TextColor="{StaticResource WarmError}" />
+                                    <Label Text="записа" Style="{StaticResource WarmCaption}" FontSize="10" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+
+                        <!-- One comparison card instead of two competing cards -->
+                        <Border Style="{StaticResource WarmCard}" Padding="14">
+                            <Border.StrokeShape><shapes:RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="12">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="9">
+                                    <Label Text="Последна активност"
+                                           Style="{StaticResource WarmSectionHeading}"
+                                           VerticalOptions="Center" />
+                                    <Grid Grid.Column="1" ColumnDefinitions="Auto,Auto" ColumnSpacing="5">
+                                        <Button x:Name="Comparison7Button"
+                                                Grid.Column="0"
+                                                Text="7 дни"
+                                                Style="{StaticResource StatisticsSegmentButton}"
+                                                Clicked="OnComparison7Clicked" />
+                                        <Button x:Name="Comparison30Button"
+                                                Grid.Column="1"
+                                                Text="30 дни"
+                                                Style="{StaticResource StatisticsSegmentButton}"
+                                                Clicked="OnComparison30Clicked" />
+                                    </Grid>
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                                    <Label x:Name="ComparisonCountLabel"
+                                           Grid.Column="0"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="36"
+                                           TextColor="{StaticResource WarmAccent700}"
+                                           VerticalOptions="Center" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                        <Label x:Name="ComparisonPeriodLabel" Style="{StaticResource WarmBody}" />
+                                        <Label x:Name="ComparisonChangeLabel" Style="{StaticResource WarmCaption}" />
+                                        <Label x:Name="ComparisonPreviousLabel" Style="{StaticResource WarmCaption}" FontSize="10" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Daily chart, reduced to a readable mobile range by default -->
+                        <Border Style="{StaticResource WarmCard}" Padding="14">
+                            <Border.StrokeShape><shapes:RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Записи по дни" Style="{StaticResource WarmSectionHeading}" />
+                                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="5">
+                                    <Button x:Name="Daily30Button"
+                                            Grid.Column="0"
+                                            Text="30 дни"
+                                            Style="{StaticResource StatisticsSegmentButton}"
+                                            Clicked="OnDaily30Clicked" />
+                                    <Button x:Name="Daily90Button"
+                                            Grid.Column="1"
+                                            Text="90 дни"
+                                            Style="{StaticResource StatisticsSegmentButton}"
+                                            Clicked="OnDaily90Clicked" />
+                                    <Button x:Name="DailyAllButton"
+                                            Grid.Column="2"
+                                            Text="Всички"
+                                            Style="{StaticResource StatisticsSegmentButton}"
+                                            Clicked="OnDailyAllClicked" />
+                                </Grid>
+                                <Label x:Name="DailyRangeLabel" Style="{StaticResource WarmCaption}" />
+                                <HorizontalStackLayout Spacing="14">
+                                    <HorizontalStackLayout Spacing="5">
+                                        <BoxView WidthRequest="12" HeightRequest="3" Color="#597EA2" VerticalOptions="Center" />
+                                        <Label Text="Записи" Style="{StaticResource WarmCaption}" />
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout Spacing="5">
+                                        <BoxView WidthRequest="12" HeightRequest="3" Color="{StaticResource WarmAccent}" VerticalOptions="Center" />
+                                        <Label Text="7-дневна средна" Style="{StaticResource WarmCaption}" />
+                                    </HorizontalStackLayout>
+                                </HorizontalStackLayout>
+                                <Border x:Name="DailyPointDetails"
+                                        IsVisible="False"
+                                        Style="{StaticResource WarmFieldBorder}"
+                                        Padding="10,7">
+                                    <Border.StrokeShape><shapes:RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+                                        <Label x:Name="SelectedDateLabel" Grid.Column="0" Style="{StaticResource WarmCaption}" TextColor="{StaticResource WarmText}" />
+                                        <Label x:Name="SelectedRecordsLabel" Grid.Column="1" FontFamily="OpenSansSemibold" FontSize="12" TextColor="#597EA2" />
+                                        <Label x:Name="SelectedAverageLabel" Grid.Column="2" FontFamily="OpenSansSemibold" FontSize="12" TextColor="{StaticResource WarmAccent700}" />
+                                    </Grid>
+                                </Border>
+                                <GraphicsView x:Name="DailyChart"
+                                              HeightRequest="230"
+                                              StartInteraction="OnDailyChartInteraction"
+                                              DragInteraction="OnDailyChartInteraction"
+                                              SemanticProperties.Description="Графика на записите по дни. Докоснете за подробности." />
+                                <Label Text="Докоснете графиката за конкретна дата"
+                                       Style="{StaticResource WarmCaption}"
+                                       FontSize="10"
+                                       HorizontalTextAlignment="Center" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Style="{StaticResource WarmCard}" Padding="14">
+                            <Border.StrokeShape><shapes:RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="9">
+                                <Label Text="Записи по месеци" Style="{StaticResource WarmSectionHeading}" />
+                                <Label Text="Последните 12 месеца" Style="{StaticResource WarmCaption}" />
+                                <GraphicsView x:Name="MonthlyChart"
+                                              HeightRequest="210"
+                                              SemanticProperties.Description="Графика на записите през последните 12 месеца" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Style="{StaticResource WarmCard}" Padding="14">
+                            <Border.StrokeShape><shapes:RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                            <VerticalStackLayout Spacing="9">
+                                <Label Text="Кои дни са най-активни" Style="{StaticResource WarmSectionHeading}" />
+                                <GraphicsView x:Name="WeekdayChart"
+                                              HeightRequest="270"
+                                              SemanticProperties.Description="Разпределение на записите по дни от седмицата" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Mobile cards replace the five-column desktop table -->
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="9">
+                            <Label Text="По месеци"
+                                   Style="{StaticResource WarmSectionHeading}"
+                                   VerticalOptions="Center" />
+                            <Button x:Name="MonthsToggleButton"
+                                    Grid.Column="1"
+                                    Text="Покажи всички"
+                                    Style="{StaticResource WarmGhostButton}"
+                                    FontSize="12"
+                                    Clicked="OnMonthsToggleClicked" />
+                        </Grid>
+                        <VerticalStackLayout x:Name="MonthlyCards" Spacing="8">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:MonthlyStatistics">
+                                    <Border Style="{StaticResource WarmCard}" Padding="14">
+                                        <Border.StrokeShape><shapes:RoundRectangle CornerRadius="4" /></Border.StrokeShape>
+                                        <VerticalStackLayout Spacing="10">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <Label Grid.Column="0"
+                                                       Text="{Binding MonthText}"
+                                                       Style="{StaticResource WarmSectionHeading}" />
+                                                <HorizontalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                                    <Label Text="{Binding RecordCount}"
+                                                           FontFamily="OpenSansSemibold"
+                                                           FontSize="17"
+                                                           TextColor="{StaticResource WarmAccent700}" />
+                                                    <Label Text="записа" Style="{StaticResource WarmCaption}" />
+                                                </HorizontalStackLayout>
+                                            </Grid>
+                                            <BoxView HeightRequest="1" Color="{StaticResource WarmDivider}" />
+                                            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="9">
+                                                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                                    <Label Text="Активни дни" Style="{StaticResource WarmCaption}" FontSize="10" />
+                                                    <Label Text="{Binding ActiveDays}" TextColor="{StaticResource WarmAccent700}" FontFamily="OpenSansSemibold" FontSize="14" />
+                                                </VerticalStackLayout>
+                                                <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                                    <Label Text="Средно" Style="{StaticResource WarmCaption}" FontSize="10" />
+                                                    <Label Text="{Binding AveragePerActiveDay, StringFormat='{0:0.00}'}" TextColor="{StaticResource WarmAccent700}" FontFamily="OpenSansSemibold" FontSize="14" />
+                                                </VerticalStackLayout>
+                                                <VerticalStackLayout Grid.Column="2" Spacing="2">
+                                                    <Label Text="Максимум" Style="{StaticResource WarmCaption}" FontSize="10" />
+                                                    <Label Text="{Binding MaximumPerDay}" TextColor="{StaticResource WarmAccent700}" FontFamily="OpenSansSemibold" FontSize="14" />
+                                                </VerticalStackLayout>
+                                            </Grid>
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </ScrollView>
+            </RefreshView>
+
+            <VerticalStackLayout x:Name="LoadingView"
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Spacing="9">
+                <ActivityIndicator IsRunning="True" Color="{StaticResource WarmAccent700}" />
+                <Label Text="Зареждане на статистиката…" Style="{StaticResource WarmCaption}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout x:Name="ErrorView"
+                                 IsVisible="False"
+                                 VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Padding="28"
+                                 Spacing="14">
+                <Label Text="Статистиката не може да се зареди"
+                       Style="{StaticResource WarmSectionHeading}"
+                       HorizontalTextAlignment="Center" />
+                <Label x:Name="ErrorLabel"
+                       Style="{StaticResource WarmCaption}"
+                       HorizontalTextAlignment="Center" />
+                <Button Text="Опитай отново"
+                        Style="{StaticResource WarmPrimaryButton}"
+                        Clicked="OnRetryClicked" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>

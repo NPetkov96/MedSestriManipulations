@@ -9,6 +9,7 @@
         <ShellContent Title="Начало" ContentTemplate="{DataTemplate local:MainPage}" Route="MainPage" />
         <ShellContent Title="История" ContentTemplate="{DataTemplate local:HistoryPage}" Route="HistoryPage" />
         <ShellContent Title="Катетри" ContentTemplate="{DataTemplate local:CatheterPage}" Route="CatheterPage" />
+        <ShellContent Title="Статистика" ContentTemplate="{DataTemplate local:StatisticsPage}" Route="StatisticsPage" />
     </TabBar>
 
 </Shell>

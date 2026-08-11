@@ -10,9 +10,11 @@ namespace MedSestriManipulations.Services
         private List<BloodTest> _bloodTests = new();
         private List<Patient> _patients = new();
         private List<Catheter> _catheters = new();
+        private MedSestriStatistics? _statistics;
         private bool _isBloodTestsLoaded;
         private bool _isPatientsLoaded;
         private bool _isCathetersLoaded;
+        private bool _isStatisticsLoaded;
 
         private static readonly string _bloodTestsCacheFile =
             Path.Combine(FileSystem.AppDataDirectory, "bloodtests_cache.json");
@@ -23,11 +25,16 @@ namespace MedSestriManipulations.Services
         private static readonly string _cathetersCacheFile =
             Path.Combine(FileSystem.AppDataDirectory, "catheters_cache.json");
 
+        private static readonly string _statisticsCacheFile =
+            Path.Combine(FileSystem.AppDataDirectory, "statistics_cache.json");
+
         private Task<List<BloodTest>>? _bloodTestsInFlight;
         private Task<List<Patient>>? _patientsInFlight;
         private Task<List<Catheter>>? _cathetersInFlight;
+        private Task<MedSestriStatistics>? _statisticsInFlight;
 
         public int PatientsVersion { get; private set; }
+        public int StatisticsVersion { get; private set; }
 
         public CachedDataService(API api)
         {
@@ -209,11 +216,89 @@ namespace MedSestriManipulations.Services
             catch {  }
         }
 
+        public Task<MedSestriStatistics> GetStatisticsAsync(bool forceRefresh = false)
+        {
+            if (forceRefresh)
+            {
+                _isStatisticsLoaded = false;
+                TryDeleteCacheFile(_statisticsCacheFile);
+            }
+
+            if (_isStatisticsLoaded && _statistics != null)
+                return Task.FromResult(_statistics);
+
+            return _statisticsInFlight ??= LoadStatisticsAsync(forceRefresh);
+        }
+
+        private async Task<MedSestriStatistics> LoadStatisticsAsync(bool forceRefresh)
+        {
+            try
+            {
+                if (!forceRefresh && File.Exists(_statisticsCacheFile))
+                {
+                    try
+                    {
+                        var json = await File.ReadAllTextAsync(_statisticsCacheFile);
+                        var cached = JsonSerializer.Deserialize<MedSestriStatistics>(json);
+                        if (cached != null)
+                        {
+                            _statistics = cached;
+                            _isStatisticsLoaded = true;
+                            StatisticsVersion++;
+
+                            _ = RefreshStatisticsInBackgroundAsync();
+                            return cached;
+                        }
+                    }
+                    catch { }
+                }
+
+                return await RefreshStatisticsFromApiAsync();
+            }
+            finally
+            {
+                _statisticsInFlight = null;
+            }
+        }
+
+        private async Task RefreshStatisticsInBackgroundAsync()
+        {
+            try
+            {
+                await RefreshStatisticsFromApiAsync();
+            }
+            catch
+            {
+                // The cached statistics remain available when the background refresh fails.
+            }
+        }
+
+        private async Task<MedSestriStatistics> RefreshStatisticsFromApiAsync()
+        {
+            var fresh = await _api.GetStatisticsAsync();
+            _statistics = fresh;
+            _isStatisticsLoaded = true;
+            StatisticsVersion++;
+
+            var json = JsonSerializer.Serialize(fresh);
+            await File.WriteAllTextAsync(_statisticsCacheFile, json);
+            return fresh;
+        }
+
         public void InvalidatePatients()
         {
             _isPatientsLoaded = false;
             PatientsVersion++;
             TryDeleteCacheFile(_patientsCacheFile);
+            InvalidateStatistics();
+        }
+
+        public void InvalidateStatistics()
+        {
+            _isStatisticsLoaded = false;
+            _statistics = null;
+            StatisticsVersion++;
+            TryDeleteCacheFile(_statisticsCacheFile);
         }
 
         private static void TryDeleteCacheFile(string path)

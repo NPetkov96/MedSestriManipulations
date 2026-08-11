@@ -53,6 +53,16 @@ namespace MedSestriManipulations.ApiHandler
             return result!;
         }
 
+        public async Task<MedSestriStatistics> GetStatisticsAsync()
+        {
+            var response = await _httpClient.GetAsync("api/Bodimed/statistics");
+            if (!response.IsSuccessStatusCode)
+                throw new ArgumentException(ErrorMessage);
+
+            return await response.Content.ReadFromJsonAsync<MedSestriStatistics>()
+                ?? new MedSestriStatistics();
+        }
+
         public async Task<HttpResponseMessage> DeletePatient(DateTime date)
         {
             var json = JsonSerializer.Serialize(date);

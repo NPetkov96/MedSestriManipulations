@@ -15,11 +15,12 @@
                 VerticalOptions="Center" />
         </Grid>
 
-        <HorizontalStackLayout Grid.Row="1"
-                                Spacing="28"
-                                HorizontalOptions="Center">
+        <Grid Grid.Row="1"
+              Padding="9,0"
+              ColumnDefinitions="*,*,*,*"
+              ColumnSpacing="4">
 
-            <Grid MinimumHeightRequest="48" MinimumWidthRequest="48">
+            <Grid Grid.Column="0" MinimumHeightRequest="48">
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="GoHome" />
                 </Grid.GestureRecognizers>
@@ -27,6 +28,7 @@
                     <Label x:Name="HomeTabLabel"
                            Text="Начало"
                            Style="{StaticResource WarmButtonText}"
+                           FontSize="14"
                            HorizontalOptions="Center" />
                     <BoxView x:Name="HomeUnderline"
                              HeightRequest="2"
@@ -37,7 +39,7 @@
                 </VerticalStackLayout>
             </Grid>
 
-            <Grid MinimumHeightRequest="48" MinimumWidthRequest="48">
+            <Grid Grid.Column="1" MinimumHeightRequest="48">
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="GoHistory" />
                 </Grid.GestureRecognizers>
@@ -45,6 +47,7 @@
                     <Label x:Name="HistoryTabLabel"
                            Text="История"
                            Style="{StaticResource WarmButtonText}"
+                           FontSize="14"
                            HorizontalOptions="Center" />
                     <BoxView x:Name="HistoryUnderline"
                              HeightRequest="2"
@@ -55,7 +58,7 @@
                 </VerticalStackLayout>
             </Grid>
 
-            <Grid MinimumHeightRequest="48" MinimumWidthRequest="48">
+            <Grid Grid.Column="2" MinimumHeightRequest="48">
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer Tapped="GoCatheters" />
                 </Grid.GestureRecognizers>
@@ -63,6 +66,7 @@
                     <Label x:Name="CathetersTabLabel"
                            Text="Катетри"
                            Style="{StaticResource WarmButtonText}"
+                           FontSize="14"
                            HorizontalOptions="Center" />
                     <BoxView x:Name="CathetersUnderline"
                              HeightRequest="2"
@@ -72,7 +76,26 @@
                              HorizontalOptions="Center" />
                 </VerticalStackLayout>
             </Grid>
-        </HorizontalStackLayout>
+
+            <Grid Grid.Column="3" MinimumHeightRequest="48">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="GoStatistics" />
+                </Grid.GestureRecognizers>
+                <VerticalStackLayout Spacing="4" VerticalOptions="Center">
+                    <Label x:Name="StatisticsTabLabel"
+                           Text="Статистика"
+                           Style="{StaticResource WarmButtonText}"
+                           FontSize="14"
+                           HorizontalOptions="Center" />
+                    <BoxView x:Name="StatisticsUnderline"
+                             HeightRequest="2"
+                             WidthRequest="36"
+                             Color="{StaticResource WarmAccent}"
+                             IsVisible="False"
+                             HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Grid>
+        </Grid>
 
         <BoxView Grid.Row="2" HeightRequest="1" Color="{StaticResource WarmDivider}" />
     </Grid>

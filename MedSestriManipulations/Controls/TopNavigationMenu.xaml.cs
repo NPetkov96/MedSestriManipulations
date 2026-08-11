@@ -29,6 +29,11 @@ public partial class TopNavigationMenu : ContentView
         await NavigateToAsync("//CatheterPage", "CatheterPage");
     }
 
+    private async void GoStatistics(object sender, EventArgs e)
+    {
+        await NavigateToAsync("//StatisticsPage", "StatisticsPage");
+    }
+
     private async Task NavigateToAsync(string route, string routeName)
     {
         var shell = Shell.Current;
@@ -57,6 +62,7 @@ public partial class TopNavigationMenu : ContentView
         SetTabState(HomeTabLabel, HomeUnderline, route.Contains("MainPage", StringComparison.OrdinalIgnoreCase));
         SetTabState(HistoryTabLabel, HistoryUnderline, route.Contains("HistoryPage", StringComparison.OrdinalIgnoreCase));
         SetTabState(CathetersTabLabel, CathetersUnderline, route.Contains("CatheterPage", StringComparison.OrdinalIgnoreCase));
+        SetTabState(StatisticsTabLabel, StatisticsUnderline, route.Contains("StatisticsPage", StringComparison.OrdinalIgnoreCase));
     }
 
     private static void SetTabState(Label label, BoxView underline, bool isActive)
